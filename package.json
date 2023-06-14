@@ -5,6 +5,7 @@
   "sideEffects": [
     "src/tests/config.ts"
   ],
+  "main": "src/config.ts",
   "exports": {
     "./*.ts": "./src/*.ts"
   },
