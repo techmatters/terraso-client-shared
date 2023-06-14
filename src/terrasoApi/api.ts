@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+import { TypedDocumentString } from 'graphqlSchema/graphql';
 import _ from 'lodash/fp';
-import { getAuthHeaders } from 'terrasoApi/shared/account/auth';
-import { UNAUTHENTICATED } from 'terrasoApi/shared/account/authConstants';
-import { getAPIConfig } from 'terrasoApi/shared/config';
-import { TypedDocumentString } from 'terrasoApi/shared/graphqlSchema/graphql';
-import logger from 'terrasoApi/shared/monitoring/logger';
+import logger from 'monitoring/logger';
+import { getAuthHeaders } from 'account/auth';
+import { UNAUTHENTICATED } from 'account/authConstants';
+import { getAPIConfig } from 'config';
 
 type Error = { message: any };
 type Errors = { errors?: Error[] | null };

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+import 'account/accountSlice'; // necessary to avoid circular dependency issue
 import {
   configureStore,
   Middleware,
@@ -22,9 +23,9 @@ import {
 } from '@reduxjs/toolkit';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import _ from 'lodash/fp';
-import accountReducer from 'terrasoApi/shared/account/accountSlice';
-import membershipsReducer from 'terrasoApi/shared/memberships/membershipsSlice';
-import notificationsReducer from 'terrasoApi/shared/notifications/notificationsSlice';
+import membershipsReducer from 'memberships/membershipsSlice';
+import notificationsReducer from 'notifications/notificationsSlice';
+import accountReducer from 'account/accountSlice';
 
 const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {

@@ -16,13 +16,10 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
-import * as membershipsService from 'terrasoApi/shared/memberships/membershipsService';
-import * as membershipsUtils from 'terrasoApi/shared/memberships/membershipsUtils';
-import {
-  createAsyncThunk,
-  Message,
-  withExtra as withExtraInput,
-} from 'terrasoApi/shared/store/utils';
+import * as membershipsService from 'memberships/membershipsService';
+import * as membershipsUtils from 'memberships/membershipsUtils';
+import { createAsyncThunk, withExtra as withExtraInput } from 'store/utils';
+import { Message } from 'notifications/notificationsSlice';
 
 export type MembershipList = {
   // TODO: massage membershipsUtils/Service so more of these can be required

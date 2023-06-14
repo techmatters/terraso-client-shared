@@ -16,11 +16,11 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
-import * as accountService from 'terrasoApi/shared/account/accountService';
-import { getToken, removeToken } from 'terrasoApi/shared/account/auth';
-import logger from 'terrasoApi/shared/monitoring/logger';
-import type { SharedDispatch } from 'terrasoApi/shared/store/store';
-import { createAsyncThunk } from 'terrasoApi/shared/store/utils';
+import type { SharedDispatch } from 'store/store';
+import { createAsyncThunk } from 'store/utils';
+import logger from 'monitoring/logger';
+import * as accountService from 'account/accountService';
+import { getToken, removeToken } from 'account/auth';
 
 const initialState = {
   currentUser: {
@@ -58,15 +58,15 @@ export type User = {
 };
 
 export const fetchUser = createAsyncThunk(
-  'terrasoApi/shared/account/fetchUser',
+  'account/fetchUser',
   accountService.fetchUser
 );
 export const fetchProfile = createAsyncThunk(
-  'terrasoApi/shared/account/fetchProfile',
+  'account/fetchProfile',
   accountService.fetchProfile
 );
 export const saveUser = createAsyncThunk(
-  'terrasoApi/shared/account/saveUser',
+  'account/saveUser',
   accountService.saveUser,
   () => ({
     severity: 'success',
@@ -74,17 +74,17 @@ export const saveUser = createAsyncThunk(
   })
 );
 export const fetchAuthURLs = createAsyncThunk(
-  'terrasoApi/shared/account/fetchAuthURLs',
+  'account/fetchAuthURLs',
   accountService.getAuthURLs
 );
 export const savePreference = createAsyncThunk(
-  'terrasoApi/shared/account/savePreference',
+  'account/savePreference',
   accountService.savePreference,
   null,
   false
 );
 export const unsubscribeFromNotifications = createAsyncThunk(
-  'terrasoApi/shared/account/unsubscribeFromNotifications',
+  'account/unsubscribeFromNotifications',
   accountService.unsubscribeFromNotifications,
   null,
   false

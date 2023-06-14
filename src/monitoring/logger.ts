@@ -15,7 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 import _ from 'lodash/fp';
-import { getAPIConfig } from 'terrasoApi/shared/config';
+import { getAPIConfig } from 'config';
 
 const logLevel = 'warn';
 

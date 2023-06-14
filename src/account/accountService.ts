@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import _ from 'lodash/fp';
-import { User } from 'terrasoApi/shared/account/accountSlice';
-import { getUserEmail } from 'terrasoApi/shared/account/auth';
-import { getAPIConfig } from 'terrasoApi/shared/config';
-import { graphql } from 'terrasoApi/shared/graphqlSchema';
+import { graphql } from 'graphqlSchema';
 import type {
   UserFieldsFragment,
   UserPreferencesFragment,
-} from 'terrasoApi/shared/graphqlSchema/graphql';
-import * as terrasoApi from 'terrasoApi/shared/terrasoApi/api';
+} from 'graphqlSchema/graphql';
+import _ from 'lodash/fp';
+import * as terrasoApi from 'terrasoApi/api';
+import { User } from 'account/accountSlice';
+import { getUserEmail } from 'account/auth';
+import { getAPIConfig } from 'config';
 
 const parsePreferences = (
   user: UserFieldsFragment & UserPreferencesFragment

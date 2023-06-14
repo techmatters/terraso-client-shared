@@ -15,8 +15,8 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 import jwt from 'jwt-decode';
-import { UNAUTHENTICATED } from 'terrasoApi/shared/account/authConstants';
-import { getAPIConfig } from 'terrasoApi/shared/config';
+import { UNAUTHENTICATED } from 'account/authConstants';
+import { getAPIConfig } from 'config';
 
 type AccessToken = {
   email: string;

@@ -18,8 +18,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
 import { v4 as uuidv4 } from 'uuid';
 
+export type Message = {
+  severity: 'success' | 'error';
+  content: any;
+  params?: any;
+};
+
 const initialState = {
-  messages: {},
+  messages: {} as Record<string, Message>,
 };
 
 const notificationsSlice = createSlice({

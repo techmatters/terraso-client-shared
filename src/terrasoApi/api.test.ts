@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import { setAPIConfig } from 'terrasoApi/shared/config';
-import * as terrasoApi from 'terrasoApi/shared/terrasoApi/api';
+import * as terrasoApi from 'terrasoApi/api';
+import { mockLogger } from 'tests/config';
 
 const mockFetch = jest.fn<
   ReturnType<typeof global.fetch>,
@@ -23,16 +23,6 @@ const mockFetch = jest.fn<
 >();
 global.fetch = mockFetch;
 global.console.error = jest.fn();
-const logger = jest.fn();
-
-setAPIConfig({
-  terrasoAPIURL: 'http://127.0.0.1:8000',
-  graphQLEndpoint: '/graphql',
-  tokenStorage: {
-    getToken: () => undefined,
-  } as any,
-  logger: logger as any,
-});
 
 test('Terraso API: request error', async () => {
   global.console.warn = jest.fn();
@@ -41,8 +31,8 @@ test('Terraso API: request error', async () => {
     'terraso_api.error_request_response',
   ]);
   expect(console.error).toHaveBeenCalledTimes(1);
-  expect(logger).toHaveBeenCalledTimes(1);
-  expect(logger.mock.calls[0][0]).toBe('error');
+  expect(mockLogger).toHaveBeenCalledTimes(1);
+  expect(mockLogger.mock.calls[0][0]).toBe('error');
 });
 test('Terraso API: request format error', async () => {
   mockFetch.mockResolvedValue(new Response(''));
@@ -50,8 +40,8 @@ test('Terraso API: request format error', async () => {
     'terraso_api.error_request_response',
   ]);
   expect(console.error).toHaveBeenCalledTimes(1);
-  expect(logger).toHaveBeenCalledTimes(1);
-  expect(logger.mock.calls[0][0]).toBe('error');
+  expect(mockLogger).toHaveBeenCalledTimes(1);
+  expect(mockLogger.mock.calls[0][0]).toBe('error');
 });
 test('Terraso API: request GraphQL errors', async () => {
   mockFetch.mockResolvedValue(
@@ -69,8 +59,8 @@ test('Terraso API: request GraphQL errors', async () => {
     'Test error',
   ]);
   expect(console.error).toHaveBeenCalledTimes(0);
-  expect(logger).toHaveBeenCalledTimes(1);
-  expect(logger.mock.calls[0][0]).toBe('warn');
+  expect(mockLogger).toHaveBeenCalledTimes(1);
+  expect(mockLogger.mock.calls[0][0]).toBe('warn');
 });
 test('Terraso API: no data error', async () => {
   mockFetch.mockResolvedValue(new Response('{}'));
@@ -123,5 +113,5 @@ test('Terraso API: success', async () => {
   const result = await terrasoApi.requestGraphQL('', {});
   expect(result).toEqual({ test: 'value' });
   expect(console.error).toHaveBeenCalledTimes(0);
-  expect(logger).toHaveBeenCalledTimes(0);
+  expect(mockLogger).toHaveBeenCalledTimes(0);
 });

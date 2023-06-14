@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import { render, screen } from 'tests/utils';
+import 'tests/utils';
+import { render } from 'tests/utils';
 import React from 'react';
-import { fetchAuthURLs } from 'terrasoApi/shared/account/accountSlice';
-import { useFetchData } from 'terrasoApi/shared/store/utils';
+import { useFetchData } from 'store/utils';
+import { fetchAuthURLs } from 'account/accountSlice';
 
 const TestComponent = () => {
   useFetchData(fetchAuthURLs);
@@ -32,24 +33,33 @@ global.fetch = mockFetch;
 
 test('AsyncThunk: Handle error', async () => {
   mockFetch.mockRejectedValue('Test error');
-  await render(<TestComponent />);
-  expect(screen.getByText(/Test error/i)).toBeInTheDocument();
+  const { store } = await render(<TestComponent />);
+  const [message] = Object.values(store.getState().notifications.messages);
+  expect(message.severity).toBe('error');
+  expect(message.params.error).toBe('Test error');
+  expect(message.content).toContain('Test error');
 });
 test('AsyncThunk: Handle multiple errors', async () => {
   mockFetch.mockRejectedValue(['Test error 1', 'Test error 2']);
-  await render(<TestComponent />);
-  expect(screen.getByText(/Test error 1/i)).toBeInTheDocument();
-  expect(screen.getByText(/Test error 2/i)).toBeInTheDocument();
+  const { store } = await render(<TestComponent />);
+  const [message1, message2] = Object.values(
+    store.getState().notifications.messages
+  );
+  expect(message1.severity).toBe('error');
+  expect(message1.params.error).toBe('Test error 1');
+  expect(message1.content).toContain('Test error 1');
+  expect(message2.severity).toBe('error');
+  expect(message2.params.error).toBe('Test error 2');
+  expect(message2.content).toContain('Test error 2');
 });
 test('AsyncThunk: Complex error message', async () => {
   mockFetch.mockRejectedValue({
     content: ['common.unexpected_error'],
     params: { error: 'Unexpected' },
   });
-  await render(<TestComponent />);
-  expect(
-    screen.getByText(
-      /Oops, something went wrong. Try again in a few minutes. \(Error: Unexpected\)/i
-    )
-  ).toBeInTheDocument();
+  const { store } = await render(<TestComponent />);
+  const [message] = Object.values(store.getState().notifications.messages);
+  expect(message.severity).toBe('error');
+  expect(message.params.error).toBe('Unexpected');
+  expect(message.content).toContain('common.unexpected_error');
 });

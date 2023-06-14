@@ -22,14 +22,11 @@ import {
 import type { BaseThunkAPI } from '@reduxjs/toolkit/dist/createAsyncThunk';
 import _ from 'lodash/fp';
 import { useDispatch } from 'react-redux';
-import { signOut, User } from 'terrasoApi/shared/account/accountSlice';
-import { refreshToken } from 'terrasoApi/shared/account/auth';
-import { UNAUTHENTICATED } from 'terrasoApi/shared/account/authConstants';
-import { addMessage } from 'terrasoApi/shared/notifications/notificationsSlice';
-import type {
-  SharedDispatch,
-  SharedState,
-} from 'terrasoApi/shared/store/store';
+import type { SharedDispatch, SharedState } from 'store/store';
+import { addMessage, Message } from 'notifications/notificationsSlice';
+import { signOut, User } from 'account/accountSlice';
+import { refreshToken } from 'account/auth';
+import { UNAUTHENTICATED } from 'account/authConstants';
 
 const executeAuthRequest = <T>(
   dispatch: SharedDispatch,
@@ -83,12 +80,6 @@ export type ThunkAPI = BaseThunkAPI<
   SharedDispatch,
   RejectPayload
 >;
-
-export type Message = {
-  severity: 'success' | 'error';
-  content: any;
-  params?: any;
-};
 
 export const createAsyncThunk = <Returned, ThunkArg = void>(
   typePrefix: string,

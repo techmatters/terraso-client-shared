@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+import { graphql } from 'graphqlSchema';
+import type { MembershipAddMutationInput } from 'graphqlSchema/graphql';
 import _ from 'lodash/fp';
-import { graphql } from 'terrasoApi/shared/graphqlSchema';
-import type { MembershipAddMutationInput } from 'terrasoApi/shared/graphqlSchema/graphql';
-import { Membership } from 'terrasoApi/shared/memberships/membershipsSlice';
+import { Membership } from 'memberships/membershipsSlice';
 import {
   extractMembers,
   extractMembersInfo,
-} from 'terrasoApi/shared/memberships/membershipsUtils';
-import * as terrasoApi from 'terrasoApi/shared/terrasoApi/api';
+} from 'memberships/membershipsUtils';
+import * as terrasoApi from 'terrasoApi/api';
 
 export const fetchMembers = (slug: string) => {
   const query = graphql(`
@@ -100,7 +100,6 @@ export const joinMembershipList = ({
       addMembership(input: $input) {
         membership {
           group {
-            ...groupFields
             ...groupMembersInfo
             ...accountMembership
           }
@@ -134,7 +133,6 @@ export const leaveMembershipList = ({ membershipId }: Membership) => {
       deleteMembership(input: $input) {
         membership {
           group {
-            ...groupFields
             ...groupMembersInfo
             ...accountMembership
           }

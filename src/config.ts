@@ -1,4 +1,4 @@
-import type { Severity } from 'terrasoApi/shared/monitoring/logger';
+import type { Severity } from 'monitoring/logger';
 
 export type TerrasoAPIConfig = {
   terrasoAPIURL: string;
