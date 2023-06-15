@@ -5,6 +5,9 @@
   "sideEffects": [
     "src/tests/config.ts"
   ],
+  "publishConfig": {
+    "directory": "dist"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@rollbar/react": "^0.11.1",
