@@ -10,8 +10,9 @@
     "dist"
   ],
   "exports": {
-    "./*.js": "./dist/*.js",
-    "./tests/*": null
+    "./*": "./dist/*.js",
+    "./tests/*": null,
+    "./*.test": null
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
