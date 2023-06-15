@@ -5,9 +5,6 @@
   "sideEffects": [
     "src/tests/config.ts"
   ],
-  "publishConfig": {
-    "directory": "dist"
-  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@rollbar/react": "^0.11.1",
@@ -35,7 +32,7 @@
     "generate-types": "graphql-codegen",
     "lint-js": "eslint ./ --fix --ext .ts --ext .tsx --max-warnings 0 --ignore-path .gitignore",
     "check-ts": "npm run generate-types && tsc --noEmit --emitDeclarationOnly false",
-    "build": "tsc && npx babel src --extensions \".ts\" --out-dir dist",
+    "build": "tsc && npx babel src --extensions \".ts\" --out-dir .",
     "test": "jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false"
