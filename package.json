@@ -36,7 +36,7 @@
     "web-vitals": "^3.3.1"
   },
   "scripts": {
-    "prepare": "npm run generate-types",
+    "prepare": "npm run generate-types && npm run build",
     "generate-types": "graphql-codegen",
     "lint-js": "eslint ./ --fix --ext .ts --ext .tsx --max-warnings 0 --ignore-path .gitignore",
     "check-ts": "npm run generate-types && tsc --noEmit",
