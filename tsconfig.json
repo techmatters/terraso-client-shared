@@ -15,12 +15,13 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "moduleResolution": "node16",
-    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "outDir": "dist"
   },
 
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["dist"]
 }

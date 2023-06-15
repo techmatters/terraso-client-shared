@@ -5,9 +5,13 @@
   "sideEffects": [
     "src/tests/config.ts"
   ],
-  "main": "src/config.ts",
+  "files": [
+    "src",
+    "dist"
+  ],
   "exports": {
-    "./*.ts": "./src/*.ts"
+    "./*.js": "./dist/*.js",
+    "./tests/*": null
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
@@ -36,7 +40,7 @@
     "generate-types": "graphql-codegen",
     "lint-js": "eslint ./ --fix --ext .ts --ext .tsx --max-warnings 0 --ignore-path .gitignore",
     "check-ts": "npm run generate-types && tsc --noEmit",
-    "build": "npm pack",
+    "build": "tsc",
     "test": "jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false"
