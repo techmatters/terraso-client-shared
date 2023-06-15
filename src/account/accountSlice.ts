@@ -16,11 +16,11 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
-import type { SharedDispatch } from 'store/store';
-import { createAsyncThunk } from 'store/utils';
-import logger from 'monitoring/logger';
-import * as accountService from 'account/accountService';
-import { getToken, removeToken } from 'account/auth';
+import * as accountService from 'terraso-client-shared/account/accountService';
+import { getToken, removeToken } from 'terraso-client-shared/account/auth';
+import logger from 'terraso-client-shared/monitoring/logger';
+import type { SharedDispatch } from 'terraso-client-shared/store/store';
+import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
 const initialState = {
   currentUser: {

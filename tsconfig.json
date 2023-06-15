@@ -9,7 +9,6 @@
 
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
@@ -20,8 +19,12 @@
     "skipLibCheck": true,
     "strict": true,
     "outDir": "dist",
+    "emitDeclarationOnly": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "paths": {
+      "terraso-client-shared/*": ["./src/*"]
+    }
   },
 
   "include": ["src"],

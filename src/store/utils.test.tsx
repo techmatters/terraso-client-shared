@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import 'tests/utils';
-import { render } from 'tests/utils';
+import 'terraso-client-shared/tests/utils';
 import React from 'react';
-import { useFetchData } from 'store/utils';
-import { fetchAuthURLs } from 'account/accountSlice';
+import { fetchAuthURLs } from 'terraso-client-shared/account/accountSlice';
+import { useFetchData } from 'terraso-client-shared/store/utils';
+import { render } from 'terraso-client-shared/tests/utils';
 
 const TestComponent = () => {
   useFetchData(fetchAuthURLs);

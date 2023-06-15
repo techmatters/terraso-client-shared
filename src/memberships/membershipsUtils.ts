@@ -14,14 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+import _ from 'lodash/fp';
 import type {
   AccountMembershipFragment,
   GroupMembersFragment,
   GroupMembersInfoFragment,
   GroupMembersPendingFragment,
-} from 'graphqlSchema/graphql';
-import _ from 'lodash/fp';
-import type { Membership, MembershipList } from 'memberships/membershipsSlice';
+} from 'terraso-client-shared/graphqlSchema/graphql';
+import type {
+  Membership,
+  MembershipList,
+} from 'terraso-client-shared/memberships/membershipsSlice';
 
 type MembershipQuery = Partial<
   GroupMembersInfoFragment &

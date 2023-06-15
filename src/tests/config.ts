@@ -1,4 +1,4 @@
-import { setAPIConfig } from 'config';
+import { setAPIConfig } from 'terraso-client-shared/config';
 
 export const mockLogger = jest.fn();
 

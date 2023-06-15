@@ -1,4 +1,4 @@
-import 'tests/config';
+import 'terraso-client-shared/tests/config';
 import { ReactElement } from 'react';
 import { render as rtlRender } from '@testing-library/react';
 import { axe } from 'jest-axe';
@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import createStoreFactory, {
   DispatchFromStoreFactory,
   StateFromStoreFactory,
-} from 'store/store';
+} from 'terraso-client-shared/store/store';
 
 const executeAxe = process.env['TEST_A11Y'] === 'true';
 
@@ -40,4 +40,4 @@ export const render = async (
   return result;
 };
 
-export { mockLogger } from 'tests/config';
+export { mockLogger } from 'terraso-client-shared/tests/config';

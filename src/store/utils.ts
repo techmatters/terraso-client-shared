@@ -22,11 +22,17 @@ import {
 import type { BaseThunkAPI } from '@reduxjs/toolkit/dist/createAsyncThunk';
 import _ from 'lodash/fp';
 import { useDispatch } from 'react-redux';
-import type { SharedDispatch, SharedState } from 'store/store';
-import { addMessage, Message } from 'notifications/notificationsSlice';
-import { signOut, User } from 'account/accountSlice';
-import { refreshToken } from 'account/auth';
-import { UNAUTHENTICATED } from 'account/authConstants';
+import { signOut, User } from 'terraso-client-shared/account/accountSlice';
+import { refreshToken } from 'terraso-client-shared/account/auth';
+import { UNAUTHENTICATED } from 'terraso-client-shared/account/authConstants';
+import {
+  addMessage,
+  Message,
+} from 'terraso-client-shared/notifications/notificationsSlice';
+import type {
+  SharedDispatch,
+  SharedState,
+} from 'terraso-client-shared/store/store';
 
 const executeAuthRequest = <T>(
   dispatch: SharedDispatch,

@@ -16,10 +16,10 @@
  */
 import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 import _ from 'lodash/fp';
-import logger from 'monitoring/logger';
-import { getAuthHeaders } from 'account/auth';
-import { UNAUTHENTICATED } from 'account/authConstants';
-import { getAPIConfig } from 'config';
+import { getAuthHeaders } from 'terraso-client-shared/account/auth';
+import { UNAUTHENTICATED } from 'terraso-client-shared/account/authConstants';
+import { getAPIConfig } from 'terraso-client-shared/config';
+import logger from 'terraso-client-shared/monitoring/logger';
 
 type Error = { message: any };
 type Errors = { errors?: Error[] | null };

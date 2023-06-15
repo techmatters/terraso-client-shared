@@ -1,1 +1,3 @@
-+src/graphqlSchema
+src
+node_modules
+.*

@@ -5,15 +5,6 @@
   "sideEffects": [
     "src/tests/config.ts"
   ],
-  "files": [
-    "src",
-    "dist"
-  ],
-  "exports": {
-    "./*": "./dist/*.js",
-    "./tests/*": null,
-    "./*.test": null
-  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@rollbar/react": "^0.11.1",
@@ -38,10 +29,11 @@
   },
   "scripts": {
     "prepare": "npm run generate-types && npm run build",
+    "prepublishOnly": "mv dist/* ./",
     "generate-types": "graphql-codegen",
     "lint-js": "eslint ./ --fix --ext .ts --ext .tsx --max-warnings 0 --ignore-path .gitignore",
-    "check-ts": "npm run generate-types && tsc --noEmit",
-    "build": "tsc",
+    "check-ts": "npm run generate-types && tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsc && npx babel src --extensions \".ts\" --out-dir dist",
     "test": "jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false"
@@ -52,6 +44,10 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
     "@graphql-codegen/cli": "^3.3.1",
     "@graphql-codegen/client-preset": "^4.0.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.0.2",
@@ -65,6 +61,7 @@
     "@types/node": "^20.3.0",
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/parser": "^5.59.11",
+    "babel-plugin-root-import": "^6.6.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-jest": "^27.2.1",
@@ -97,9 +94,9 @@
         "statements": 80
       }
     },
-    "modulePaths": [
-      "src/"
-    ],
+    "moduleNameMapper": {
+      "terraso-client-shared/(.*)": "<rootDir>/src/$1"
+    },
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/src/tests/setup.ts",
@@ -128,5 +125,25 @@
         }
       }
     }
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-typescript"
+    ],
+    "plugins": [
+      [
+        "babel-plugin-root-import",
+        {
+          "rootPathPrefix": "terraso-client-shared/",
+          "rootPathSuffix": "./src"
+        }
+      ]
+    ],
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "src/tests"
+    ]
   }
 }
