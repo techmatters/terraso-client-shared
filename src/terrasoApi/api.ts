@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import { TypedDocumentString } from 'graphqlSchema/graphql';
+import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 import _ from 'lodash/fp';
 import logger from 'monitoring/logger';
 import { getAuthHeaders } from 'account/auth';
@@ -84,7 +84,7 @@ export const requestGraphQL = async <
   Q extends Record<string, object | null>,
   V = any
 >(
-  query: TypedDocumentString<Q, V> | string,
+  query: DocumentTypeDecoration<Q, V> | string,
   variables?: V
 ): Promise<WithoutEntryErrors<Q>> => {
   const body = { query, variables };
