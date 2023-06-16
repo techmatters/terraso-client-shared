@@ -33,7 +33,7 @@
     "check-ts": "npm run generate-types && tsc --noEmit --emitDeclarationOnly false",
     "build": "npm run generate-types && tsc && npx babel src --extensions \".ts\" --out-dir dist && cp -r README.md package.json src dist/",
     "release": "npm run build && npm pack ./dist",
-    "test": "jest",
+    "test": "npm run generate-types && jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false"
   },
