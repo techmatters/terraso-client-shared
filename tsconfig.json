@@ -18,7 +18,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "outDir": ".",
+    "outDir": "dist",
     "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
@@ -28,5 +28,5 @@
   },
 
   "include": ["src"],
-  "exclude": ["dist"]
+  "exclude": ["dist", "src/tests", "src/**/*.test.ts", "src/**/*.test.tsx"]
 }

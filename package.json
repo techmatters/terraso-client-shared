@@ -28,11 +28,11 @@
     "web-vitals": "^3.3.1"
   },
   "scripts": {
-    "prepare": "npm run generate-types && npm run build",
     "generate-types": "graphql-codegen",
     "lint-js": "eslint ./ --fix --ext .ts --ext .tsx --max-warnings 0 --ignore-path .gitignore",
     "check-ts": "npm run generate-types && tsc --noEmit --emitDeclarationOnly false",
-    "build": "tsc && npx babel src --extensions \".ts\" --out-dir .",
+    "build": "tsc && npx babel src --extensions \".ts\" --out-dir dist && cp -r README.md package.json src dist/",
+    "release": "npm run build && npm pack ./dist",
     "test": "jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false"

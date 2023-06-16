@@ -88,4 +88,10 @@ jobs:
         run: npm install
 
       - name: Run build
-        run: npm run build
+        run: npm run build-release
+
+      - name: Archive package
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: terraso-client-shared-*.tgz
