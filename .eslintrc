@@ -1,0 +1,27 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  },
+  "plugins": [
+    "prettier",
+    "lodash-fp"
+  ],
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "eslint:recommended",
+    "plugin:jsx-a11y/recommended",
+    "prettier",
+    "plugin:lodash-fp/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "testing-library/no-unnecessary-act": "off",
+    "curly": "error"
+  }
+}
