@@ -1,5 +1,5 @@
 import 'terraso-client-shared/tests/config';
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { render as rtlRender } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { act } from 'react-dom/test-utils';
