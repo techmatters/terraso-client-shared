@@ -130,12 +130,13 @@ export const request = async <T>({
   body: any;
   headers?: Record<string, string>;
 }): Promise<WithoutErrors<T>> => {
+  const authHeaders = await getAuthHeaders();
   const response = await fetch(
     new URL(path, getAPIConfig().terrasoAPIURL).href,
     {
       method: 'POST',
       headers: {
-        ...getAuthHeaders(),
+        ...authHeaders,
         ...headers,
       },
       body: body instanceof FormData ? body : JSON.stringify(body),

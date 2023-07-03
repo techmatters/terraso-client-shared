@@ -35,7 +35,7 @@ const initialState = {
     urls: {},
     fetching: true,
   },
-  hasToken: !!getToken(),
+  hasToken: false,
   preferences: {
     saving: false,
     success: false,
@@ -56,6 +56,11 @@ export type User = {
   profileImage: string;
   preferences: Record<string, string>;
 };
+
+export const getInitialToken = createAsyncThunk(
+  'account/getInitialToken',
+  getToken
+);
 
 export const fetchUser = createAsyncThunk(
   'account/fetchUser',
@@ -106,6 +111,16 @@ export const userSlice = createSlice({
   },
 
   extraReducers: builder => {
+    builder.addCase(getInitialToken.fulfilled, (state, action) => ({
+      ...state,
+      hasToken: !!action.payload,
+    }));
+
+    builder.addCase(getInitialToken.rejected, state => ({
+      ...state,
+      hasToken: initialState.hasToken,
+    }));
+
     builder.addCase(saveUser.pending, state => ({
       ...state,
       currentUser: {

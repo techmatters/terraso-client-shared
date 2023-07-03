@@ -83,7 +83,7 @@ export const fetchProfile = async (
 // TODO: this is a temporary solution to get the user's email address,
 // the API should have a account query to get the logged in user data
 export const fetchUser = async () => {
-  const email = getUserEmail();
+  const email = await getUserEmail();
   return fetchProfile(null, email === undefined ? null : { email });
 };
 

@@ -4,7 +4,7 @@ export type TerrasoAPIConfig = {
   terrasoAPIURL: string;
   graphQLEndpoint: string;
   tokenStorage: {
-    getToken: (name: string) => string | undefined;
+    getToken: (name: string) => Promise<string | undefined>;
     setToken: (name: string, token: string) => void;
     removeToken: (name: string) => void;
   };
@@ -24,6 +24,7 @@ export const { getAPIConfig, setAPIConfig } = (() => {
     },
     setAPIConfig: (config: TerrasoAPIConfig) => {
       apiConfig = config;
+      // initialize token
     },
   };
 })();
