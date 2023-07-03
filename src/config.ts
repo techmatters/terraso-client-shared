@@ -1,26 +1,18 @@
 import type { Severity } from 'terraso-client-shared/monitoring/logger';
 
-type ConfigParams = {
-  usePromise: 'yes' | 'no';
-};
-
-type MaybePromise<T extends ConfigParams, V> = T['usePromise'] extends 'yes'
-  ? Promise<V>
-  : V;
-
-export type TerrasoAPIConfig<Params extends ConfigParams> = {
+export type TerrasoAPIConfig = {
   terrasoAPIURL: string;
   graphQLEndpoint: string;
   tokenStorage: {
-    getToken: (name: string) => MaybePromise<Params, string | undefined>;
-    setToken: (name: string, token: string) => MaybePromise<Params, void>;
-    removeToken: (name: string) => MaybePromise<Params, void>;
+    getToken: (name: string) => string | undefined;
+    setToken: (name: string, token: string) => void;
+    removeToken: (name: string) => void;
   };
   logger: (severity: Severity, ...args: any[]) => void;
 };
 
-export const { getAPIConfig, setAPIConfig } = (<T extends ConfigParams>() => {
-  let apiConfig: TerrasoAPIConfig<T> | undefined;
+export const { getAPIConfig, setAPIConfig } = (() => {
+  let apiConfig: TerrasoAPIConfig | undefined;
   return {
     getAPIConfig: () => {
       if (apiConfig === undefined) {
@@ -30,15 +22,8 @@ export const { getAPIConfig, setAPIConfig } = (<T extends ConfigParams>() => {
       }
       return apiConfig;
     },
-    setAPIConfig: (config: TerrasoAPIConfig<T>) => {
+    setAPIConfig: (config: TerrasoAPIConfig) => {
       apiConfig = config;
     },
   };
 })();
-
-export class APIConfig<T extends ConfigParams> {
-  config: TerrasoAPIConfig<T>;
-  constructor(config: TerrasoAPIConfig<T>) {
-    this.config = config;
-  }
-}
