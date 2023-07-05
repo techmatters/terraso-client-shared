@@ -26,6 +26,8 @@ import _ from 'lodash/fp';
 import accountReducer from 'terraso-client-shared/account/accountSlice';
 import membershipsReducer from 'terraso-client-shared/memberships/membershipsSlice';
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
+import siteReducer from 'terraso-client-shared/site/siteSlice';
+import projectReducer from 'terraso-client-shared/site/siteSlice';
 
 const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {
@@ -42,6 +44,8 @@ const sharedReducers = {
   account: accountReducer,
   memberships: membershipsReducer,
   notifications: notificationsReducer,
+  site: siteReducer,
+  project: projectReducer,
 };
 
 // Using some advanced TypeScript features here: since we have
