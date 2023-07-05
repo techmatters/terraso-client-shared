@@ -59,7 +59,7 @@ export type DispatchFromStoreFactory<T extends (_: any) => ToolkitStore> =
   ReturnType<T>['dispatch'];
 
 const createStoreFactory = <S>(reducers: ReducersMapObject<S>) => {
-  return (intialState?: SharedState & S) =>
+  return (intialState?: Partial<SharedState & S>) =>
     configureStore({
       middleware: getDefaultMiddleware =>
         getDefaultMiddleware().concat(handleAbortMiddleware),
