@@ -58,6 +58,11 @@ export type User = {
   preferences: Record<string, string>;
 };
 
+export const getToken = createAsyncThunk(
+  'account/getToken',
+  getAPIConfig().tokenStorage.getToken
+);
+
 export const fetchUser = createAsyncThunk(
   'account/fetchUser',
   accountService.fetchUser
@@ -107,6 +112,10 @@ export const userSlice = createSlice({
   },
 
   extraReducers: builder => {
+    builder.addCase(getToken.fulfilled, (state, action) => ({
+      ...state,
+      hasToken: action.payload !== undefined,
+    }));
     builder.addCase(saveUser.pending, state => ({
       ...state,
       currentUser: {
