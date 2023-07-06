@@ -5,8 +5,8 @@ export type TerrasoAPIConfig = {
   graphQLEndpoint: string;
   tokenStorage: {
     getToken: (name: string) => Promise<string | undefined>;
-    setToken: (name: string, token: string) => void;
-    removeToken: (name: string) => void;
+    setToken: (name: string, token: string) => Promise<void>;
+    removeToken: (name: string) => Promise<void>;
     /**
      * Value of initial token used to init redux store.
      * @remarks
