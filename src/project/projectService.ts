@@ -17,7 +17,12 @@
 
 import type { User } from 'terraso-client-shared/account/accountSlice';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
-import type { ProjectDataFragment } from 'terraso-client-shared/graphqlSchema/graphql';
+import type {
+  ProjectAddMutationInput,
+  ProjectDataFragment,
+  ProjectDeleteMutationInput,
+  ProjectUpdateMutationInput,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Project } from 'terraso-client-shared/project/projectSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { collapseConnectionEdges } from 'terraso-client-shared/terrasoApi/utils';
@@ -65,7 +70,7 @@ export const fetchProjectsForUser = async (_: undefined, user: User | null) => {
     );
 };
 
-export const addProject = (project: Omit<Project, 'id'>) => {
+export const addProject = (project: ProjectAddMutationInput) => {
   const query = graphql(`
     mutation addProject($input: ProjectAddMutationInput!) {
       addProject(input: $input) {
@@ -82,7 +87,7 @@ export const addProject = (project: Omit<Project, 'id'>) => {
     .then(resp => collapseProjectFields(resp.addProject.project));
 };
 
-export const updateProject = (project: Project) => {
+export const updateProject = (project: ProjectUpdateMutationInput) => {
   const query = graphql(`
     mutation updateProject($input: ProjectUpdateMutationInput!) {
       updateProject(input: $input) {
@@ -99,7 +104,7 @@ export const updateProject = (project: Project) => {
     .then(resp => collapseProjectFields(resp.updateProject.project!));
 };
 
-export const deleteProject = (project: Project) => {
+export const deleteProject = (project: ProjectDeleteMutationInput) => {
   const query = graphql(`
     mutation deleteProject($input: ProjectDeleteMutationInput!) {
       deleteProject(input: $input) {

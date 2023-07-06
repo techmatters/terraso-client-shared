@@ -19,5 +19,6 @@ export const projectData = /* GraphQL */ `
   fragment projectData on ProjectNode {
     id
     name
+    privacy
   }
 `;

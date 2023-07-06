@@ -17,7 +17,11 @@
 
 import type { User } from 'terraso-client-shared/account/accountSlice';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
-import type { SiteDataFragment } from 'terraso-client-shared/graphqlSchema/graphql';
+import type {
+  SiteAddMutationInput,
+  SiteDataFragment,
+  SiteUpdateMutationInput,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Site } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { collapseConnectionEdges } from 'terraso-client-shared/terrasoApi/utils';
@@ -96,7 +100,7 @@ export const fetchSitesForUser = async (_: undefined, user: User | null) => {
     );
 };
 
-export const addSite = (site: Omit<Site, 'id' | 'ownerId'>) => {
+export const addSite = (site: SiteAddMutationInput) => {
   const query = graphql(`
     mutation addSite($input: SiteAddMutationInput!) {
       addSite(input: $input) {
@@ -113,7 +117,7 @@ export const addSite = (site: Omit<Site, 'id' | 'ownerId'>) => {
     .then(resp => collapseSiteFields(resp.addSite.site));
 };
 
-export const updateSite = (site: Omit<Site, 'ownerId'>) => {
+export const updateSite = (site: SiteUpdateMutationInput) => {
   const query = graphql(`
     mutation updateSite($input: SiteUpdateMutationInput!) {
       updateSite(input: $input) {
