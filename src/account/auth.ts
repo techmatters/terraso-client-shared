@@ -24,8 +24,8 @@ type AccessToken = {
 
 export const getToken = () => getAPIConfig().tokenStorage.getToken('atoken');
 
-export const getAuthHeaders = (): Record<string, string> => {
-  const token = getToken();
+export const getAuthHeaders = async (): Promise<Record<string, string>> => {
+  const token = await getToken();
   if (!token) {
     return {};
   }
@@ -40,13 +40,14 @@ export const removeToken = () => {
 };
 
 export const refreshToken = async () => {
+  const refreshToken = await getAPIConfig().tokenStorage.getToken('rtoken');
   const response = await fetch(
     new URL('/auth/tokens', getAPIConfig().terrasoAPIURL).href,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        refresh_token: getAPIConfig().tokenStorage.getToken('rtoken'),
+        refresh_token: refreshToken,
       }),
     }
   );
@@ -63,7 +64,7 @@ export const refreshToken = async () => {
   getAPIConfig().tokenStorage.setToken('atoken', atoken);
 };
 
-export const getUserEmail = () => {
-  const token = getToken();
+export const getUserEmail = async () => {
+  const token = await getToken();
   return token === undefined ? undefined : jwt<AccessToken>(token).email;
 };

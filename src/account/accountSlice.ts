@@ -17,7 +17,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
 import * as accountService from 'terraso-client-shared/account/accountService';
-import { getToken, removeToken } from 'terraso-client-shared/account/auth';
+import { removeToken } from 'terraso-client-shared/account/auth';
+import { getAPIConfig } from 'terraso-client-shared/config';
 import logger from 'terraso-client-shared/monitoring/logger';
 import type { SharedDispatch } from 'terraso-client-shared/store/store';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
@@ -35,7 +36,7 @@ const initialState = {
     urls: {},
     fetching: true,
   },
-  hasToken: !!getToken(),
+  hasToken: getAPIConfig().tokenStorage.initialToken !== null,
   preferences: {
     saving: false,
     success: false,

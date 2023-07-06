@@ -6,7 +6,7 @@ setAPIConfig({
   terrasoAPIURL: 'http://127.0.0.1:8000',
   graphQLEndpoint: '/graphql',
   tokenStorage: {
-    getToken: () => undefined,
+    getToken: async () => undefined,
   } as any,
   logger: mockLogger,
 });
