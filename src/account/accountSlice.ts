@@ -58,9 +58,9 @@ export type User = {
   preferences: Record<string, string>;
 };
 
-export const getToken = createAsyncThunk(
-  'account/getToken',
-  getAPIConfig().tokenStorage.getToken
+export const setHasAccessTokenAsync = createAsyncThunk(
+  'account/setHasAccessTokenAsync',
+  () => getAPIConfig().tokenStorage.getToken('atoken')
 );
 
 export const fetchUser = createAsyncThunk(
@@ -112,10 +112,11 @@ export const userSlice = createSlice({
   },
 
   extraReducers: builder => {
-    builder.addCase(getToken.fulfilled, (state, action) => ({
+    builder.addCase(setHasAccessTokenAsync.fulfilled, (state, action) => ({
       ...state,
       hasToken: action.payload !== undefined,
     }));
+
     builder.addCase(saveUser.pending, state => ({
       ...state,
       currentUser: {

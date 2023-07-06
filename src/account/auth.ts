@@ -60,8 +60,10 @@ export const refreshToken = async () => {
 
   const { access_token: atoken, refresh_token: rtoken } = tokens;
 
-  getAPIConfig().tokenStorage.setToken('rtoken', rtoken);
-  getAPIConfig().tokenStorage.setToken('atoken', atoken);
+  return Promise.all([
+    getAPIConfig().tokenStorage.setToken('rtoken', rtoken),
+    getAPIConfig().tokenStorage.setToken('atoken', atoken),
+  ]);
 };
 
 export const getUserEmail = async () => {
