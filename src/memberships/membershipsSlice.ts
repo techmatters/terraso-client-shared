@@ -60,26 +60,26 @@ const initialState = {
 
 export const fetchMembers = createAsyncThunk(
   'memberships/fetchMembers',
-  membershipsService.fetchMembers
+  membershipsService.fetchMembers,
 );
 export const removeMember = createAsyncThunk(
   'memberships/removeMember',
-  membershipsService.removeMember
+  membershipsService.removeMember,
 );
 export const updateMember = createAsyncThunk(
   'memberships/updateMember',
-  membershipsService.updateMember
+  membershipsService.updateMember,
 );
 export const joinMembershipList = createAsyncThunk(
   'memberships/joinMembershipList',
   withExtraInput<{ ownerName: string; successMessage: string }>()(
-    membershipsService.joinMembershipList
+    membershipsService.joinMembershipList,
   ),
   (group, { ownerName, successMessage }) => ({
     severity: 'success',
     content: successMessage,
     params: { name: ownerName },
-  })
+  }),
 );
 export const leaveMembershipList = createAsyncThunk(
   'memberships/leaveGroup',
@@ -92,7 +92,7 @@ export const leaveMembershipList = createAsyncThunk(
     severity: 'success',
     content: successMessage,
     params: { name: ownerName },
-  })
+  }),
 );
 
 export const membershipsSlice = createSlice({
@@ -102,7 +102,7 @@ export const membershipsSlice = createSlice({
   reducers: {
     setMemberships: (
       state,
-      action: { payload: Record<string, MembershipGroup> }
+      action: { payload: Record<string, MembershipGroup> },
     ) => ({
       ...state,
       lists: {
@@ -115,8 +115,8 @@ export const membershipsSlice = createSlice({
                 ...state.lists[groupSlug],
                 ...newMembershipState,
               },
-            ]
-          )
+            ],
+          ),
         ),
       },
     }),
@@ -125,7 +125,7 @@ export const membershipsSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(
       fetchMembers.pending,
-      _.set('members', initialState.members)
+      _.set('members', initialState.members),
     );
 
     builder.addCase(fetchMembers.fulfilled, (state, action) => ({
@@ -142,8 +142,8 @@ export const membershipsSlice = createSlice({
       _.set(
         `members.list.${action.meta.arg.membershipId}.fetching`,
         true,
-        state
-      )
+        state,
+      ),
     );
 
     builder.addCase(removeMember.fulfilled, (state, action) => ({
@@ -158,16 +158,16 @@ export const membershipsSlice = createSlice({
       _.set(
         `members.list.${action.meta.arg.membershipId}.fetching`,
         false,
-        state
-      )
+        state,
+      ),
     );
 
     builder.addCase(updateMember.pending, (state, action) =>
       _.set(
         `members.list.${action.meta.arg.member.membershipId}.fetching`,
         true,
-        state
-      )
+        state,
+      ),
     );
 
     builder.addCase(updateMember.fulfilled, (state, action) => ({
@@ -182,8 +182,8 @@ export const membershipsSlice = createSlice({
       _.set(
         `members.list.${action.meta.arg.member.membershipId}.fetching`,
         false,
-        state
-      )
+        state,
+      ),
     );
 
     builder.addCase(joinMembershipList.pending, (state, action) =>
@@ -193,7 +193,7 @@ export const membershipsSlice = createSlice({
             joining: true,
           },
         },
-      })
+      }),
     );
 
     builder.addCase(joinMembershipList.fulfilled, (state, action) =>
@@ -204,7 +204,7 @@ export const membershipsSlice = createSlice({
             group: action.payload,
           },
         },
-      })
+      }),
     );
 
     builder.addCase(joinMembershipList.rejected, (state, action) =>
@@ -214,7 +214,7 @@ export const membershipsSlice = createSlice({
             joining: false,
           },
         },
-      })
+      }),
     );
 
     builder.addCase(leaveMembershipList.pending, (state, action) =>
@@ -224,7 +224,7 @@ export const membershipsSlice = createSlice({
             joining: true,
           },
         },
-      })
+      }),
     );
 
     builder.addCase(leaveMembershipList.fulfilled, (state, action) =>
@@ -235,7 +235,7 @@ export const membershipsSlice = createSlice({
             group: action.payload,
           },
         },
-      })
+      }),
     );
 
     builder.addCase(leaveMembershipList.rejected, (state, action) =>
@@ -245,7 +245,7 @@ export const membershipsSlice = createSlice({
             joining: false,
           },
         },
-      })
+      }),
     );
   },
 });

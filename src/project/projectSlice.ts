@@ -31,27 +31,27 @@ const initialState = {
 
 export const fetchProject = createAsyncThunk(
   'project/fetchProject',
-  projectService.fetchProject
+  projectService.fetchProject,
 );
 
 export const fetchProjectsForUser = createAsyncThunk(
   'project/fetchProjectsForUser',
-  projectService.fetchProjectsForUser
+  projectService.fetchProjectsForUser,
 );
 
 export const addProject = createAsyncThunk(
   'project/addProject',
-  projectService.addProject
+  projectService.addProject,
 );
 
 export const updateProject = createAsyncThunk(
   'project/updateProject',
-  projectService.updateProject
+  projectService.updateProject,
 );
 
 export const deleteProject = createAsyncThunk(
   'project/deleteProject',
-  projectService.deleteProject
+  projectService.deleteProject,
 );
 
 const projectSlice = createSlice({
@@ -68,9 +68,9 @@ const projectSlice = createSlice({
       fetchProjectsForUser.fulfilled,
       (state, { payload: projects }) => {
         state.projects = Object.fromEntries(
-          projects.map(project => [project.id, project])
+          projects.map(project => [project.id, project]),
         );
-      }
+      },
     );
 
     builder.addCase(addProject.fulfilled, (state, { payload: project }) => {

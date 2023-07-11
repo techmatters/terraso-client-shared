@@ -121,7 +121,7 @@ export const joinMembershipList = ({
     .then(group => ({
       ..._.omit(
         ['memberships', 'accountMembership', 'membershipsCount'],
-        group
+        group,
       ),
       membersInfo: extractMembersInfo(group),
     }));
@@ -150,7 +150,7 @@ export const leaveMembershipList = ({ membershipId }: Membership) => {
     .then(group => ({
       ..._.omit(
         ['memberships', 'accountMembership', 'membershipsCount'],
-        group
+        group,
       ),
       membersInfo: extractMembersInfo(group),
     }));

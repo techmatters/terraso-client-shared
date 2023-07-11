@@ -52,8 +52,8 @@ test('Terraso API: request GraphQL errors', async () => {
             message: 'Test error',
           },
         ],
-      })
-    )
+      }),
+    ),
   );
   await expect(terrasoApi.requestGraphQL('', {})).rejects.toEqual([
     'Test error',
@@ -78,8 +78,8 @@ test('Terraso API: mutation errors', async () => {
             errors: [{ message: 'Test error' }],
           },
         },
-      })
-    )
+      }),
+    ),
   );
   await expect(terrasoApi.requestGraphQL('', {})).rejects.toEqual([
     'Test error',
@@ -94,8 +94,8 @@ test('Terraso API: No mutation errors', async () => {
             errors: null,
           },
         },
-      })
-    )
+      }),
+    ),
   );
   const result = await terrasoApi.requestGraphQL('', {});
   expect(result).toEqual({ testMutation: {} });
@@ -107,8 +107,8 @@ test('Terraso API: success', async () => {
         data: {
           test: 'value',
         },
-      })
-    )
+      }),
+    ),
   );
   const result = await terrasoApi.requestGraphQL('', {});
   expect(result).toEqual({ test: 'value' });

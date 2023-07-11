@@ -96,7 +96,7 @@ export const fetchSitesForUser = async (_: undefined, user: User | null) => {
     .then(resp =>
       collapseConnectionEdges(resp.userSites)
         .concat(collapseConnectionEdges(resp.projectSites))
-        .map(collapseSiteFields)
+        .map(collapseSiteFields),
     );
 };
 

@@ -59,16 +59,16 @@ export type User = {
 
 export const setHasAccessTokenAsync = createAsyncThunk(
   'account/setHasAccessTokenAsync',
-  () => getToken()
+  () => getToken(),
 );
 
 export const fetchUser = createAsyncThunk(
   'account/fetchUser',
-  accountService.fetchUser
+  accountService.fetchUser,
 );
 export const fetchProfile = createAsyncThunk(
   'account/fetchProfile',
-  accountService.fetchProfile
+  accountService.fetchProfile,
 );
 export const saveUser = createAsyncThunk(
   'account/saveUser',
@@ -76,23 +76,23 @@ export const saveUser = createAsyncThunk(
   () => ({
     severity: 'success',
     content: 'account.save_success',
-  })
+  }),
 );
 export const fetchAuthURLs = createAsyncThunk(
   'account/fetchAuthURLs',
-  accountService.getAuthURLs
+  accountService.getAuthURLs,
 );
 export const savePreference = createAsyncThunk(
   'account/savePreference',
   accountService.savePreference,
   null,
-  false
+  false,
 );
 export const unsubscribeFromNotifications = createAsyncThunk(
   'account/unsubscribeFromNotifications',
   accountService.unsubscribeFromNotifications,
   null,
-  false
+  false,
 );
 
 export const userSlice = createSlice({
@@ -152,7 +152,7 @@ export const userSlice = createSlice({
         data: _.set(
           ['preferences', action.payload.key],
           action.payload.value,
-          state.currentUser.data as User
+          state.currentUser.data as User,
         ),
       },
     }));
@@ -163,7 +163,7 @@ export const userSlice = createSlice({
         saving: true,
         success: false,
         error: null,
-      })
+      }),
     );
 
     builder.addCase(savePreference.rejected, (state, action) =>
@@ -174,8 +174,8 @@ export const userSlice = createSlice({
           success: false,
           error: action.payload,
         },
-        state
-      )
+        state,
+      ),
     );
 
     builder.addCase(fetchUser.pending, state => ({
@@ -243,18 +243,18 @@ export const userSlice = createSlice({
 
     builder.addCase(
       unsubscribeFromNotifications.pending,
-      _.set('unsubscribe', { processing: true, success: false, error: null })
+      _.set('unsubscribe', { processing: true, success: false, error: null }),
     );
     builder.addCase(unsubscribeFromNotifications.rejected, (state, action) =>
       _.set(
         'unsubscribe',
         { processing: false, success: false, error: action.payload },
-        state
-      )
+        state,
+      ),
     );
     builder.addCase(
       unsubscribeFromNotifications.fulfilled,
-      _.set('unsubscribe', { processing: false, success: true, error: null })
+      _.set('unsubscribe', { processing: false, success: true, error: null }),
     );
   },
 });

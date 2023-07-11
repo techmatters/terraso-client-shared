@@ -66,7 +66,7 @@ export const fetchProjectsForUser = async (_: undefined, user: User | null) => {
   return terrasoApi
     .requestGraphQL(query, { id: user.id })
     .then(resp =>
-      collapseConnectionEdges(resp.projects).map(collapseProjectFields)
+      collapseConnectionEdges(resp.projects).map(collapseProjectFields),
     );
 };
 

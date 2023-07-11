@@ -55,7 +55,7 @@ export const extractMembers = (group?: MembershipQuery | null) =>
   }));
 
 export const extractAccountMembership = (
-  group?: AccountMembershipFragment | null
+  group?: AccountMembershipFragment | null,
 ) =>
   group?.accountMembership
     ? {
@@ -66,7 +66,7 @@ export const extractAccountMembership = (
 
 export const getMemberships = (groups: MembershipList[]) =>
   Object.fromEntries(
-    groups.map(group => [group.slug, { group, fetching: false }])
+    groups.map(group => [group.slug, { group, fetching: false }]),
   );
 
 export const generateIndexedMembers = (memberships: Membership[]) =>
