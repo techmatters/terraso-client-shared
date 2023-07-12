@@ -31,7 +31,7 @@
   "scripts": {
     "generate-types": "graphql-codegen",
     "lint-js": "eslint ./ --ext .ts --ext .tsx --max-warnings 0 --ignore-path .gitignore",
-    "format-js": "npm run lint-js -- --fix"",
+    "format-js": "npm run lint-js -- --fix",
     "check-ts": "npm run generate-types && tsc --noEmit --emitDeclarationOnly false",
     "build": "npm run generate-types && tsc && babel src --extensions \".ts\" --out-dir dist && cp -r README.md package.json src dist/",
     "test": "npm run generate-types && jest",
