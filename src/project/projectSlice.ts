@@ -23,6 +23,7 @@ export type Project = {
   id: string;
   name: string;
   privacy: 'PRIVATE' | 'PUBLIC';
+  description?: string;
 };
 
 const initialState = {
