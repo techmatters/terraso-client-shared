@@ -49,7 +49,7 @@ export const refreshToken = async () => {
       body: JSON.stringify({
         refresh_token: refreshToken,
       }),
-    }
+    },
   );
 
   if (response.status !== 200) {

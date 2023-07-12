@@ -35,29 +35,29 @@ const initialState = {
 
 export const fetchSite = createAsyncThunk(
   'site/fetchSite',
-  siteService.fetchSite
+  siteService.fetchSite,
 );
 
 export const fetchSitesForProject = createAsyncThunk(
   'site/fetchSitesForProject',
-  siteService.fetchSitesForProject
+  siteService.fetchSitesForProject,
 );
 
 export const fetchSitesForUser = createAsyncThunk(
   'site/fetchSitesForUser',
-  siteService.fetchSitesForUser
+  siteService.fetchSitesForUser,
 );
 
 export const addSite = createAsyncThunk('site/addSite', siteService.addSite);
 
 export const updateSite = createAsyncThunk(
   'site/updateSite',
-  siteService.updateSite
+  siteService.updateSite,
 );
 
 export const deleteSite = createAsyncThunk(
   'site/deleteSite',
-  siteService.deleteSite
+  siteService.deleteSite,
 );
 
 const siteSlice = createSlice({
@@ -81,16 +81,16 @@ const siteSlice = createSlice({
           });
         Object.assign(
           state.sites,
-          Object.fromEntries(sites.map(site => [site.id, site]))
+          Object.fromEntries(sites.map(site => [site.id, site])),
         );
-      }
+      },
     );
 
     builder.addCase(
       fetchSitesForUser.fulfilled,
       (state, { payload: sites }) => {
         state.sites = Object.fromEntries(sites.map(site => [site.id, site]));
-      }
+      },
     );
 
     builder.addCase(addSite.fulfilled, (state, { payload: site }) => {

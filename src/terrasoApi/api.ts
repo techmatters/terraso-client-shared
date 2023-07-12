@@ -57,13 +57,13 @@ type WithoutEntryErrors<T> = { [K in keyof T]: WithoutErrors<T[K]> };
 
 const handleApiErrors = async <T extends Errors>(
   response: T,
-  body: any
+  body: any,
 ): Promise<WithoutErrors<T>> => {
   if (!response.errors || response.errors.length === 0) {
     return typeof response === 'object' ? _.omit('errors', response) : response;
   }
   const unauthenticatedError = response.errors.find((error: any) =>
-    _.includes('AnonymousUser', error.message)
+    _.includes('AnonymousUser', error.message),
   );
   if (unauthenticatedError) {
     return Promise.reject(UNAUTHENTICATED);
@@ -75,17 +75,17 @@ const handleApiErrors = async <T extends Errors>(
 
   const messages = _.flatMap(
     error => parseMessage(error.message, parsedBody),
-    response.errors
+    response.errors,
   );
   return Promise.reject(messages);
 };
 
 export const requestGraphQL = async <
   Q extends Record<string, object | null>,
-  V = any
+  V = any,
 >(
   query: DocumentTypeDecoration<Q, V> | string,
-  variables?: V
+  variables?: V,
 ): Promise<WithoutEntryErrors<Q>> => {
   const body = { query, variables };
   const jsonResponse = await request<{ data?: Q }>({
@@ -100,7 +100,7 @@ export const requestGraphQL = async <
     logger.error(
       'Terraso API: Unexpected error',
       'received data:',
-      jsonResponse
+      jsonResponse,
     );
     return Promise.reject(['terraso_api.error_unexpected']);
   }
@@ -112,7 +112,7 @@ export const requestGraphQL = async <
       logger.error(
         'Terraso API: Unexpected error',
         'received data:',
-        jsonResponse
+        jsonResponse,
       );
       return Promise.reject(['terraso_api.error_unexpected']);
     }
@@ -140,7 +140,7 @@ export const request = async <T>({
         ...headers,
       },
       body: body instanceof FormData ? body : JSON.stringify(body),
-    }
+    },
   ).catch(error => {
     logger.error('Terraso API: Failed to execute request', error);
     return Promise.reject(['terraso_api.error_request_response']);

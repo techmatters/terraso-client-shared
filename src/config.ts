@@ -5,7 +5,7 @@ export type TerrasoAPIConfig = {
   graphQLEndpoint: string;
   tokenStorage: {
     getToken: (
-      name: string
+      name: string,
     ) => Promise<string | undefined> | string | undefined;
     setToken: (name: string, token: string) => Promise<void> | void;
     removeToken: (name: string) => Promise<void> | void;
@@ -19,7 +19,7 @@ export const { getAPIConfig, setAPIConfig } = (() => {
     getAPIConfig: () => {
       if (apiConfig === undefined) {
         throw new Error(
-          'Client did not configure Terraso API before starting.'
+          'Client did not configure Terraso API before starting.',
         );
       }
       return apiConfig;

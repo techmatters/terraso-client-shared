@@ -43,7 +43,7 @@ test('AsyncThunk: Handle multiple errors', async () => {
   mockFetch.mockRejectedValue(['Test error 1', 'Test error 2']);
   const { store } = await render(<TestComponent />);
   const [message1, message2] = Object.values(
-    store.getState().notifications.messages
+    store.getState().notifications.messages,
   );
   expect(message1.severity).toBe('error');
   expect(message1.params.error).toBe('Test error 1');

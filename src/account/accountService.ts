@@ -26,11 +26,11 @@ import type {
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 
 const parsePreferences = (
-  user: UserFieldsFragment & UserPreferencesFragment
+  user: UserFieldsFragment & UserPreferencesFragment,
 ): User => ({
   ...user,
   preferences: _.fromPairs(
-    user.preferences.edges.map(({ node: { key, value } }) => [key, value])
+    user.preferences.edges.map(({ node: { key, value } }) => [key, value]),
   ),
 });
 
@@ -39,7 +39,7 @@ const getURL = (provider: string) =>
     new URL(`/auth/${provider}/authorize`, getAPIConfig().terrasoAPIURL).href,
     {
       headers: { 'Content-Type': 'application/json' },
-    }
+    },
   )
     .then(response => response.json())
     .then(response => response.request_url as string);
@@ -50,12 +50,12 @@ export const getAuthURLs = () =>
       google,
       apple,
       microsoft,
-    })
+    }),
   );
 
 export const fetchProfile = async (
   params: null,
-  currentUser: { email: string } | null
+  currentUser: { email: string } | null,
 ) => {
   const query = graphql(`
     query userProfile($email: String) {
@@ -108,7 +108,7 @@ export const saveUser = (user: User) => {
 
 export const savePreference = async (
   { key, value }: { key: string; value: string },
-  currentUser: User | null
+  currentUser: User | null,
 ) => {
   const query = graphql(`
     mutation updateUserPreference($input: UserPreferenceUpdateInput!) {
@@ -149,7 +149,7 @@ export const signOut = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-    }
+    },
   );
 
   if (response.status !== 200) {

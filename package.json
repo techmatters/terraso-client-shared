@@ -43,6 +43,9 @@
     "not dead",
     "not op_mini all"
   ],
+  "overrides": {
+    "prettier": "$prettier"
+  },
   "devDependencies": {
     "@babel/cli": "^7.22.5",
     "@babel/core": "^7.22.5",
@@ -66,14 +69,14 @@
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-jest": "^27.2.2",
     "eslint-plugin-lodash-fp": "^2.2.0-a1",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "flat": "^5.0.2",
     "i18next-conv": "^14.0.0",
     "jest": "^29.5.0",
     "jest-axe": "^8.0.0",
     "jest-environment-jsdom": "^29.6.1",
     "plausible-tracker": "^0.3.8",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.0",
     "stylelint": "^15.10.1",
     "stylelint-prettier": "^3.0.0",
     "ts-jest": "^29.1.1",

@@ -25,7 +25,7 @@ const LOG_LEVELS = ['log', 'info', 'warn', 'error'] as const;
 const ORDER = _.flow(
   _.entries,
   _.map(([index, severity]) => [severity, index]),
-  _.fromPairs
+  _.fromPairs,
 )(LOG_LEVELS);
 
 const handleLog =
@@ -39,7 +39,7 @@ const handleLog =
   };
 
 const logger = Object.fromEntries(
-  LOG_LEVELS.map(severity => [severity, handleLog(severity)])
+  LOG_LEVELS.map(severity => [severity, handleLog(severity)]),
 ) as Record<Severity, (...args: any[]) => void>;
 
 export default logger;

@@ -25,7 +25,7 @@ const baseRender = (component: ReactElement, intialState?: TestAppState) => {
 
 export const render = async (
   component: ReactElement,
-  intialState?: TestAppState
+  intialState?: TestAppState,
 ) => {
   const result = await act(async () => baseRender(component, intialState));
   if (executeAxe) {

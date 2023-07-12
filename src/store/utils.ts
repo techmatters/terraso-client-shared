@@ -36,7 +36,7 @@ import type {
 
 const executeAuthRequest = <T>(
   dispatch: SharedDispatch,
-  action: () => Promise<T>
+  action: () => Promise<T>,
 ) =>
   action().catch(async error => {
     if (error !== UNAUTHENTICATED) {
@@ -92,7 +92,7 @@ export const createAsyncThunk = <Returned, ThunkArg = void>(
   action: (
     arg: ThunkArg,
     currentUser: User | null,
-    thunkAPI: ThunkAPI
+    thunkAPI: ThunkAPI,
   ) => Returned | Promise<Returned>,
   onSuccessMessage:
     | ((result: Returned, input: ThunkArg) => Message)
@@ -100,7 +100,7 @@ export const createAsyncThunk = <Returned, ThunkArg = void>(
   dispatchErrorMessage = true,
   onErrorMessage: (_: { message: Message; input: ThunkArg }) => Message = ({
     message,
-  }) => message
+  }) => message,
 ) => {
   const generateErrorFallbacks = generateErrorFallbacksPartial(typePrefix);
   return createAsyncThunkBase<Returned, ThunkArg, ThunkAPIConfig>(
@@ -133,25 +133,25 @@ export const createAsyncThunk = <Returned, ThunkArg = void>(
 
         if (dispatchErrorMessage && !thunkAPI.signal.aborted) {
           parsedErrors.forEach(message =>
-            dispatch(addMessage(onErrorMessage({ message, input })))
+            dispatch(addMessage(onErrorMessage({ message, input }))),
           );
         }
 
         return rejectWithValue({ error, parsedErrors });
       }
-    }
+    },
   );
 };
 
 export const withExtra =
   <Extra>() =>
   <OriginalArg, Return>(
-    fn: (_: OriginalArg) => Return
+    fn: (_: OriginalArg) => Return,
   ): ((_: OriginalArg & Extra) => Return) =>
     fn;
 
 export const useFetchData = (
-  dataFetchCallback: () => AsyncThunkAction<any, any, ThunkAPIConfig> | null
+  dataFetchCallback: () => AsyncThunkAction<any, any, ThunkAPIConfig> | null,
 ) => {
   const dispatch = useDispatch<SharedDispatch>();
   useEffect(() => {
