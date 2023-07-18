@@ -7,7 +7,7 @@
   ],
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
-    "@rollbar/react": "^0.11.1",
+    "@rollbar/react": "^0.11.2",
     "@turf/bbox": "^6.5.0",
     "@turf/center": "^6.5.0",
     "@turf/helpers": "^6.5.0",
