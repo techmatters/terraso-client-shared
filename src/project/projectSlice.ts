@@ -24,6 +24,9 @@ export type Project = {
   name: string;
   privacy: 'PRIVATE' | 'PUBLIC';
   description: string;
+  updatedAt: Date;
+  userCount: number;
+  siteCount: number;
 };
 
 const initialState = {

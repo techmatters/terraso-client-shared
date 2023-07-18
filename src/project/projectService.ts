@@ -25,11 +25,15 @@ import type {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Project } from 'terraso-client-shared/project/projectSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
-import { collapseConnectionEdges } from 'terraso-client-shared/terrasoApi/utils';
+import {
+  collapseConnectionEdges,
+  collapseFields,
+} from 'terraso-client-shared/terrasoApi/utils';
 
-const collapseProjectFields = (project: ProjectDataFragment): Project => ({
-  ...project,
-  privacy: 'PRIVATE',
+const collapseProjectFields = collapseFields<ProjectDataFragment, Project>({
+  userCount: inp => inp['group']['memberships']['totalCount'],
+  updatedAt: inp => new Date(inp['updatedAt']),
+  siteCount: inp => inp['siteSet']['totalCount'],
 });
 
 export const fetchProject = (id: string) => {
