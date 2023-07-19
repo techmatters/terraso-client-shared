@@ -26,10 +26,18 @@ type Errors = { errors?: Error[] | null };
 
 const parseMessage = (message: any, body: any) => {
   try {
-    // If JSON return parse
-    const jsonMessages =
-      typeof message === 'string' ? JSON.parse(message) : message;
-    return jsonMessages.map((message: any) => {
+    const messages = (function () {
+      // If JSON return parse
+      if (typeof message === 'string' && (message.startsWith('{') || message.startsWith('['))) {
+        return JSON.parse(message);
+      }
+      if (_.isArray(message)) {
+        return message;
+      }
+      return [message];
+    })();
+
+    return messages.map((message: any) => {
       const errorField = _.get('context.field', message);
       return {
         content: [

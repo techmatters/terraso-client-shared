@@ -75,14 +75,35 @@ test('Terraso API: mutation errors', async () => {
       JSON.stringify({
         data: {
           testMutation: {
-            errors: [{ message: 'Test error' }],
+            errors: [
+              {
+                "message": "[{\"code\": \"unique\", \"context\": {\"model\": \"Group\", \"field\": \"name\", \"extra\": \"\"}}]"
+              }
+            ],
           },
         },
       }),
     ),
   );
   await expect(terrasoApi.requestGraphQL('', {})).rejects.toEqual([
-    'Test error',
+    {
+      content: [
+        "unique",
+        "terraso_api.unique",
+        "terraso_api.error",
+        "terraso_api.name.unique",
+      ],
+      params: {
+        body: {
+          query: "",
+          variables: {},
+        },
+        code: "unique",
+        context: "",
+        field: "name",
+        model: "Group",
+      }
+    },
   ]);
 });
 test('Terraso API: No mutation errors', async () => {
