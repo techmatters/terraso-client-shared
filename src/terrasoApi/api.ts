@@ -37,7 +37,7 @@ const parseMessage = (message: any, body: any) => {
       if (_.isArray(message)) {
         return message;
       }
-      return [message];
+      return message;
     })();
 
     return messages.map((message: any) => {

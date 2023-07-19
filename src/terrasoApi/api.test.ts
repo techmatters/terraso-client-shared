@@ -77,8 +77,12 @@ test('Terraso API: mutation errors', async () => {
           testMutation: {
             errors: [
               {
-                message:
-                  '[{"code": "unique", "context": {"model": "Group", "field": "name", "extra": ""}}]',
+                message: JSON.stringify([
+                  {
+                    code: 'unique',
+                    context: { model: 'Group', field: 'name', extra: '' },
+                  },
+                ]),
               },
             ],
           },
