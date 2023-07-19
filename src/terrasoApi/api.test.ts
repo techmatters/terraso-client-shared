@@ -16,6 +16,7 @@
  */
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { mockLogger } from 'terraso-client-shared/tests/config';
+import { graphql } from 'terraso-client-shared/graphqlSchema';
 
 const mockFetch = jest.fn<
   ReturnType<typeof global.fetch>,
@@ -90,7 +91,19 @@ test('Terraso API: mutation errors', async () => {
       }),
     ),
   );
-  await expect(terrasoApi.requestGraphQL('', {})).rejects.toEqual([
+  const query = graphql(`
+    query userProfile($email: String) {
+      users(email: $email) {
+        edges {
+          node {
+            ...userFields
+            ...userPreferences
+          }
+        }
+      }
+    }
+  `);
+  await expect(terrasoApi.requestGraphQL(query, {})).rejects.toEqual([
     {
       content: [
         'unique',
@@ -100,7 +113,6 @@ test('Terraso API: mutation errors', async () => {
       ],
       params: {
         body: {
-          query: '',
           variables: {},
         },
         code: 'unique',

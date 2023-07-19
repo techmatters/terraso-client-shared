@@ -53,7 +53,7 @@ const parseMessage = (message: any, body: any) => {
           code: message.code,
           ..._.omit('extra', message.context),
           context: _.get('context.extra', message),
-          body,
+          body: _.omit('query', body),
         },
       };
     });
