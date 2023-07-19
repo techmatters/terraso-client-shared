@@ -28,7 +28,10 @@ const parseMessage = (message: any, body: any) => {
   try {
     const messages = (function () {
       // If JSON return parse
-      if (typeof message === 'string' && (message.startsWith('{') || message.startsWith('['))) {
+      if (
+        typeof message === 'string' &&
+        (message.startsWith('{') || message.startsWith('['))
+      ) {
         return JSON.parse(message);
       }
       if (_.isArray(message)) {

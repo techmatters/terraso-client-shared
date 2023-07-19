@@ -77,8 +77,9 @@ test('Terraso API: mutation errors', async () => {
           testMutation: {
             errors: [
               {
-                "message": "[{\"code\": \"unique\", \"context\": {\"model\": \"Group\", \"field\": \"name\", \"extra\": \"\"}}]"
-              }
+                message:
+                  '[{"code": "unique", "context": {"model": "Group", "field": "name", "extra": ""}}]',
+              },
             ],
           },
         },
@@ -88,21 +89,21 @@ test('Terraso API: mutation errors', async () => {
   await expect(terrasoApi.requestGraphQL('', {})).rejects.toEqual([
     {
       content: [
-        "unique",
-        "terraso_api.unique",
-        "terraso_api.error",
-        "terraso_api.name.unique",
+        'unique',
+        'terraso_api.unique',
+        'terraso_api.error',
+        'terraso_api.name.unique',
       ],
       params: {
         body: {
-          query: "",
+          query: '',
           variables: {},
         },
-        code: "unique",
-        context: "",
-        field: "name",
-        model: "Group",
-      }
+        code: 'unique',
+        context: '',
+        field: 'name',
+        model: 'Group',
+      },
     },
   ]);
 });
