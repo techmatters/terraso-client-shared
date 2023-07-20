@@ -32,7 +32,7 @@ import {
 
 const collapseProjectFields = collapseFields<ProjectDataFragment, Project>({
   userCount: inp => inp['group']['memberships']['totalCount'],
-  updatedAt: inp => new Date(inp['updatedAt']),
+  updatedAt: inp => new Date(inp['updatedAt']).toLocaleDateString(),
   siteCount: inp => inp['siteSet']['totalCount'],
 });
 
