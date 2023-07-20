@@ -21,23 +21,18 @@ export const collapseConnectionEdges = <T>(connection: {
   return connection.edges.map(({ node }) => node);
 };
 
-export function collapseFields<
-  Input extends {},
-  Output extends { [Property in keyof Partial<Output>]: Output[Property] },
->(changes: {
+export function collapseFields<Input, Output>(changes: {
   [Property in keyof Partial<Output>]: (inp: Input) => Output[Property];
 }): (input: Input) => Output {
-  return (input: Input) =>
-    (Object.keys(input) as (keyof Output)[]).reduce((output, field) => {
-      if (field in changes) {
-        output[field] = changes[field](input);
-      } else {
-        if (field in input) {
-          output[field] = input[field as unknown as keyof Input] as any;
-        } else {
-          throw new Error(`field ${String(field)} not mapped to output`);
-        }
-      }
-      return output;
-    }, {} as Output);
+  return (input: Input) => {
+    const update = (Object.keys(changes) as (keyof Output)[]).reduce(
+      (output, field) => {
+        let result = changes[field](input);
+        output[field] = result;
+        return output;
+      },
+      {} as Output,
+    );
+    return { ...input, ...update };
+  };
 }
