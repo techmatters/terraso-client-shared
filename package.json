@@ -6,6 +6,7 @@
     "src/tests/config.ts"
   ],
   "dependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.0",
     "@reduxjs/toolkit": "^1.9.5",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
