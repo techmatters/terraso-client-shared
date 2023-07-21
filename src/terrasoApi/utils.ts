@@ -21,14 +21,19 @@ export const collapseConnectionEdges = <T>(connection: {
   return connection.edges.map(({ node }) => node);
 };
 
+type MandatoryFields<Input, Output> = Partial<Input | Output> & // fields in Input, but not Output: optional
+  Omit<Output, keyof Input>; // fields in Output, but not Input: mandatory
+
 export function collapseFields<Input, Output>(changes: {
-  [Property in keyof Partial<Output>]: (inp: Input) => Output[Property];
+  [Property in keyof MandatoryFields<Input, Output>]: (
+    inp: Input,
+  ) => Output[Property];
 }): (input: Input) => Output {
   return (input: Input) => {
-    const update = (Object.keys(changes) as (keyof Output)[]).reduce(
+    const update = (Object.keys(changes) as (keyof typeof changes)[]).reduce(
       (output, field) => {
         let result = changes[field](input);
-        output[field] = result;
+        output[field as keyof Output] = result;
         return output;
       },
       {} as Output,
