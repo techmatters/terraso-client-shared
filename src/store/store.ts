@@ -15,6 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 import 'terraso-client-shared/account/accountSlice'; // necessary to avoid circular dependency issue
+
 import {
   configureStore,
   Middleware,
@@ -26,8 +27,8 @@ import _ from 'lodash/fp';
 import accountReducer from 'terraso-client-shared/account/accountSlice';
 import membershipsReducer from 'terraso-client-shared/memberships/membershipsSlice';
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
-import siteReducer from 'terraso-client-shared/site/siteSlice';
 import projectReducer from 'terraso-client-shared/project/projectSlice';
+import siteReducer from 'terraso-client-shared/site/siteSlice';
 
 const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {

@@ -6,14 +6,13 @@
 		"^tests/utils$",
 		"^react$",
 		"<THIRD_PARTY_MODULES>",
-		"^@mui/(.*)$",
-		"^(common|forms|layout|localization|monitoring|navigation|notifications|permissions|state)/(.*)$",
-		"^(account|contact|gis|group|home|landscape|sharedData|storyMap|taxonomies|terrasoBackend|tool|user)/(.*)$",
-		"^(config|custom-hooks|react-hoc)$",
-		"^[./]",
-		"^assets/(.*)$",
-		"^theme$"
+		"",
+		"^(monitoring|notifications|store)/(.*)$",
+		"^(account|memberships|project|site|terrasoApi)/(.*)$",
+		"",
+		"^config$",
+		"",
+		"^[./]"
 	],
-	"importOrderSeparation": true,
-	"importOrderSortSpecifiers": true
+	"plugins": ["@ianvs/prettier-plugin-sort-imports"]
 }

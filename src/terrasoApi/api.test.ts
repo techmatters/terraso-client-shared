@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+import { graphql } from 'terraso-client-shared/graphqlSchema';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { mockLogger } from 'terraso-client-shared/tests/config';
-import { graphql } from 'terraso-client-shared/graphqlSchema';
 
 const mockFetch = jest.fn<
   ReturnType<typeof global.fetch>,
