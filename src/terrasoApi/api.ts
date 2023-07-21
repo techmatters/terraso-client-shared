@@ -27,7 +27,7 @@ type Errors = { errors?: Error[] | null };
 const parseMessage = (message: any, body: any) => {
   try {
     const messages = (function () {
-      // If JSON return parse
+      // If message can be parsed as JSON, return parsed messages
       if (
         typeof message === 'string' &&
         (message.startsWith('{') || message.startsWith('['))
