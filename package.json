@@ -76,7 +76,6 @@
     "jest": "^29.6.1",
     "jest-axe": "^8.0.0",
     "jest-environment-jsdom": "^29.6.1",
-    "plausible-tracker": "^0.3.8",
     "prettier": "^3.0.0",
     "stylelint": "^15.10.1",
     "stylelint-prettier": "^4.0.0",
