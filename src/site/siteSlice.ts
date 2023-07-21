@@ -19,6 +19,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as siteService from 'terraso-client-shared/site/siteService';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
+export type SitePrivacy = 'PRIVATE' | 'PUBLIC';
+
 export type Site = {
   projectId?: string;
   ownerId?: string;
@@ -26,6 +28,7 @@ export type Site = {
   name: string;
   latitude: number;
   longitude: number;
+  privacy: SitePrivacy;
   archived: boolean;
 };
 
