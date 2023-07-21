@@ -1,0 +1,11 @@
+{
+  "depcheck": {
+    "ignoreMatches": [
+        "jest-environment-jsdom",
+        "@graphql-codegen/client-preset",
+        "terraso-client-shared",
+        "react-dom",
+        "@graphql-typed-document-node/core"
+    ]
+  }
+}
