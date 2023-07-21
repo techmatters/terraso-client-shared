@@ -1,4 +1,5 @@
 import 'terraso-client-shared/tests/config';
+
 import React, { ReactElement } from 'react';
 import { render as rtlRender } from '@testing-library/react';
 import { axe } from 'jest-axe';
