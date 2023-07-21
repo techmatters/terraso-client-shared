@@ -21,5 +21,14 @@ export const projectData = /* GraphQL */ `
     name
     privacy
     description
+    updatedAt
+    group {
+      memberships {
+        totalCount
+      }
+    }
+    siteSet {
+      totalCount
+    }
   }
 `;

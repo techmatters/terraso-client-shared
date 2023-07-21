@@ -24,6 +24,9 @@ export type Project = {
   name: string;
   privacy: 'PRIVATE' | 'PUBLIC';
   description: string;
+  updatedAt: string; // this should be Date.toLocaleDateString; redux can't serialize Dates
+  userCount: number;
+  siteCount: number;
 };
 
 const initialState = {
