@@ -25,10 +25,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Typecheck ts code
+      - name: Typecheck TypeScript
         run: npm run check-ts
 
-      - name: Run lint js checks
+      - name: Lint JavaScript
         run: npm run lint-js
 
       - name: Check NPM module usage
