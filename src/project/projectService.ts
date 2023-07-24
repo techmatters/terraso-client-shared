@@ -34,6 +34,22 @@ const collapseProjectFields = collapseFields<ProjectDataFragment, Project>({
   userCount: inp => inp['group']['memberships']['totalCount'],
   updatedAt: inp => new Date(inp['updatedAt']).toLocaleDateString(),
   siteCount: inp => inp['siteSet']['totalCount'],
+  members: inp => {
+    return Object.fromEntries(
+      inp['group']['memberships']['edges'].map(edge => {
+        const {
+          userRole,
+          membershipStatus,
+          id: membershipId,
+          user,
+        } = edge['node'];
+        return [
+          membershipId,
+          [{ userRole, membershipStatus, membershipId }, user],
+        ];
+      }),
+    );
+  },
 });
 
 export const fetchProject = (id: string) => {

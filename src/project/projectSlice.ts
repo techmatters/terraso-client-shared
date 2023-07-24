@@ -16,6 +16,8 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
+import { User } from 'terraso-client-shared/account/accountSlice';
+import { Membership } from 'terraso-client-shared/memberships/membershipsSlice';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
@@ -26,6 +28,7 @@ export type Project = {
   description: string;
   updatedAt: string; // this should be Date.toLocaleDateString; redux can't serialize Dates
   userCount: number;
+  members: Record<string, [Membership, Omit<User, 'preferences'>]>;
   siteCount: number;
 };
 

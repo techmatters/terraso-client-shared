@@ -25,6 +25,20 @@ export const projectData = /* GraphQL */ `
     group {
       memberships {
         totalCount
+        edges {
+          node {
+            user {
+              id
+              email
+              firstName
+              lastName
+              profileImage
+            }
+            userRole
+            membershipStatus
+            id
+          }
+        }
       }
     }
     siteSet {
