@@ -15,7 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
 import { Membership } from 'terraso-client-shared/memberships/membershipsSlice';
 import * as projectService from 'terraso-client-shared/project/projectService';
@@ -35,6 +35,15 @@ export type Project = {
 const initialState = {
   projects: {} as Record<string, Project>,
 };
+
+interface MembershipKey {
+  projectId: string;
+  userId: string;
+}
+
+export const removeUserFromProject = createAction<MembershipKey>(
+  'project/removeUserFromProject',
+);
 
 export const fetchProject = createAsyncThunk(
   'project/fetchProject',
@@ -66,6 +75,12 @@ const projectSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
+    builder.addCase(
+      removeUserFromProject,
+      (state, { payload: { userId, projectId } }) => {
+        delete state.projects[projectId].members[userId];
+      },
+    );
     // TODO: add case to delete project if not found
     builder.addCase(fetchProject.fulfilled, (state, { payload: project }) => {
       state.projects[project.id] = project;
