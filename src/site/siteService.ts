@@ -122,7 +122,9 @@ export const addSite = (site: SiteAddMutationInput) => {
     .then(resp => collapseSiteFields(resp.addSite.site));
 };
 
-export const updateSite = (update: UpdateArg<SiteUpdateMutationInput>) => {
+export const updateSite = (
+  update: UpdateArg<'id', SiteUpdateMutationInput>,
+) => {
   const query = graphql(`
     mutation updateSite($input: SiteUpdateMutationInput!) {
       updateSite(input: $input) {
@@ -135,7 +137,7 @@ export const updateSite = (update: UpdateArg<SiteUpdateMutationInput>) => {
   `);
 
   return terrasoApi
-    .requestGraphQL(query, updateArgToInput(update))
+    .requestGraphQL(query, updateArgToInput('id', update))
     .then(resp => collapseSiteFields(resp.updateSite.site!));
 };
 

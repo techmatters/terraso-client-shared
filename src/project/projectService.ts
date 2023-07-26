@@ -94,7 +94,7 @@ export const addProject = (project: ProjectAddMutationInput) => {
 };
 
 export const updateProject = (
-  update: UpdateArg<ProjectUpdateMutationInput>,
+  update: UpdateArg<'id', ProjectUpdateMutationInput>,
 ) => {
   const query = graphql(`
     mutation updateProject($input: ProjectUpdateMutationInput!) {
@@ -108,7 +108,7 @@ export const updateProject = (
   `);
 
   return terrasoApi
-    .requestGraphQL(query, updateArgToInput(update))
+    .requestGraphQL(query, updateArgToInput('id', update))
     .then(resp => collapseProjectFields(resp.updateProject.project!));
 };
 

@@ -15,25 +15,29 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-type Resolve<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+export type UpdateArg<ID extends string, T extends Record<ID, any>> = {
+  [K in ID]: T[K];
+} & {
+  update: Omit<T, ID>;
+};
 
-export type UpdateArg<T extends { id: string }> = Resolve<{
-  id: string;
-  update: Resolve<Omit<T, 'id'>>;
-}>;
-
-export const updateArgToInput = <T extends { id: string }>({
-  id,
-  update,
-}: UpdateArg<T>) => {
-  if ('id' in update) {
+export const updateArgToInput = <ID extends string, T extends Record<ID, any>>(
+  idField: ID,
+  { [idField]: id, update }: UpdateArg<ID, T>,
+) => {
+  if (idField in update) {
     throw Error(`
       update arguments should not contain IDs! 
       are you accidentally passing the entire model object into the 
       update arg instead of just the fields you need to update?
     `);
   }
-  return { input: { ...update, id } };
+  return {
+    input: {
+      ...({ [idField]: id } as unknown as { [K in ID]: T[K] }),
+      ...update,
+    },
+  };
 };
 
 export const collapseConnectionEdges = <T>(connection: {
