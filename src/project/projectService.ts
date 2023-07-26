@@ -28,6 +28,8 @@ import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
   collapseConnectionEdges,
   collapseFields,
+  UpdateArg,
+  updateArgToInput,
 } from 'terraso-client-shared/terrasoApi/utils';
 
 const collapseProjectFields = collapseFields<ProjectDataFragment, Project>({
@@ -91,7 +93,9 @@ export const addProject = (project: ProjectAddMutationInput) => {
     .then(resp => collapseProjectFields(resp.addProject.project));
 };
 
-export const updateProject = (project: ProjectUpdateMutationInput) => {
+export const updateProject = (
+  update: UpdateArg<ProjectUpdateMutationInput>,
+) => {
   const query = graphql(`
     mutation updateProject($input: ProjectUpdateMutationInput!) {
       updateProject(input: $input) {
@@ -104,7 +108,7 @@ export const updateProject = (project: ProjectUpdateMutationInput) => {
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { input: project })
+    .requestGraphQL(query, updateArgToInput(update))
     .then(resp => collapseProjectFields(resp.updateProject.project!));
 };
 
@@ -112,12 +116,15 @@ export const deleteProject = (project: ProjectDeleteMutationInput) => {
   const query = graphql(`
     mutation deleteProject($input: ProjectDeleteMutationInput!) {
       deleteProject(input: $input) {
+        project {
+          id
+        }
         errors
       }
     }
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { input: { id: project.id } })
-    .then(_ => project.id);
+    .requestGraphQL(query, { input: project })
+    .then(({ deleteProject: { project } }) => project.id);
 };
