@@ -23,6 +23,7 @@ export const siteData = /* GraphQL */ `
     longitude
     archived
     updatedAt
+    privacy
     owner {
       id
     }

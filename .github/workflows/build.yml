@@ -19,17 +19,20 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version-file: '.tool-versions'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Node dependencies
         run: npm install
 
-      - name: Typecheck ts code
+      - name: Typecheck TypeScript
         run: npm run check-ts
 
-      - name: Run lint js checks
+      - name: Lint JavaScript
         run: npm run lint-js
+
+      - name: Check NPM module usage
+        run: npm run check-modules
 
   tests:
     runs-on: ubuntu-latest
@@ -41,7 +44,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version-file: '.tool-versions'
           cache: 'npm'
 
       - name: Install dependencies
@@ -50,26 +53,26 @@ jobs:
       - name: Run test
         run: npm run test
 
-  tests-coverage:
-    runs-on: ubuntu-latest
+  # tests-coverage:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version-file: '.tool-versions'
+  #         cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+  #     - name: Install dependencies
+  #       run: npm install
 
-      - name: Run test
-        run: npm run test-coverage
+  #     - name: Run test
+  #       run: npm run test-coverage
 
   build:
     runs-on: ubuntu-latest
@@ -81,7 +84,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version-file: '.tool-versions'
           cache: 'npm'
 
       - name: Install dependencies
