@@ -15,7 +15,8 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
+import { removeSiteFromAllProjects } from 'terraso-client-shared/project/projectSlice';
 import * as siteService from 'terraso-client-shared/site/siteService';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
@@ -27,11 +28,14 @@ export type Site = {
   latitude: number;
   longitude: number;
   archived: boolean;
+  updatedAt: string;
 };
 
 const initialState = {
   sites: {} as Record<string, Site>,
 };
+
+export const setSites = createAction<Record<string, Site>>('site/setSites');
 
 export const fetchSite = createAsyncThunk(
   'site/fetchSite',
@@ -55,9 +59,13 @@ export const updateSite = createAsyncThunk(
   siteService.updateSite,
 );
 
-export const deleteSite = createAsyncThunk(
+export const deleteSite = createAsyncThunk<string, Site>(
   'site/deleteSite',
-  siteService.deleteSite,
+  async (site, _currentUser, { dispatch }) => {
+    const result = await siteService.deleteSite(site);
+    dispatch(removeSiteFromAllProjects(site.id));
+    return result;
+  },
 );
 
 const siteSlice = createSlice({
@@ -65,6 +73,10 @@ const siteSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
+    builder.addCase(setSites, (state, { payload: sites }) => {
+      Object.assign(state.sites, sites);
+    });
+
     // TODO: add case to delete site if not found
     builder.addCase(fetchSite.fulfilled, (state, { payload: site }) => {
       state.sites[site.id] = site;

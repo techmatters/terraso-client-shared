@@ -22,6 +22,7 @@ export const siteData = /* GraphQL */ `
     latitude
     longitude
     archived
+    updatedAt
     owner {
       id
     }

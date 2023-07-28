@@ -23,33 +23,63 @@ import type {
   ProjectDeleteMutationInput,
   ProjectUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-import type { Project } from 'terraso-client-shared/project/projectSlice';
+import { Membership } from 'terraso-client-shared/memberships/membershipsSlice';
+import type {
+  HydratedProject,
+  Project,
+  SerializableSet,
+} from 'terraso-client-shared/project/projectSlice';
+import { Site } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
   collapseConnectionEdges,
   collapseFields,
 } from 'terraso-client-shared/terrasoApi/utils';
 
-const collapseProjectFields = collapseFields<ProjectDataFragment, Project>({
-  userCount: inp => inp['group']['memberships']['totalCount'],
-  updatedAt: inp => new Date(inp['updatedAt']).toLocaleDateString(),
-  siteCount: inp => inp['siteSet']['totalCount'],
-  members: inp => {
-    return Object.fromEntries(
-      inp['group']['memberships']['edges'].map(edge => {
-        const {
-          userRole,
-          membershipStatus,
-          id: membershipId,
-          user,
-        } = edge['node'];
-        return [
-          membershipId,
-          [{ userRole, membershipStatus, membershipId }, user],
-        ];
-      }),
-    );
+const collapseProjectFields = collapseFields<
+  ProjectDataFragment,
+  HydratedProject
+>({
+  project: inp => {
+    const siteIds = inp.siteSet.edges
+      .map(edge => edge.node.id)
+      .reduce((x, y) => ({ ...x, [y]: true }), {} as SerializableSet);
+    const membershipIds = inp.group.memberships.edges
+      .map(edge => edge.node)
+      .reduce(
+        (x, { id, user }) => ({ ...x, [id]: { user: user.id } }),
+        {} as Record<string, { user: string }>,
+      );
+    const output: Project = {
+      ...inp,
+      siteIds,
+      membershipIds,
+      groupId: inp.group.id,
+    };
+    return output;
   },
+  sites: inp =>
+    inp.siteSet.edges
+      .map(edge => edge.node)
+      .reduce((x, y) => ({ ...x, [y.id]: y }), {} as Record<string, Site>),
+  memberships: inp =>
+    inp.group.memberships.edges
+      .map(({ node: { id, userRole, membershipStatus } }) => ({
+        membershipId: id,
+        userRole,
+        membershipStatus,
+      }))
+      .reduce(
+        (x, y) => ({ ...x, [y.membershipId]: y }),
+        {} as Record<string, Membership>,
+      ),
+  users: inp =>
+    inp.group.memberships.edges
+      .map(({ node: { user } }) => ({
+        ...user,
+        preferences: {},
+      }))
+      .reduce((x, y) => ({ ...x, [y.id]: y }), {} as Record<string, User>),
 });
 
 export const fetchProject = (id: string) => {

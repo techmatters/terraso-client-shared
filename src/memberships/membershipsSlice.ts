@@ -120,6 +120,15 @@ export const membershipsSlice = createSlice({
         ),
       },
     }),
+    setMembers: (
+      state,
+      { payload }: { payload: Record<string, Membership> },
+    ) => {
+      if (state.members.list === null) {
+        state.members.list = {};
+      }
+      Object.assign(state.members.list, payload);
+    },
   },
 
   extraReducers: builder => {
@@ -250,6 +259,6 @@ export const membershipsSlice = createSlice({
   },
 });
 
-export const { setMemberships } = membershipsSlice.actions;
+export const { setMemberships, setMembers } = membershipsSlice.actions;
 
 export default membershipsSlice.reducer;

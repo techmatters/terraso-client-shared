@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
 import * as accountService from 'terraso-client-shared/account/accountService';
 import { getToken, removeToken } from 'terraso-client-shared/account/auth';
@@ -46,6 +46,7 @@ const initialState = {
     success: false,
     error: null,
   },
+  users: {} as Record<string, User>,
 };
 
 export type User = {
@@ -56,6 +57,8 @@ export type User = {
   profileImage: string;
   preferences: Record<string, string>;
 };
+
+export const setUsers = createAction<Record<string, User>>('user/setUsers');
 
 export const setHasAccessTokenAsync = createAsyncThunk(
   'account/setHasAccessTokenAsync',
@@ -108,6 +111,9 @@ export const userSlice = createSlice({
       ...state,
       hasToken: action.payload,
     }),
+    setUsers: (state, { payload: users }) => {
+      Object.assign(state.users, users);
+    },
   },
 
   extraReducers: builder => {
