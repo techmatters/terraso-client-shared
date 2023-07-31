@@ -85,7 +85,10 @@ jobs:
 
       - name: Get shared client version
         id: getClientHash
-        run: echo "client_hash=`git rev-parse --short main`" >> "$GITHUB_ENV"
+        run: |
+          CLIENT_HASH=`git rev-parse --short main`
+          [[ -z "$CLIENT_HASH "]] && exit 1
+          echo "client_hash=${CLIENT_HASH}" >> "$GITHUB_ENV"
 
       - name: Setup Node
         uses: actions/setup-node@v3
