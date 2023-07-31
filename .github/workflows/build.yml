@@ -81,6 +81,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Get shared client version
+        run: echo "client_hash=`git rev-parse --short HEAD`" >> "$GITHUB_ENV"
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -95,37 +98,21 @@ jobs:
 
   update-web:
     needs: build
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/update-shared.yml
+    with:
+      repo-path: 'techmatters/terraso-web-client'
+      repo-ref: 'staging'
+      cache-dependency-path: 'package-lock.json'
+    secrets:
+      token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Get Shared Client version
-        run: echo "client_hash=`git rev-parse --short HEAD`" >> "$GITHUB_ENV"
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          repository: 'techmatters/terraso-web-client'
-          ref: 'staging'
-          token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.tool-versions'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          npm install "github:techmatters/terraso-client-shared#${{ env.client_hash }}"
-          npm install
-
-      - name: Commit version bump
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@users.noreply.github.com"
-          git add -A
-          git commit -m "build: update shared client to ${{ env.client_hash }}"
-          git push
+  # update-mobile:
+  #   needs: build
+  #   uses: ./.github/workflows/update-shared.yml
+  #   with:
+  #     repo-path: 'techmatters/terraso-mobile-client'
+  #     repo-ref: 'main'
+  #     cache-dependency-path: 'dev-client/package-lock.json'
+  #     working-directory: './dev-client'
+  #   secrets:
+  #     token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
