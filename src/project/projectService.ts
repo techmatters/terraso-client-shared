@@ -40,7 +40,7 @@ const collapseProjectFields = collapseFields<
   ProjectDataFragment,
   HydratedProject
 >({
-  project: inp => {
+  dehydrated: inp => {
     const siteIds = inp.siteSet.edges
       .map(edge => edge.node.id)
       .reduce((x, y) => ({ ...x, [y]: true }), {} as SerializableSet);

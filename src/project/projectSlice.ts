@@ -18,16 +18,24 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { setUsers, User } from 'terraso-client-shared/account/accountSlice';
 import {
-  ProjectAddMutationInput,
-  ProjectUpdateMutationInput,
-} from 'terraso-client-shared/graphqlSchema/graphql';
-import {
   Membership,
   setMembers,
 } from 'terraso-client-shared/memberships/membershipsSlice';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, Site } from 'terraso-client-shared/site/siteSlice';
-import { createAsyncThunk } from 'terraso-client-shared/store/utils';
+import {
+  createAsyncThunk,
+  dehydrated,
+} from 'terraso-client-shared/store/utils';
+
+const { plural: dehydrateProjects, sing: dehydrateProject } = dehydrated<
+  Project,
+  HydratedProject
+>({
+  memberships: setMembers,
+  users: setUsers,
+  sites: setSites,
+});
 
 export type SerializableSet = Record<string, boolean>;
 
@@ -43,7 +51,7 @@ export type Project = {
 };
 
 export type HydratedProject = {
-  project: Project;
+  dehydrated: Project;
   memberships: Record<string, Membership>;
   users: Record<string, User>;
   sites: Record<string, Site>;
@@ -83,63 +91,25 @@ export const removeSiteFromAllProjects = createAction<string>(
   'project/removeSiteFromAllProjects',
 );
 
-export const fetchProject = createAsyncThunk<Project, string>(
+export const fetchProject = createAsyncThunk(
   'project/fetchProject',
-  async (arg, _currentUser, { dispatch }) => {
-    const { project, sites, memberships, users } =
-      await projectService.fetchProject(arg);
-    dispatch(setMembers(memberships));
-    dispatch(setUsers(users));
-    dispatch(setSites(sites));
-
-    return project;
-  },
+  dehydrateProject(projectService.fetchProject),
 );
 
-export const fetchProjectsForUser = createAsyncThunk<Project[], undefined>(
+export const fetchProjectsForUser = createAsyncThunk(
   'project/fetchProjectsForUser',
-  async (arg, currentUser, { dispatch }) => {
-    let hydrated = await projectService.fetchProjectsForUser(arg, currentUser);
-    let allSites: Record<string, Site> = {};
-    let allMemberships: Record<string, Membership> = {};
-    let allUsers: Record<string, User> = {};
-    let projects: Project[] = [];
-    for (let { project, sites, users, memberships } of hydrated) {
-      allSites = { ...allSites, ...sites };
-      allMemberships = { ...allMemberships, ...memberships };
-      allUsers = { ...allUsers, ...users };
-      projects.push(project);
-    }
-    dispatch(setMembers(allMemberships));
-    dispatch(setUsers(allUsers));
-    dispatch(setSites(allSites));
-    return projects;
-  },
+  dehydrateProjects(projectService.fetchProjectsForUser),
 );
 
-export const addProject = createAsyncThunk<Project, ProjectAddMutationInput>(
+export const addProject = createAsyncThunk(
   'project/addProject',
-  async (arg, _currentUser, { dispatch }) => {
-    const { project, sites, memberships, users } =
-      await projectService.addProject(arg);
-    dispatch(setMembers(memberships));
-    dispatch(setUsers(users));
-    dispatch(setSites(sites));
-    return project;
-  },
+  dehydrateProject(projectService.addProject),
 );
 
-export const updateProject = createAsyncThunk<
-  Project,
-  ProjectUpdateMutationInput
->('project/updateProject', async (arg, _currentUser, { dispatch }) => {
-  const { project, sites, memberships, users } =
-    await projectService.updateProject(arg);
-  dispatch(setMembers(memberships));
-  dispatch(setUsers(users));
-  dispatch(setSites(sites));
-  return project;
-});
+export const updateProject = createAsyncThunk(
+  'project/updateProject',
+  dehydrateProject(projectService.updateProject),
+);
 
 export const deleteProject = createAsyncThunk(
   'project/deleteProject',
