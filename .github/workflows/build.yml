@@ -102,7 +102,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get Shared Client version
-        run: CLIENT_HASH=`git rev-parse --short HEAD`
+        run: |
+          CLIENT_HASH=`git rev-parse --short HEAD`
+          echo ${CLIENT_HASH}
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -119,6 +121,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          echo ${CLIENT_HASH}
           npm install "github:techmatters/terraso-client-shared#${CLIENT_HASH}"
           npm install
 
