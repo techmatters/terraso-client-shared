@@ -109,6 +109,7 @@ jobs:
         with:
           repository: 'techmatters/terraso-web-client'
           ref: 'staging'
+          token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
 
       - name: Setup Node
         uses: actions/setup-node@v3
