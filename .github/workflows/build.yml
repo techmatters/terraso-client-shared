@@ -130,3 +130,11 @@ jobs:
       client-hash: ${{ needs.build.outputs.client_hash }}
     secrets:
       token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+
+  deploy-mobile:
+    needs: update-mobile
+    env:
+      GH_TOKEN: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+    steps:
+      - name: Run mobile build workflow
+        run: gh workflow run build.yml --repo techmatters/terraso-mobile-client build
