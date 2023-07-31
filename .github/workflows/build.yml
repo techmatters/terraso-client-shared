@@ -92,7 +92,7 @@ jobs:
             exit 1
           fi
           echo "client_hash=${CLIENT_HASH}" >> "$GITHUB_ENV"
-          git checkout ${{ github.ref }}
+          git checkout ${{ github.ref_name }}
 
       - name: Setup Node
         uses: actions/setup-node@v3
