@@ -80,6 +80,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -92,3 +94,48 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+      - name: Get shared client version
+        id: getClientHash
+        run: |
+          git checkout main
+          CLIENT_HASH=`git rev-parse --short main`
+          if [ -z "$CLIENT_HASH" ]; then
+            exit 1
+          fi
+          echo "client_hash=${CLIENT_HASH}" >> "$GITHUB_ENV"
+
+    outputs:
+      client_hash: ${{ env.client_hash }}
+
+  update-web:
+    needs: build
+    uses: ./.github/workflows/update-shared.yml
+    with:
+      repo-path: 'techmatters/terraso-web-client'
+      repo-ref: 'staging'
+      cache-dependency-path: 'package-lock.json'
+      client-hash: ${{ needs.build.outputs.client_hash }}
+    secrets:
+      token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+
+  update-mobile:
+    needs: build
+    uses: ./.github/workflows/update-shared.yml
+    with:
+      repo-path: 'techmatters/terraso-mobile-client'
+      repo-ref: 'main'
+      cache-dependency-path: 'dev-client/package-lock.json'
+      working-directory: './dev-client'
+      client-hash: ${{ needs.build.outputs.client_hash }}
+    secrets:
+      token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+
+  deploy-mobile:
+    needs: update-mobile
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+    steps:
+      - name: Run mobile build workflow
+        run: gh workflow run build.yml --repo techmatters/terraso-mobile-client build
