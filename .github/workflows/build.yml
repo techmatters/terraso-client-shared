@@ -83,17 +83,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get shared client version
-        id: getClientHash
-        run: |
-          git checkout main
-          CLIENT_HASH=`git rev-parse --short main`
-          if [ -z "$CLIENT_HASH" ]; then
-            exit 1
-          fi
-          echo "client_hash=${CLIENT_HASH}" >> "$GITHUB_ENV"
-          git checkout ${{ github.ref_name }}
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -105,6 +94,17 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+      - name: Get shared client version
+        id: getClientHash
+        run: |
+          git checkout main
+          CLIENT_HASH=`git rev-parse --short main`
+          if [ -z "$CLIENT_HASH" ]; then
+            exit 1
+          fi
+          echo "client_hash=${CLIENT_HASH}" >> "$GITHUB_ENV"
+
     outputs:
       client_hash: ${{ env.client_hash }}
 
