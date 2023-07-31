@@ -133,6 +133,7 @@ jobs:
 
   deploy-mobile:
     needs: update-mobile
+    runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.TERRASO_CLIENT_TOKEN }}
     steps:
