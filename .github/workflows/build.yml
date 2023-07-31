@@ -106,6 +106,7 @@ jobs:
       repo-path: 'techmatters/terraso-web-client'
       repo-ref: 'staging'
       cache-dependency-path: 'package-lock.json'
+      client-hash: ${{ needs.build.outputs.client_hash }}
     secrets:
       token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
 
