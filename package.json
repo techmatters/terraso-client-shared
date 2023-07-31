@@ -47,7 +47,7 @@
     "@types/jest-axe": "^3.5.5",
     "@types/lodash": "^4.14.195",
     "@types/uuid": "^9.0.2",
-    "@typescript-eslint/parser": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.1",
     "babel-plugin-root-import": "^6.6.0",
     "depcheck": "^1.4.3",
     "eslint-config-prettier": "^8.8.0",
