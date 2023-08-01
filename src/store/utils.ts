@@ -166,16 +166,6 @@ export const useFetchData = (
   }, [dispatch, dataFetchCallback]);
 };
 
-/*interface HasId {
-  id: string;
-}
-
-type ChildrenHaveIds<T, Dehydrated> = {
-  [Property in keyof Omit<T, 'dehydrated'>]: HasId & T[Property];
-} & {
-  dehydrated: Dehydrated;
-};*/
-
 export type Thunker<U, T> = Parameters<typeof createAsyncThunk<U, T>>[1];
 
 interface Dehydratable<T> {
