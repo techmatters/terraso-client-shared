@@ -111,6 +111,7 @@ jobs:
   update-web:
     needs: build
     uses: ./.github/workflows/update-shared.yml
+    if: github.event_name != 'pull_request'
     with:
       repo-path: 'techmatters/terraso-web-client'
       repo-ref: 'staging'
@@ -122,6 +123,7 @@ jobs:
   update-mobile:
     needs: build
     uses: ./.github/workflows/update-shared.yml
+    if: github.event_name != 'pull_request'
     with:
       repo-path: 'techmatters/terraso-mobile-client'
       repo-ref: 'main'
