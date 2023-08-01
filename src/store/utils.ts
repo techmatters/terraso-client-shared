@@ -166,6 +166,16 @@ export const useFetchData = (
   }, [dispatch, dataFetchCallback]);
 };
 
+/*interface HasId {
+  id: string;
+}
+
+type ChildrenHaveIds<T, Dehydrated> = {
+  [Property in keyof Omit<T, 'dehydrated'>]: HasId & T[Property];
+} & {
+  dehydrated: Dehydrated;
+};*/
+
 export type Thunker<U, T> = Parameters<typeof createAsyncThunk<U, T>>[1];
 
 interface Dehydratable<T> {
@@ -194,9 +204,8 @@ export function dehydrated<
   const sing = <T>(fetcher: Thunker<Hydrated, T>): Thunker<Dehydrated, T> => {
     return async (arg, currentUser, thunkAPI) => {
       const result = await fetcher(arg, currentUser, thunkAPI);
-      let toDispatch: Omit<Dehydratable<Dehydrated>, 'dehydrated'> = {
+      let { dehydrated: _, ...toDispatch } = {
         ...result,
-        ...{ dehydrated: undefined },
       };
       dispatchAll(toDispatch, dispatchMap, thunkAPI.dispatch);
       return result.dehydrated;
@@ -210,20 +219,25 @@ export function dehydrated<
       if (result.length === 0) {
         return [];
       }
-      let toDispatch: Omit<Dehydratable<Dehydrated>, 'dehydrated'> = {
-        ...result[0],
-        ...{ dehydrated: undefined },
-      };
+
+      let toDispatch: any = {};
+      for (let key of Object.keys(
+        result[0],
+      ) as (keyof (typeof result)[number])[]) {
+        let res = result[0];
+        toDispatch[key] = { ...res };
+      }
+      delete toDispatch['dehydrated'];
       let returnItems = [result[0].dehydrated];
       for (let res of result.slice(1)) {
         for (let key of Object.keys(toDispatch)) {
-          Object.assign(
-            toDispatch[key as keyof typeof toDispatch],
-            res[key as keyof typeof res],
-          );
+          Object.assign(toDispatch[key], {
+            ...res[key as keyof typeof res],
+          });
         }
         returnItems.push(res.dehydrated);
       }
+
       dispatchAll(toDispatch, dispatchMap, thunkAPI.dispatch);
       return returnItems;
     };
