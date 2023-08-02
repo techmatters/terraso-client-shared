@@ -28,17 +28,17 @@ type MembershipQuery = Partial<
     CollaborationMembershipsPendingFragment
 >;
 
-export const extractMembersInfo = (
+export const extractMembershipsInfo = (
   membershipList?: MembershipQuery | null,
 ) => ({
   totalCount:
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
   accountMembership: extractAccountMembership(membershipList),
-  membersSample: extractMembers(membershipList),
+  membershipsSample: extractMemberships(membershipList),
 });
 
-export const extractMembers = (membershipList?: MembershipQuery | null) =>
+export const extractMemberships = (membershipList?: MembershipQuery | null) =>
   (
     (
       membershipList as
