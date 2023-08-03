@@ -51,8 +51,10 @@ const collapseProjectFields = collapseFields<
           (x, { id, user }) => ({ ...x, [id]: { user: user.id } }),
           {} as Record<string, { user: string }>,
         );
+
+      const { siteSet: _x, group: _y, ...rest } = inp;
       const output: Project = {
-        ...inp,
+        ...rest,
         siteIds,
         membershipIds,
         groupId: inp.group.id,

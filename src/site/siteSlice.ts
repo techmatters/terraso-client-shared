@@ -16,7 +16,11 @@
  */
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
-import { removeSiteFromAllProjects } from 'terraso-client-shared/project/projectSlice';
+import { SiteAddMutationInput } from 'terraso-client-shared/graphqlSchema/graphql';
+import {
+  addSiteToProject,
+  removeSiteFromAllProjects,
+} from 'terraso-client-shared/project/projectSlice';
 import * as siteService from 'terraso-client-shared/site/siteService';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
@@ -55,7 +59,16 @@ export const fetchSitesForUser = createAsyncThunk(
   siteService.fetchSitesForUser,
 );
 
-export const addSite = createAsyncThunk('site/addSite', siteService.addSite);
+export const addSite = createAsyncThunk<Site, SiteAddMutationInput>(
+  'site/addSite',
+  async (site, _, { dispatch }) => {
+    let res = await siteService.addSite(site);
+    if (site.projectId) {
+      dispatch(addSiteToProject({ siteId: res.id, projectId: site.projectId }));
+    }
+    return res;
+  },
+);
 
 export const updateSite = createAsyncThunk(
   'site/updateSite',

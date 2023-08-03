@@ -211,11 +211,9 @@ export function dehydrated<
       }
 
       let toDispatch: any = {};
-      for (let key of Object.keys(
-        result[0],
-      ) as (keyof (typeof result)[number])[]) {
+      for (let key of Object.keys(result[0]) as (keyof Hydrated)[]) {
         let res = result[0];
-        toDispatch[key] = { ...res };
+        toDispatch[key] = { ...res[key] };
       }
       delete toDispatch['dehydrated'];
       let returnItems = [result[0].dehydrated];
