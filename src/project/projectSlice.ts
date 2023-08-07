@@ -15,9 +15,29 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
+import { setUsers, User } from 'terraso-client-shared/account/accountSlice';
+import {
+  Membership,
+  setMembers,
+} from 'terraso-client-shared/memberships/membershipsSlice';
 import * as projectService from 'terraso-client-shared/project/projectService';
-import { createAsyncThunk } from 'terraso-client-shared/store/utils';
+import { setSites, Site } from 'terraso-client-shared/site/siteSlice';
+import {
+  createAsyncThunk,
+  dehydrated,
+} from 'terraso-client-shared/store/utils';
+
+const { plural: dehydrateProjects, sing: dehydrateProject } = dehydrated<
+  Project,
+  HydratedProject
+>({
+  memberships: setMembers,
+  users: setUsers,
+  sites: setSites,
+});
+
+export type SerializableSet = Record<string, boolean>;
 
 export type Project = {
   id: string;
@@ -25,32 +45,70 @@ export type Project = {
   privacy: 'PRIVATE' | 'PUBLIC';
   description: string;
   updatedAt: string; // this should be Date.toLocaleDateString; redux can't serialize Dates
-  userCount: number;
-  siteCount: number;
+  membershipIds: Record<string, { user: string }>; // TODO: Why doesn't the membership have user info? have to store user id here as well
+  siteIds: SerializableSet;
+  groupId: string;
+};
+
+export type HydratedProject = {
+  dehydrated: Project;
+  memberships: Record<string, Membership>;
+  users: Record<string, User>;
+  sites: Record<string, Site>;
 };
 
 const initialState = {
   projects: {} as Record<string, Project>,
 };
 
+interface MembershipKey {
+  projectId: string;
+  membershipId: string;
+}
+
+interface SiteKey {
+  projectId: string;
+  siteId: string;
+}
+
+export const removeMembershipFromProject = createAction<MembershipKey>(
+  'project/removeMembershipFromProject',
+);
+
+export const addMembershipToProject = createAction<MembershipKey>(
+  'project/addMembershipToProject',
+);
+
+export const addSiteToProject = createAction<SiteKey>(
+  'project/addSiteToProject',
+);
+
+export const removeSiteFromProject = createAction<SiteKey>(
+  'project/removeSiteFromProject',
+);
+
+export const removeSiteFromAllProjects = createAction<string>(
+  'project/removeSiteFromAllProjects',
+);
+
 export const fetchProject = createAsyncThunk(
   'project/fetchProject',
-  projectService.fetchProject,
+  dehydrateProject(projectService.fetchProject),
 );
 
 export const fetchProjectsForUser = createAsyncThunk(
   'project/fetchProjectsForUser',
-  projectService.fetchProjectsForUser,
+  dehydrateProjects(projectService.fetchProjectsForUser),
 );
 
 export const addProject = createAsyncThunk(
   'project/addProject',
-  projectService.addProject,
+  dehydrateProject(projectService.addProject),
 );
 
 export const updateProject = createAsyncThunk(
   'project/updateProject',
-  projectService.updateProject,
+  dehydrateProject(projectService.updateProject),
 );
 
 export const deleteProject = createAsyncThunk(
@@ -63,6 +121,35 @@ const projectSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
+    builder.addCase(
+      addSiteToProject,
+      (state, { payload: { siteId, projectId } }) => {
+        state.projects[projectId].siteIds[siteId] = true;
+      },
+    );
+
+    builder.addCase(
+      removeMembershipFromProject,
+      (state, { payload: { membershipId, projectId } }) => {
+        delete state.projects[projectId].membershipIds[membershipId];
+      },
+    );
+
+    builder.addCase(
+      removeSiteFromProject,
+      (state, { payload: { siteId, projectId } }) => {
+        delete state.projects[projectId].siteIds[siteId];
+      },
+    );
+
+    builder.addCase(removeSiteFromAllProjects, (state, { payload: siteId }) => {
+      for (let project of Object.values(state.projects)) {
+        if (siteId in project.siteIds) {
+          delete project.siteIds[siteId];
+        }
+      }
+    });
+
     // TODO: add case to delete project if not found
     builder.addCase(fetchProject.fulfilled, (state, { payload: project }) => {
       state.projects[project.id] = project;
@@ -71,8 +158,9 @@ const projectSlice = createSlice({
     builder.addCase(
       fetchProjectsForUser.fulfilled,
       (state, { payload: projects }) => {
-        state.projects = Object.fromEntries(
-          projects.map(project => [project.id, project]),
+        Object.assign(
+          state.projects,
+          Object.fromEntries(projects.map(project => [project.id, project])),
         );
       },
     );

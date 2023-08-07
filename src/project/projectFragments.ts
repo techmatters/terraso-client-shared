@@ -23,12 +23,15 @@ export const projectData = /* GraphQL */ `
     description
     updatedAt
     group {
-      memberships {
-        totalCount
-      }
+      id
+      ...groupMembers
     }
     siteSet {
-      totalCount
+      edges {
+        node {
+          ...siteData
+        }
+      }
     }
   }
 `;
