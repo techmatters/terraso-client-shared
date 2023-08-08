@@ -184,6 +184,8 @@ export const archiveProject = (project: ProjectArchiveMutationInput) => {
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { input: { id: project.id, archived: project.archived } })
-    .then(_ => project.id);
+    .requestGraphQL(query, {
+      input: { archived: project.archived, id: project.id },
+    })
+    .then(_ => project.archived);
 };

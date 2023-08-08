@@ -183,9 +183,12 @@ const projectSlice = createSlice({
       delete state.projects[meta.arg.id];
     });
 
-    builder.addCase(archiveProject.fulfilled, (state, { meta, payload: project }) => {
-      state.projects[meta.arg.id].archived = project.archived;
-    });
+    builder.addCase(
+      archiveProject.fulfilled,
+      (state, { meta, payload: project }) => {
+        state.projects[meta.arg.id].archived = project;
+      },
+    );
   },
 });
 
