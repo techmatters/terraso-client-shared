@@ -43,7 +43,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
-        run: npm install "github:techmatters/terraso-client-shared#${{ inputs.client-hash }}"
+        # running npm install without --no-package-lock causes extra diffs in the package-lock.json
+        # and causes npx graphql-code-generator to fail
+        run: |
+          npm install "github:techmatters/terraso-client-shared#${{ inputs.client-hash }}" --no-package-lock
+          npm install
 
       - name: Commit version bump
         uses: stefanzweifel/git-auto-commit-action@v4
