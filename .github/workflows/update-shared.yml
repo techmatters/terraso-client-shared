@@ -51,6 +51,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: "package.json package-lock.json"
-          commit_message "build: update shared client to ${{ inputs.client-hash }}"
+          commit_message: "build: update shared client to ${{ inputs.client-hash }}"
           commit_user_name: "GitHub Actions"
           commit_user_email: actions@users.noreply.github.com
