@@ -43,9 +43,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
-        run: |
-          npm install "github:techmatters/terraso-client-shared#${{ inputs.client-hash }}"
-          npm install
+        run: npm install "github:techmatters/terraso-client-shared#${{ inputs.client-hash }}"
 
       - name: Commit version bump
         uses: stefanzweifel/git-auto-commit-action@v4
