@@ -185,8 +185,8 @@ const projectSlice = createSlice({
 
     builder.addCase(
       archiveProject.fulfilled,
-      (state, { meta, payload: project }) => {
-        state.projects[meta.arg.id].archived = project;
+      (state, { meta, payload: archived }) => {
+        state.projects[meta.arg.id].archived = archived;
       },
     );
   },
