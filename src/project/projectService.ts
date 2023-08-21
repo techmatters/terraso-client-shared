@@ -19,6 +19,7 @@ import type { User } from 'terraso-client-shared/account/accountSlice';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
   ProjectAddMutationInput,
+  ProjectArchiveMutationInput,
   ProjectDataFragment,
   ProjectDeleteMutationInput,
   ProjectUpdateMutationInput,
@@ -171,4 +172,20 @@ export const deleteProject = (project: ProjectDeleteMutationInput) => {
   return terrasoApi
     .requestGraphQL(query, { input: { id: project.id } })
     .then(_ => project.id);
+};
+
+export const archiveProject = (project: ProjectArchiveMutationInput) => {
+  const query = graphql(`
+    mutation archiveProject($input: ProjectArchiveMutationInput!) {
+      archiveProject(input: $input) {
+        errors
+      }
+    }
+  `);
+
+  return terrasoApi
+    .requestGraphQL(query, {
+      input: { archived: project.archived, id: project.id },
+    })
+    .then(_ => project.archived);
 };

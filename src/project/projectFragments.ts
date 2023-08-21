@@ -22,6 +22,7 @@ export const projectData = /* GraphQL */ `
     privacy
     description
     updatedAt
+    archived
     group {
       id
       ...groupMembers
