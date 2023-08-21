@@ -48,10 +48,12 @@ export const extractMemberships = (membershipList?: MembershipQuery | null) =>
         | undefined
     )?.memberships?.edges || []
   ).map(edge => ({
+    ...edge.node.user,
+    id: edge?.node?.user?.id || edge.node.pendingEmail,
     membershipId: edge.node.id,
     userRole: edge.node.userRole,
     membershipStatus: edge.node.membershipStatus,
-    ...edge.node.user,
+    pendingEmail: edge.node.pendingEmail,
   }));
 
 export const extractAccountMembership = (
