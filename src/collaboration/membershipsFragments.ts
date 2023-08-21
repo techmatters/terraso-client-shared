@@ -52,6 +52,7 @@ export const collaborationMemberships = /* GraphQL */ `
           user {
             ...userFields
           }
+          pendingEmail
         }
       }
     }
