@@ -15,6 +15,18 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
+export const collaborationMembershipFields = /* GraphQL */ `
+  fragment collaborationMembershipFields on CollaborationMembershipNode {
+    id
+    userRole
+    membershipStatus
+    pendingEmail
+    user {
+      ...userFields
+    }
+  }
+`;
+
 export const collaborationMembershipsPending = /* GraphQL */ `
   fragment collaborationMembershipsPending on CollaborationMembershipListNode {
     pending: memberships(membershipStatus: PENDING) {
@@ -46,13 +58,7 @@ export const collaborationMemberships = /* GraphQL */ `
       totalCount
       edges {
         node {
-          id
-          userRole
-          membershipStatus
-          user {
-            ...userFields
-          }
-          pendingEmail
+          ...collaborationMembershipFields
         }
       }
     }
