@@ -50,11 +50,10 @@ const collapseProjectFields = collapseFields<
         .map(edge => edge.node)
         .reduce(
           (x, { id, user }) => ({ ...x, [id]: { user: user.id } }),
-          {} as Record<string, { user: string }>
+          {} as Record<string, { user: string }>,
         );
 
       const { siteSet: _x, group: _y, updatedAt, ...rest } = inp;
-      const updatedAtDate = new Date(updatedAt);
       const output: Project = {
         ...rest,
         updatedAt: new Date(updatedAt).toLocaleDateString().toLocaleString(),
@@ -77,7 +76,7 @@ const collapseProjectFields = collapseFields<
         }))
         .reduce(
           (x, y) => ({ ...x, [y.membershipId]: y }),
-          {} as Record<string, Membership>
+          {} as Record<string, Membership>,
         ),
     users: inp =>
       inp.group.memberships.edges
@@ -87,7 +86,7 @@ const collapseProjectFields = collapseFields<
         }))
         .reduce((x, y) => ({ ...x, [y.id]: y }), {} as Record<string, User>),
   },
-  true
+  true,
 );
 
 export const fetchProject = (id: string) => {
@@ -124,7 +123,7 @@ export const fetchProjectsForUser = async (_: undefined, user: User | null) => {
   return terrasoApi
     .requestGraphQL(query, { id: user.id })
     .then(resp =>
-      collapseConnectionEdges(resp.projects).map(collapseProjectFields)
+      collapseConnectionEdges(resp.projects).map(collapseProjectFields),
     );
 };
 
