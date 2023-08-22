@@ -48,6 +48,7 @@ export type Project = {
   membershipIds: Record<string, { user: string }>; // TODO: Why doesn't the membership have user info? have to store user id here as well
   siteIds: SerializableSet;
   groupId: string;
+  archived: boolean;
 };
 
 export type HydratedProject = {
@@ -116,6 +117,11 @@ export const deleteProject = createAsyncThunk(
   projectService.deleteProject,
 );
 
+export const archiveProject = createAsyncThunk(
+  'project/archiveProject',
+  projectService.archiveProject,
+);
+
 const projectSlice = createSlice({
   name: 'project',
   initialState,
@@ -176,6 +182,13 @@ const projectSlice = createSlice({
     builder.addCase(deleteProject.fulfilled, (state, { meta }) => {
       delete state.projects[meta.arg.id];
     });
+
+    builder.addCase(
+      archiveProject.fulfilled,
+      (state, { meta, payload: archived }) => {
+        state.projects[meta.arg.id].archived = archived;
+      },
+    );
   },
 });
 
