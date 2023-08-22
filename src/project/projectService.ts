@@ -19,6 +19,7 @@ import type { User } from 'terraso-client-shared/account/accountSlice';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
   ProjectAddMutationInput,
+  ProjectArchiveMutationInput,
   ProjectDataFragment,
   ProjectDeleteMutationInput,
   ProjectUpdateMutationInput,
@@ -49,12 +50,13 @@ const collapseProjectFields = collapseFields<
         .map(edge => edge.node)
         .reduce(
           (x, { id, user }) => ({ ...x, [id]: { user: user.id } }),
-          {} as Record<string, { user: string }>,
+          {} as Record<string, { user: string }>
         );
 
-      const { siteSet: _x, group: _y, ...rest } = inp;
+      const { siteSet: _x, group: _y, updatedAt, ...rest } = inp;
       const output: Project = {
         ...rest,
+        updatedAt: new Date(updatedAt).toLocaleDateString(),
         siteIds,
         membershipIds,
         groupId: inp.group.id,
@@ -74,7 +76,7 @@ const collapseProjectFields = collapseFields<
         }))
         .reduce(
           (x, y) => ({ ...x, [y.membershipId]: y }),
-          {} as Record<string, Membership>,
+          {} as Record<string, Membership>
         ),
     users: inp =>
       inp.group.memberships.edges
@@ -84,7 +86,7 @@ const collapseProjectFields = collapseFields<
         }))
         .reduce((x, y) => ({ ...x, [y.id]: y }), {} as Record<string, User>),
   },
-  true,
+  true
 );
 
 export const fetchProject = (id: string) => {
@@ -121,7 +123,7 @@ export const fetchProjectsForUser = async (_: undefined, user: User | null) => {
   return terrasoApi
     .requestGraphQL(query, { id: user.id })
     .then(resp =>
-      collapseConnectionEdges(resp.projects).map(collapseProjectFields),
+      collapseConnectionEdges(resp.projects).map(collapseProjectFields)
     );
 };
 
@@ -163,6 +165,20 @@ export const deleteProject = (project: ProjectDeleteMutationInput) => {
   const query = graphql(`
     mutation deleteProject($input: ProjectDeleteMutationInput!) {
       deleteProject(input: $input) {
+        errors
+      }
+    }
+  `);
+
+  return terrasoApi
+    .requestGraphQL(query, { input: { id: project.id } })
+    .then(_ => project.id);
+};
+
+export const archiveProject = (project: ProjectArchiveMutationInput) => {
+  const query = graphql(`
+    mutation archiveProject($input: ProjectArchiveMutationInput!) {
+      archiveProject(input: $input) {
         errors
       }
     }
