@@ -56,7 +56,7 @@ const collapseProjectFields = collapseFields<
       const { siteSet: _x, group: _y, updatedAt, ...rest } = inp;
       const output: Project = {
         ...rest,
-        updatedAt: new Date(updatedAt).toLocaleDateString().toLocaleString(),
+        updatedAt: new Date(updatedAt).toLocaleString(),
         siteIds,
         membershipIds,
         groupId: inp.group.id,
