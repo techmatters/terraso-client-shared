@@ -53,9 +53,10 @@ const collapseProjectFields = collapseFields<
           {} as Record<string, { user: string }>,
         );
 
-      const { siteSet: _x, group: _y, ...rest } = inp;
+      const { siteSet: _x, group: _y, updatedAt, ...rest } = inp;
       const output: Project = {
         ...rest,
+        updatedAt: new Date(updatedAt).toLocaleDateString().toLocaleString(),
         siteIds,
         membershipIds,
         groupId: inp.group.id,
