@@ -17,6 +17,7 @@
 import _ from 'lodash/fp';
 import type {
   AccountCollaborationMembershipFragment,
+  CollaborationMembershipFieldsFragment,
   CollaborationMembershipsFragment,
   CollaborationMembershipsInfoFragment,
   CollaborationMembershipsPendingFragment,
@@ -38,6 +39,15 @@ export const extractMembershipsInfo = (
   membershipsSample: extractMemberships(membershipList),
 });
 
+export const extractMembership = (
+  membership: Partial<CollaborationMembershipFieldsFragment>,
+) => ({
+  ...membership.user,
+  ..._.omit('user', membership),
+  membershipId: membership.id,
+  userId: membership.user?.id,
+});
+
 export const extractMemberships = (membershipList?: MembershipQuery | null) =>
   (
     (
@@ -47,11 +57,7 @@ export const extractMemberships = (membershipList?: MembershipQuery | null) =>
         | null
         | undefined
     )?.memberships?.edges || []
-  ).map(edge => ({
-    ...edge.node.user,
-    ..._.omit('user', edge.node),
-    membershipId: edge.node.id,
-  }));
+  ).map(edge => extractMembership(edge.node));
 
 export const extractAccountMembership = (
   membershipList?: AccountCollaborationMembershipFragment | null,
