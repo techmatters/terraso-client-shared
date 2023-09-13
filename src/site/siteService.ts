@@ -26,7 +26,7 @@ import type { Site } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { collapseConnectionEdges } from 'terraso-client-shared/terrasoApi/utils';
 
-const collapseSiteFields = (site: SiteDataFragment): Site => {
+export const collapseSiteFields = (site: SiteDataFragment): Site => {
   const { project, owner, ...rest } = site;
   return {
     ...rest,

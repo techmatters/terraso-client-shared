@@ -30,6 +30,7 @@ import type {
   Project,
   SerializableSet,
 } from 'terraso-client-shared/project/projectSlice';
+import { collapseSiteFields } from 'terraso-client-shared/site/siteService';
 import { Site } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
@@ -66,7 +67,10 @@ const collapseProjectFields = collapseFields<
     sites: inp =>
       inp.siteSet.edges
         .map(edge => edge.node)
-        .reduce((x, y) => ({ ...x, [y.id]: y }), {} as Record<string, Site>),
+        .reduce(
+          (x, y) => ({ ...x, [y.id]: collapseSiteFields(y) }),
+          {} as Record<string, Site>,
+        ),
     memberships: inp =>
       inp.group.memberships.edges
         .map(({ node: { id, userRole, membershipStatus } }) => ({
