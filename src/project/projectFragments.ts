@@ -23,9 +23,9 @@ export const projectData = /* GraphQL */ `
     description
     updatedAt
     archived
-    group {
+    membershipList {
       id
-      ...groupMembers
+      ...collaborationMemberships
     }
     siteSet {
       edges {
