@@ -18,7 +18,6 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { setUsers, User } from 'terraso-client-shared/account/accountSlice';
 import { UserRole } from 'terraso-client-shared/graphqlSchema/graphql';
-import { setMembers } from 'terraso-client-shared/memberships/membershipsSlice';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, Site } from 'terraso-client-shared/site/siteSlice';
 import {
@@ -30,7 +29,6 @@ const { plural: dehydrateProjects, sing: dehydrateProject } = dehydrated<
   Project,
   HydratedProject
 >({
-  memberships: setMembers,
   users: setUsers,
   sites: setSites,
 });
@@ -55,7 +53,6 @@ export type Project = {
 
 export type HydratedProject = {
   dehydrated: Project;
-  memberships: Record<string, ProjectMembership>;
   users: Record<string, User>;
   sites: Record<string, Site>;
 };
@@ -139,7 +136,7 @@ const projectSlice = createSlice({
     builder.addCase(
       removeMembershipFromProject,
       (state, { payload: { membershipId, projectId } }) => {
-        delete state.projects[projectId].membershipIds[membershipId];
+        delete state.projects[projectId].memberships[membershipId];
       },
     );
 

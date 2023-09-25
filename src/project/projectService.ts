@@ -76,23 +76,6 @@ const collapseProjectFields = collapseFields<
           (x, y) => ({ ...x, [y.id]: collapseSiteFields(y) }),
           {} as Record<string, Site>,
         ),
-    memberships: inp =>
-      inp.membershipList.memberships?.edges
-        .map(({ node: { id, userRole, user } }) => ({
-          membershipId: id,
-          userId: user?.id,
-          userRole,
-        }))
-        .reduce(
-          (x, y) => {
-            if (y.userId !== undefined) {
-              let userId = y.userId;
-              return { ...x, [y.membershipId]: { ...y, userId } };
-            }
-            return x;
-          },
-          {} as Record<string, ProjectMembership>,
-        ) || {},
     users: inp =>
       inp.membershipList.memberships?.edges
         .map(({ node: { user } }) => {
