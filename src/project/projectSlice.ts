@@ -38,6 +38,7 @@ export type SerializableSet = Record<string, boolean>;
 export type ProjectMembership = {
   userId: string;
   userRole: UserRole;
+  id: string;
 };
 
 export type Project = {

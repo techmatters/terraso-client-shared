@@ -55,7 +55,7 @@ const collapseProjectFields = collapseFields<
               if (user === null || user === undefined) {
                 return x;
               }
-              return { ...x, [id]: { userId: user.id, userRole } };
+              return { ...x, [id]: { userId: user.id, userRole, id } };
             },
             {} as Record<string, ProjectMembership>,
           ) || {};
