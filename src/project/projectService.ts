@@ -24,10 +24,10 @@ import type {
   ProjectDeleteMutationInput,
   ProjectUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-import { Membership } from 'terraso-client-shared/memberships/membershipsSlice';
 import type {
   HydratedProject,
   Project,
+  ProjectMembership,
   SerializableSet,
 } from 'terraso-client-shared/project/projectSlice';
 import { collapseSiteFields } from 'terraso-client-shared/site/siteService';
@@ -47,20 +47,25 @@ const collapseProjectFields = collapseFields<
       const siteIds = inp.siteSet.edges
         .map(edge => edge.node.id)
         .reduce((x, y) => ({ ...x, [y]: true }), {} as SerializableSet);
-      const membershipIds = inp.group.memberships.edges
-        .map(edge => edge.node)
-        .reduce(
-          (x, { id, user }) => ({ ...x, [id]: { user: user.id } }),
-          {} as Record<string, { user: string }>,
-        );
+      const memberships =
+        inp.membershipList.memberships?.edges
+          .map(edge => edge.node)
+          .reduce(
+            (x, { id, user, userRole }) => {
+              if (user === null || user === undefined) {
+                return x;
+              }
+              return { ...x, [id]: { userId: user.id, userRole } };
+            },
+            {} as Record<string, ProjectMembership>,
+          ) || {};
 
-      const { siteSet: _x, group: _y, updatedAt, ...rest } = inp;
+      const { siteSet: _x, membershipList: _y, updatedAt, ...rest } = inp;
       const output: Project = {
         ...rest,
         updatedAt: new Date(updatedAt).toLocaleString(),
         siteIds,
-        membershipIds,
-        groupId: inp.group.id,
+        memberships,
       };
       return output;
     },
@@ -72,23 +77,42 @@ const collapseProjectFields = collapseFields<
           {} as Record<string, Site>,
         ),
     memberships: inp =>
-      inp.group.memberships.edges
-        .map(({ node: { id, userRole, membershipStatus } }) => ({
+      inp.membershipList.memberships?.edges
+        .map(({ node: { id, userRole, user } }) => ({
           membershipId: id,
+          userId: user?.id,
           userRole,
-          membershipStatus,
         }))
         .reduce(
-          (x, y) => ({ ...x, [y.membershipId]: y }),
-          {} as Record<string, Membership>,
-        ),
+          (x, y) => {
+            if (y.userId !== undefined) {
+              let userId = y.userId;
+              return { ...x, [y.membershipId]: { ...y, userId } };
+            }
+            return x;
+          },
+          {} as Record<string, ProjectMembership>,
+        ) || {},
     users: inp =>
-      inp.group.memberships.edges
-        .map(({ node: { user } }) => ({
-          ...user,
-          preferences: {},
-        }))
-        .reduce((x, y) => ({ ...x, [y.id]: y }), {} as Record<string, User>),
+      inp.membershipList.memberships?.edges
+        .map(({ node: { user } }) => {
+          if (user === undefined || user === null) {
+            return undefined;
+          }
+          return {
+            ...user,
+            preferences: {},
+          };
+        })
+        .reduce(
+          (x, y) => {
+            if (y !== undefined) {
+              return { ...x, [y.id]: y };
+            }
+            return x;
+          },
+          {} as Record<string, User>,
+        ) || {},
   },
   true,
 );

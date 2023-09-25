@@ -17,10 +17,8 @@
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { setUsers, User } from 'terraso-client-shared/account/accountSlice';
-import {
-  Membership,
-  setMembers,
-} from 'terraso-client-shared/memberships/membershipsSlice';
+import { UserRole } from 'terraso-client-shared/graphqlSchema/graphql';
+import { setMembers } from 'terraso-client-shared/memberships/membershipsSlice';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, Site } from 'terraso-client-shared/site/siteSlice';
 import {
@@ -39,21 +37,25 @@ const { plural: dehydrateProjects, sing: dehydrateProject } = dehydrated<
 
 export type SerializableSet = Record<string, boolean>;
 
+export type ProjectMembership = {
+  userId: string;
+  userRole: UserRole;
+};
+
 export type Project = {
   id: string;
   name: string;
   privacy: 'PRIVATE' | 'PUBLIC';
   description: string;
   updatedAt: string; // this should be Date.toLocaleDateString; redux can't serialize Dates
-  membershipIds: Record<string, { user: string }>; // TODO: Why doesn't the membership have user info? have to store user id here as well
+  memberships: Record<string, ProjectMembership>;
   siteIds: SerializableSet;
-  groupId: string;
   archived: boolean;
 };
 
 export type HydratedProject = {
   dehydrated: Project;
-  memberships: Record<string, Membership>;
+  memberships: Record<string, ProjectMembership>;
   users: Record<string, User>;
   sites: Record<string, Site>;
 };

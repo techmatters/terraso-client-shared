@@ -47,7 +47,6 @@ export const projectData = /* GraphQL */ `
     updatedAt
     archived
     membershipList {
-      id
       ...projectMembershipList
     }
     siteSet {
