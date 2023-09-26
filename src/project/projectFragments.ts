@@ -21,6 +21,7 @@ export const projectMembershipFields = /* GraphQL */ `
     userRole
     user {
       ...userFields
+      ...userPreferences
     }
   }
 `;

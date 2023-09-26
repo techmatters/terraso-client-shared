@@ -15,6 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
+import { parsePreferences } from 'terraso-client-shared/account/accountService';
 import type { User } from 'terraso-client-shared/account/accountSlice';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
@@ -23,83 +24,70 @@ import type {
   ProjectArchiveMutationInput,
   ProjectDataFragment,
   ProjectDeleteMutationInput,
+  ProjectMembershipFieldsFragment,
   ProjectUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-import type {
-  HydratedProject,
-  Project,
-  ProjectMembership,
-  SerializableSet,
-} from 'terraso-client-shared/project/projectSlice';
-import { collapseSiteFields } from 'terraso-client-shared/site/siteService';
-import { Site } from 'terraso-client-shared/site/siteSlice';
+import { collapseSites } from 'terraso-client-shared/site/siteService';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
-  collapseConnectionEdges,
-  collapseFields,
+  collapseEdges,
+  collapseMaps,
+  collapseToSet,
+  Connection,
 } from 'terraso-client-shared/terrasoApi/utils';
 
-const collapseProjectFields = collapseFields<
-  ProjectDataFragment,
-  HydratedProject
->(
-  {
-    dehydrated: inp => {
-      const siteIds = inp.siteSet.edges
-        .map(edge => edge.node.id)
-        .reduce((x, y) => ({ ...x, [y]: true }), {} as SerializableSet);
-      const memberships =
-        inp.membershipList.memberships?.edges
-          .map(edge => edge.node)
-          .reduce(
-            (x, { id, user, userRole }) => {
-              if (user === null || user === undefined) {
-                return x;
-              }
-              return { ...x, [id]: { userId: user.id, userRole, id } };
-            },
-            {} as Record<string, ProjectMembership>,
-          ) || {};
+const collapseProjectMembership = ({
+  user,
+  ...fields
+}: ProjectMembershipFieldsFragment) => ({
+  membership: { userId: user.id, ...fields },
+  user: parsePreferences(user),
+});
 
-      const { siteSet: _x, membershipList: _y, updatedAt, ...rest } = inp;
-      const output: Project = {
-        ...rest,
-        updatedAt: new Date(updatedAt).toLocaleString(),
-        siteIds,
-        memberships,
-      };
-      return output;
+const collapseProjectMemberships = (
+  connection: Connection<ProjectMembershipFieldsFragment>,
+) => {
+  const memberships = collapseEdges(connection).map(collapseProjectMembership);
+  return {
+    memberships: Object.fromEntries(
+      memberships.map(({ membership }) => [membership.userId, membership]),
+    ),
+    users: Object.fromEntries(memberships.map(({ user }) => [user.id, user])),
+  };
+};
+
+export const collapseProject = ({
+  membershipList,
+  siteSet,
+  ...project
+}: ProjectDataFragment) => {
+  const sites = collapseSites(siteSet);
+  const { memberships, users } = collapseProjectMemberships(
+    membershipList.memberships,
+  );
+  return {
+    project: {
+      ...project,
+      sites: collapseToSet(Object.keys(sites)),
+      memberships,
     },
-    sites: inp =>
-      inp.siteSet.edges
-        .map(edge => edge.node)
-        .reduce(
-          (x, y) => ({ ...x, [y.id]: collapseSiteFields(y) }),
-          {} as Record<string, Site>,
-        ),
-    users: inp =>
-      inp.membershipList.memberships?.edges
-        .map(({ node: { user } }) => {
-          if (user === undefined || user === null) {
-            return undefined;
-          }
-          return {
-            ...user,
-            preferences: {},
-          };
-        })
-        .reduce(
-          (x, y) => {
-            if (y !== undefined) {
-              return { ...x, [y.id]: y };
-            }
-            return x;
-          },
-          {} as Record<string, User>,
-        ) || {},
-  },
-  true,
-);
+    sites,
+    users,
+  };
+};
+
+export const collapseProjects = (
+  projectConnection: Connection<ProjectDataFragment>,
+) => {
+  const projects = collapseEdges(projectConnection).map(collapseProject);
+  return {
+    projects: Object.fromEntries(
+      projects.map(({ project }) => [project.id, project]),
+    ),
+    sites: collapseMaps(...projects.map(({ sites }) => sites)),
+    users: collapseMaps(...projects.map(({ users }) => users)),
+  };
+};
 
 export const fetchProject = (id: string) => {
   const query = graphql(`
@@ -112,7 +100,7 @@ export const fetchProject = (id: string) => {
 
   return terrasoApi
     .requestGraphQL(query, { id })
-    .then(resp => collapseProjectFields(resp.project));
+    .then(resp => collapseProject(resp.project));
 };
 
 export const fetchProjectsForUser = async (_: undefined, user: User | null) => {
@@ -134,9 +122,7 @@ export const fetchProjectsForUser = async (_: undefined, user: User | null) => {
 
   return terrasoApi
     .requestGraphQL(query, { id: user.id })
-    .then(resp =>
-      collapseConnectionEdges(resp.projects).map(collapseProjectFields),
-    );
+    .then(resp => collapseProjects(resp.projects));
 };
 
 export const addProject = (project: ProjectAddMutationInput) => {
@@ -153,7 +139,7 @@ export const addProject = (project: ProjectAddMutationInput) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: project })
-    .then(resp => collapseProjectFields(resp.addProject.project));
+    .then(resp => collapseProject(resp.addProject.project));
 };
 
 export const updateProject = (project: ProjectUpdateMutationInput) => {
@@ -170,7 +156,7 @@ export const updateProject = (project: ProjectUpdateMutationInput) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: project })
-    .then(resp => collapseProjectFields(resp.updateProject.project!));
+    .then(resp => collapseProject(resp.updateProject.project!));
 };
 
 export const deleteProject = (project: ProjectDeleteMutationInput) => {
