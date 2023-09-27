@@ -15,6 +15,29 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
+export const projectMembershipFields = /* GraphQL */ `
+  fragment projectMembershipFields on ProjectMembershipNode {
+    id
+    userRole
+    user {
+      ...userFields
+    }
+  }
+`;
+
+export const projectMembershipList = /* GraphQL */ `
+  fragment projectMembershipList on ProjectMembershipListNode {
+    memberships {
+      totalCount
+      edges {
+        node {
+          ...projectMembershipFields
+        }
+      }
+    }
+  }
+`;
+
 export const projectData = /* GraphQL */ `
   fragment projectData on ProjectNode {
     id
@@ -23,9 +46,8 @@ export const projectData = /* GraphQL */ `
     description
     updatedAt
     archived
-    group {
-      id
-      ...groupMembers
+    membershipList {
+      ...projectMembershipList
     }
     siteSet {
       edges {
