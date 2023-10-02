@@ -114,6 +114,10 @@ export const userSlice = createSlice({
     setUsers: (state, { payload: users }) => {
       Object.assign(state.users, users);
     },
+
+    addUser: (state, { payload: user }) => {
+      state.users[user.id] = user;
+    },
   },
 
   extraReducers: builder => {
@@ -265,7 +269,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUser, setHasToken } = userSlice.actions;
+export const { setUser, setHasToken, addUser } = userSlice.actions;
 
 export default userSlice.reducer;
 
