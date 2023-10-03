@@ -15,6 +15,31 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
+export type UpdateArg<ID extends string, T extends Record<ID, any>> = {
+  [K in ID]: T[K];
+} & {
+  update: Omit<T, ID>;
+};
+
+export const updateArgToInput = <ID extends string, T extends Record<ID, any>>(
+  idField: ID,
+  { [idField]: id, update }: UpdateArg<ID, T>,
+) => {
+  if (idField in update) {
+    throw Error(`
+      update arguments should not contain IDs! 
+      are you accidentally passing the entire model object into the 
+      update arg instead of just the fields you need to update?
+    `);
+  }
+  return {
+    input: {
+      ...({ [idField]: id } as unknown as { [K in ID]: T[K] }),
+      ...update,
+    },
+  };
+};
+
 export const collapseConnectionEdges = <T>(connection: {
   edges: { node: T }[];
 }): T[] => {

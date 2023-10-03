@@ -20,11 +20,16 @@ import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
   SiteAddMutationInput,
   SiteDataFragment,
+  SiteDeleteMutationInput,
   SiteUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Site } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
-import { collapseConnectionEdges } from 'terraso-client-shared/terrasoApi/utils';
+import {
+  collapseConnectionEdges,
+  UpdateArg,
+  updateArgToInput,
+} from 'terraso-client-shared/terrasoApi/utils';
 
 export const collapseSiteFields = (site: SiteDataFragment): Site => {
   const { project, owner, ...rest } = site;
@@ -117,7 +122,9 @@ export const addSite = (site: SiteAddMutationInput) => {
     .then(resp => collapseSiteFields(resp.addSite.site));
 };
 
-export const updateSite = (site: SiteUpdateMutationInput) => {
+export const updateSite = (
+  update: UpdateArg<'id', SiteUpdateMutationInput>,
+) => {
   const query = graphql(`
     mutation updateSite($input: SiteUpdateMutationInput!) {
       updateSite(input: $input) {
@@ -130,20 +137,23 @@ export const updateSite = (site: SiteUpdateMutationInput) => {
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { input: site })
+    .requestGraphQL(query, updateArgToInput('id', update))
     .then(resp => collapseSiteFields(resp.updateSite.site!));
 };
 
-export const deleteSite = (site: Site) => {
+export const deleteSite = (site: SiteDeleteMutationInput) => {
   const query = graphql(`
     mutation deleteSite($input: SiteDeleteMutationInput!) {
       deleteSite(input: $input) {
+        site {
+          id
+        }
         errors
       }
     }
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { input: { id: site.id } })
-    .then(_ => site.id);
+    .requestGraphQL(query, { input: site })
+    .then(({ deleteSite: { site } }) => site.id);
 };
