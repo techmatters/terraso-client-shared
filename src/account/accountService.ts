@@ -157,6 +157,8 @@ export const signOut = async () => {
   }
 };
 
+export type UserInProjectError = "NoUser" | "InProject";
+
 export const checkUserInProject = async (
   projectId: string,
   userEmail: string,
@@ -189,11 +191,11 @@ export const checkUserInProject = async (
     }),
   ]);
   if (userExists.users === undefined || userExists.users?.edges.length === 0) {
-    return { type: 'NoUser' };
+    return { type: 'NoUser' as UserInProjectError};
   }
   if (inProject.users?.totalCount !== 0) {
-    return { type: 'InProject' };
+    return { type: 'InProject' as UserInProjectError};
   }
 
-  return userExists.users.edges[0];
+  return userExists.users.edges[0].node;
 };
