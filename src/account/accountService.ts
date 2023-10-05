@@ -188,12 +188,12 @@ export const checkUserInProject = async (
       email: userEmail,
     }),
   ]);
-  if (userExists.users?.edges.length === 0) {
+  if (userExists.users === undefined || userExists.users?.edges.length === 0) {
     return { type: 'NoUser' };
   }
   if (inProject.users?.totalCount !== 0) {
     return { type: 'InProject' };
   }
 
-  return userExists.users?.edges[0];
+  return userExists.users.edges[0];
 };
