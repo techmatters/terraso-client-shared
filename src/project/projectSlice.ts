@@ -16,8 +16,15 @@
  */
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
-import { setUsers, User } from 'terraso-client-shared/account/accountSlice';
-import { UserRole } from 'terraso-client-shared/graphqlSchema/graphql';
+import {
+  addUser,
+  setUsers,
+  User,
+} from 'terraso-client-shared/account/accountSlice';
+import {
+  ProjectAddUserMutationInput,
+  UserRole,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, Site } from 'terraso-client-shared/site/siteSlice';
 import {
@@ -122,6 +129,24 @@ export const archiveProject = createAsyncThunk(
   projectService.archiveProject,
 );
 
+export const addUserToProject = createAsyncThunk<
+  ProjectMembership,
+  ProjectAddUserMutationInput
+>('project/addUser', async (input, _, { dispatch }) => {
+  const res = await projectService.addUserToProject(input);
+  // TODO: Should make user required in future!
+  // https://github.com/techmatters/terraso-backend/issues/859
+  if (res.membership.user === undefined || res.membership.user === null) {
+    throw Error(`Membership ${res.membership.id} created without user!`);
+  }
+  dispatch(addUser(res.membership.user));
+  return {
+    userId: res.membership.user.id,
+    userRole: res.membership.userRole,
+    id: res.membership.id,
+  };
+});
+
 const projectSlice = createSlice({
   name: 'project',
   initialState,
@@ -187,6 +212,17 @@ const projectSlice = createSlice({
       archiveProject.fulfilled,
       (state, { meta, payload: archived }) => {
         state.projects[meta.arg.id].archived = archived;
+      },
+    );
+
+    builder.addCase(
+      addUserToProject.fulfilled,
+      (state, { meta, payload: { id: membershipId, userRole, userId } }) => {
+        state.projects[meta.arg.projectId].memberships[membershipId] = {
+          id: membershipId,
+          userRole,
+          userId,
+        };
       },
     );
   },
