@@ -181,12 +181,16 @@ type DispatchMap<Result> = {
 export const dispatchByKeys = <T extends object, ThunkArg>(
   fetcher: CreateAsyncThunkParams<T, ThunkArg>,
   dispatchMap: DispatchMap<T>,
-): CreateAsyncThunkParams<void, ThunkArg> => {
+): CreateAsyncThunkParams<T, ThunkArg> => {
   return async (arg, currentUser, thunkAPI) => {
-    await Promise.all(
-      Object.entries(await fetcher(arg, currentUser, thunkAPI)).map(
-        ([key, result]) =>
-          thunkAPI.dispatch(dispatchMap[key as keyof T](result)),
+    return Object.fromEntries(
+      await Promise.all(
+        Object.entries(await fetcher(arg, currentUser, thunkAPI)).map(
+          async ([key, result]) => {
+            await thunkAPI.dispatch(dispatchMap[key as keyof T](result));
+            return [key, result];
+          },
+        ),
       ),
     );
   };

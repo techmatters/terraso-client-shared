@@ -18,6 +18,7 @@
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
   DepthDependentSoilDataUpdateMutationInput,
+  ProjectSoilSettingsDeleteDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateMutationInput,
   SoilDataDeleteDepthIntervalMutationInput,
@@ -184,7 +185,7 @@ export const updateProjectSoilSettings = async (
       $input: ProjectSoilSettingsUpdateMutationInput!
     ) {
       updateProjectSoilSettings(input: $input) {
-        soilSettings {
+        projectSoilSettings {
           ...projectSoilSettings
         }
         errors
@@ -193,7 +194,7 @@ export const updateProjectSoilSettings = async (
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input: soilSettings });
-  return resp.updateProjectSoilSettings.soilSettings!;
+  return resp.updateProjectSoilSettings.projectSoilSettings!;
 };
 
 export const updateProjectDepthInterval = async (
@@ -204,7 +205,7 @@ export const updateProjectDepthInterval = async (
       $input: ProjectSoilSettingsUpdateDepthIntervalMutationInput!
     ) {
       updateProjectSoilSettingsDepthInterval(input: $input) {
-        soilSettings {
+        projectSoilSettings {
           ...projectSoilSettings
         }
         errors
@@ -213,18 +214,18 @@ export const updateProjectDepthInterval = async (
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.updateProjectSoilSettingsDepthInterval.soilSettings!;
+  return resp.updateProjectSoilSettingsDepthInterval.projectSoilSettings!;
 };
 
 export const deleteProjectDepthInterval = async (
-  depthInterval: ProjectSoilSettingsUpdateDepthIntervalMutationInput,
+  depthInterval: ProjectSoilSettingsDeleteDepthIntervalMutationInput,
 ) => {
   const query = graphql(`
     mutation deleteProjectSoilSettingsDepthInterval(
       $input: ProjectSoilSettingsDeleteDepthIntervalMutationInput!
     ) {
       deleteProjectSoilSettingsDepthInterval(input: $input) {
-        soilSettings {
+        projectSoilSettings {
           ...projectSoilSettings
         }
         errors
@@ -233,5 +234,5 @@ export const deleteProjectDepthInterval = async (
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.deleteProjectSoilSettingsDepthInterval.soilSettings!;
+  return resp.deleteProjectSoilSettingsDepthInterval.projectSoilSettings!;
 };

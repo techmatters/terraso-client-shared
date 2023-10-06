@@ -16,6 +16,7 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash/fp';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
 import type {
   DepthDependentSoilDataNode,
@@ -33,7 +34,40 @@ import {
   dispatchByKeys,
 } from 'terraso-client-shared/store/utils';
 
+export const soilPitMethods = [
+  'soilTexture',
+  'soilColor',
+  'carbonates',
+  'ph',
+  'soilOrganicCarbonMatter',
+  'electricalConductivity',
+  'sodiumAdsorptionRatio',
+  'soilStructure',
+] as const;
+export const collectionMethods = [
+  'slope',
+  'verticalCracking',
+  ...soilPitMethods,
+  'landUseLandCover',
+  'soilLimitations',
+  'photos',
+  'notes',
+] as const;
+
+export type SoilPitMethod = (typeof soilPitMethods)[number];
+export type CollectionMethod = (typeof collectionMethods)[number];
+
+const methodEnabled = <T extends SoilPitMethod>(method: T): `${T}Enabled` =>
+  `${method}Enabled`;
+
+const methodRequired = <T extends SoilPitMethod>(method: T): `${T}Required` =>
+  `${method}Required`;
+
 export { DepthInterval };
+export type LabelledDepthInterval = {
+  label: string;
+  depthInterval: DepthInterval;
+};
 export type SoilDataDepthInterval = Omit<SoilDataDepthIntervalNode, 'site'>;
 export type DepthDependentSoilData = Omit<DepthDependentSoilDataNode, 'site'>;
 export type SoilData = Omit<

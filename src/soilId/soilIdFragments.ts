@@ -70,18 +70,14 @@ export const soilDataDepthInterval = /* GraphQL */ `
       start
       end
     }
-    slopeEnabled
     soilTextureEnabled
     soilColorEnabled
-    verticalCrackingEnabled
     carbonatesEnabled
     phEnabled
     soilOrganicCarbonMatterEnabled
     electricalConductivityEnabled
     sodiumAdsorptionRatioEnabled
     soilStructureEnabled
-    landUseLandCoverEnabled
-    soilLimitationsEnabled
   }
 `;
 
