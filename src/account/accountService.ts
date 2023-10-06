@@ -157,45 +157,37 @@ export const signOut = async () => {
   }
 };
 
-export type UserInProjectError = "NoUser" | "InProject";
+export type UserInProjectError = 'NoUser' | 'InProject';
 
 export const checkUserInProject = async (
   projectId: string,
   userEmail: string,
 ) => {
   const existQuery = graphql(`
-    query userExists($email: String!) {
-      users(email: $email) {
+    query userExistsInProject($email: String!, $project: String!) {
+      userExists: users(email: $email) {
         edges {
           node {
             ...userFields
           }
         }
       }
-    }
-  `);
-
-  const inProjectQuery = graphql(`
-    query userExistsInProject($project: String!, $email: String!) {
-      users(project: $project, email: $email) {
+      userInProject: users(project: $project, email: $email) {
         totalCount
       }
     }
   `);
 
-  let [userExists, inProject] = await Promise.all([
-    terrasoApi.requestGraphQL(existQuery, { email: userEmail }),
-    terrasoApi.requestGraphQL(inProjectQuery, {
-      project: projectId,
-      email: userEmail,
-    }),
-  ]);
-  if (userExists.users === undefined || userExists.users?.edges.length === 0) {
-    return { type: 'NoUser' as UserInProjectError};
+  let { userExists, userInProject } = await terrasoApi.requestGraphQL(
+    existQuery,
+    { email: userEmail, project: projectId },
+  );
+  if (userExists === undefined || userExists.edges.length === 0) {
+    return { type: 'NoUser' as UserInProjectError };
   }
-  if (inProject.users?.totalCount !== 0) {
-    return { type: 'InProject' as UserInProjectError};
+  if (userInProject === undefined || userInProject.totalCount !== 0) {
+    return { type: 'InProject' as UserInProjectError };
   }
 
-  return userExists.users.edges[0].node;
+  return userExists.edges[0].node;
 };
