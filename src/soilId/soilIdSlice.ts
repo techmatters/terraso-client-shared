@@ -57,11 +57,13 @@ export const collectionMethods = [
 export type SoilPitMethod = (typeof soilPitMethods)[number];
 export type CollectionMethod = (typeof collectionMethods)[number];
 
-const methodEnabled = <T extends SoilPitMethod>(method: T): `${T}Enabled` =>
-  `${method}Enabled`;
+export const methodEnabled = <T extends SoilPitMethod>(
+  method: T,
+): `${T}Enabled` => `${method}Enabled`;
 
-const methodRequired = <T extends SoilPitMethod>(method: T): `${T}Required` =>
-  `${method}Required`;
+export const methodRequired = <T extends SoilPitMethod>(
+  method: T,
+): `${T}Required` => `${method}Required`;
 
 export { DepthInterval };
 export type LabelledDepthInterval = {
