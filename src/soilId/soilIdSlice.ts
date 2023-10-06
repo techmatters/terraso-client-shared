@@ -61,7 +61,7 @@ export const methodEnabled = <T extends SoilPitMethod>(
   method: T,
 ): `${T}Enabled` => `${method}Enabled`;
 
-export const methodRequired = <T extends SoilPitMethod>(
+export const methodRequired = <T extends CollectionMethod>(
   method: T,
 ): `${T}Required` => `${method}Required`;
 
