@@ -24,7 +24,7 @@ import logger from 'terraso-client-shared/monitoring/logger';
 type Error = { message: any };
 type Errors = { errors?: Error[] | null };
 
-const parseMessage = (message: any, body: any) => {
+const parseMessage = (message: any, body: any, response: any) => {
   try {
     const messages = (function () {
       // If message can be parsed as JSON, return parsed messages
@@ -54,6 +54,7 @@ const parseMessage = (message: any, body: any) => {
           ..._.omit('extra', message.context),
           context: _.get('context.extra', message),
           body: _.omit('query', body),
+          response: _.omit('errors', response),
         },
       };
     });
@@ -85,7 +86,7 @@ const handleApiErrors = async <T extends Errors>(
     body instanceof FormData ? JSON.parse(JSON.stringify(body)) : body;
 
   const messages = _.flatMap(
-    error => parseMessage(error.message, parsedBody),
+    error => parseMessage(error.message, parsedBody, response),
     response.errors,
   );
   return Promise.reject(messages);
