@@ -4,7 +4,7 @@
 
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "node16",
+    "module": "node18",
     "target": "es2015",
 
     "allowJs": false,
@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node16",
+    "moduleResolution": "node18",
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
