@@ -39,6 +39,7 @@ export const collaborationMembershipsInfo = /* GraphQL */ `
   fragment collaborationMembershipsInfo on CollaborationMembershipListNode {
     membershipType
     membershipsCount
+    enrollMethod
     memberships(first: 5, membershipStatus: APPROVED) {
       totalCount
       edges {

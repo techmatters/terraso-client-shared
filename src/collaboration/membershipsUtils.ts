@@ -37,6 +37,8 @@ export const extractMembershipsInfo = (
   pendingCount: membershipList?.pending?.totalCount,
   accountMembership: extractAccountMembership(membershipList),
   membershipsSample: extractMemberships(membershipList),
+  enrollMethod: membershipList?.enrollMethod,
+  membershipType: membershipList?.membershipType,
 });
 
 export const extractMembership = (
