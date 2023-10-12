@@ -1,1 +1,1 @@
-ignores: [ "@graphql-codegen/client-preset", "@graphql-typed-document-node/core", "@ianvs/prettier-plugin-sort-imports", "jest-environment-jsdom", "react-dom", "terraso-client-shared", "terraso-backend" ]
+ignores: [ "@graphql-codegen/cli", "@graphql-codegen/client-preset", "@graphql-typed-document-node/core", "@ianvs/prettier-plugin-sort-imports", "jest-environment-jsdom", "react-dom", "terraso-client-shared", "terraso-backend" ]
