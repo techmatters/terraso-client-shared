@@ -156,3 +156,41 @@ export const signOut = async () => {
     await Promise.reject(response);
   }
 };
+
+export const checkUserInProject = async (
+  projectId: string,
+  userEmail: string,
+) => {
+  const existQuery = graphql(`
+    query userExists($email: String!) {
+      users(email: $email) {
+        edges {
+          node {
+            ...userFields
+          }
+        }
+      }
+    }
+  `);
+
+  const inProjectQuery = graphql(`
+    query userExistsInProject($user_InProject: String!) {
+      users(user_InProject: $user_InProject) {
+        totalCount
+      }
+    }
+  `);
+
+  let [userExists, inProject] = await Promise.all([
+    terrasoApi.requestGraphQL(existQuery, { email: userEmail }),
+    terrasoApi.requestGraphQL(inProjectQuery, { user_InProject: projectId }),
+  ]);
+  if (userExists.users?.edges.length === 0) {
+    return { type: 'NoUser' };
+  }
+  if (inProject.users?.totalCount !== 0) {
+    return { type: 'InProject' };
+  }
+
+  return userExists.users?.edges[0];
+};
