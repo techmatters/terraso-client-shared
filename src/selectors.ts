@@ -5,7 +5,7 @@ import { type SharedState } from 'terraso-client-shared/store/store';
 import { ProjectMembership } from './project/projectSlice';
 
 const selectProjectMemberships = (state: SharedState, projectId: string) =>
-  state.project.projects[projectId].memberships;
+  state.project.projects[projectId]?.memberships ?? [];
 
 const selectUsers = (state: SharedState) => state.account.users;
 

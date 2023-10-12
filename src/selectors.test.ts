@@ -28,7 +28,7 @@ const generateUser = () => {
 };
 
 const generateProject = (
-  memberships: ProjectMembership[],
+  memberships: ProjectMembership[] = [],
   privacy?: ProjectPrivacy,
 ): Project => {
   const id = uuidv4();
@@ -106,4 +106,13 @@ test('can select memberships of specific project', () => {
     projectB.id,
   );
   expect(memberships).toStrictEqual([[membershipB, user]]);
+});
+
+test('not found project returns empty membership', () => {
+  const store = createStore(initState([], []));
+  const memberships = selectProjectMembershipsWithUsers(
+    store.getState(),
+    'badid',
+  );
+  expect(memberships).toStrictEqual([]);
 });
