@@ -22,7 +22,7 @@ import logger from 'terraso-client-shared/monitoring/logger';
 import type { SharedDispatch } from 'terraso-client-shared/store/store';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
-const initialState = {
+export const initialState = {
   currentUser: {
     fetching: true,
     data: null as User | null,
