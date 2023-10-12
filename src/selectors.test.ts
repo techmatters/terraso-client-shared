@@ -3,7 +3,10 @@ import {
   initialState as accountInitialState,
   User,
 } from 'terraso-client-shared/account/accountSlice';
-import { ProjectPrivacy } from 'terraso-client-shared/graphqlSchema/graphql';
+import {
+  ProjectPrivacy,
+  UserRole,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   Project,
   ProjectMembership,
@@ -39,6 +42,10 @@ const generateProject = (
     archived: false,
     memberships: keyBy(memberships, 'id'),
   };
+};
+
+const generateMembership = (userId: string, userRole: UserRole) => {
+  return { id: uuidv4(), userId, userRole };
 };
 
 type Indexable<T, Index extends keyof T> = T[Index] extends string | number
@@ -84,4 +91,19 @@ test('can select memberships', () => {
     project.id,
   );
   expect(memberships).toStrictEqual([[membership, user]]);
+});
+
+test('can select memberships of specific project', () => {
+  const user = generateUser();
+  const membershipA = generateMembership(user.id, 'viewer');
+  const membershipB = generateMembership(user.id, 'manager');
+  const projectA = generateProject([membershipA]);
+  const projectB = generateProject([membershipB]);
+  const store = createStore(initState([projectA, projectB], [user]));
+
+  const memberships = selectProjectMembershipsWithUsers(
+    store.getState(),
+    projectB.id,
+  );
+  expect(memberships).toStrictEqual([[membershipB, user]]);
 });
