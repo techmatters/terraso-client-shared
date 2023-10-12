@@ -86,6 +86,7 @@ test('Terraso API: mutation errors', async () => {
                 ]),
               },
             ],
+            extraData: 'test',
           },
         },
       }),
@@ -114,6 +115,9 @@ test('Terraso API: mutation errors', async () => {
       params: {
         body: {
           variables: {},
+        },
+        response: {
+          extraData: 'test',
         },
         code: 'unique',
         context: '',
