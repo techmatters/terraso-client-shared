@@ -174,8 +174,8 @@ export const checkUserInProject = async (
   `);
 
   const inProjectQuery = graphql(`
-    query userExistsInProject($user_InProject: String!) {
-      users(user_InProject: $user_InProject) {
+    query userExistsInProject($project: String!) {
+      users(project: $project) {
         totalCount
       }
     }
@@ -183,7 +183,7 @@ export const checkUserInProject = async (
 
   let [userExists, inProject] = await Promise.all([
     terrasoApi.requestGraphQL(existQuery, { email: userEmail }),
-    terrasoApi.requestGraphQL(inProjectQuery, { user_InProject: projectId }),
+    terrasoApi.requestGraphQL(inProjectQuery, { project: projectId }),
   ]);
   if (userExists.users?.edges.length === 0) {
     return { type: 'NoUser' };
