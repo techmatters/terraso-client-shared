@@ -20,7 +20,6 @@ import {
   addUser,
   setUsers,
   updateUsers,
-  User,
 } from 'terraso-client-shared/account/accountSlice';
 import {
   ProjectAddUserMutationInput,

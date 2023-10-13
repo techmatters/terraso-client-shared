@@ -16,7 +16,6 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import _ from 'lodash/fp';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
 import type {
   DepthDependentSoilDataNode,
