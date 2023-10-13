@@ -165,14 +165,14 @@ export const checkUserInProject = async (
 ) => {
   const existQuery = graphql(`
     query userExistsInProject($email: String!, $project: String!) {
-      userExists: users(email: $email) {
+      userExists: users(email_Iexact: $email) {
         edges {
           node {
             ...userFields
           }
         }
       }
-      userInProject: users(project: $project, email: $email) {
+      userInProject: users(project: $project, email_Iexact: $email) {
         totalCount
       }
     }
