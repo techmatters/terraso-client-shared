@@ -15,35 +15,17 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-export const collapseConnectionEdges = <T>(connection: {
+export type Connection<T> = {
   edges: { node: T }[];
-}): T[] => {
+};
+
+export const collapseEdges = <T>(connection: Connection<T>): T[] => {
   return connection.edges.map(({ node }) => node);
 };
 
-type MandatoryFields<Input, Output> = Partial<Input | Output> & // fields in Input, but not Output: optional
-  Omit<Output, keyof Input>; // fields in Output, but not Input: mandatory
+export const collapseToSet = (values: string[]) =>
+  Object.fromEntries(values.map(value => [value, true]));
 
-export function collapseFields<Input, Output>(
-  changes: {
-    [Property in keyof MandatoryFields<Input, Output>]: (
-      inp: Input,
-    ) => Output[Property];
-  },
-  clean: boolean = false,
-): (input: Input) => Output {
-  return (input: Input) => {
-    const update = (Object.keys(changes) as (keyof typeof changes)[]).reduce(
-      (output, field) => {
-        let result = changes[field](input);
-        output[field as keyof Output] = result;
-        return output;
-      },
-      {} as Output,
-    );
-    if (clean) {
-      return update;
-    }
-    return { ...input, ...update };
-  };
-}
+export const collapseMaps = <T>(
+  ...maps: Record<string, T>[]
+): Record<string, T> => Object.assign({}, ...maps);
