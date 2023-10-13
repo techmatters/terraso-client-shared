@@ -50,7 +50,7 @@ const collapseProjectMemberships = (
   const memberships = collapseEdges(connection).map(collapseProjectMembership);
   return {
     memberships: Object.fromEntries(
-      memberships.map(({ membership }) => [membership.userId, membership]),
+      memberships.map(({ membership }) => [membership.id, membership]),
     ),
     users: Object.fromEntries(memberships.map(({ user }) => [user.id, user])),
   };
