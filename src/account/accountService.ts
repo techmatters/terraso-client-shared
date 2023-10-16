@@ -25,7 +25,7 @@ import type {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 
-const parsePreferences = (
+export const parsePreferences = (
   user: UserFieldsFragment & UserPreferencesFragment,
 ): User => ({
   ...user,

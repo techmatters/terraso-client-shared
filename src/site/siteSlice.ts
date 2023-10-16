@@ -15,7 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { createAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SiteAddMutationInput } from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   addSiteToProject,
@@ -41,8 +41,6 @@ export type Site = {
 const initialState = {
   sites: {} as Record<string, Site>,
 };
-
-export const setSites = createAction<Record<string, Site>>('site/setSites');
 
 export const fetchSite = createAsyncThunk(
   'site/fetchSite',
@@ -87,12 +85,15 @@ export const deleteSite = createAsyncThunk<string, Site>(
 const siteSlice = createSlice({
   name: 'site',
   initialState,
-  reducers: {},
+  reducers: {
+    setSites: (state, { payload }: PayloadAction<Record<string, Site>>) => {
+      state.sites = payload;
+    },
+    updateSites: (state, { payload }: PayloadAction<Record<string, Site>>) => {
+      Object.assign(state.sites, payload.sites);
+    },
+  },
   extraReducers: builder => {
-    builder.addCase(setSites, (state, { payload: sites }) => {
-      Object.assign(state.sites, sites);
-    });
-
     // TODO: add case to delete site if not found
     builder.addCase(fetchSite.fulfilled, (state, { payload: site }) => {
       state.sites[site.id] = site;
@@ -135,4 +136,5 @@ const siteSlice = createSlice({
   },
 });
 
+export const { setSites, updateSites } = siteSlice.actions;
 export default siteSlice.reducer;
