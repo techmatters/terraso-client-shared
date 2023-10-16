@@ -36,6 +36,8 @@ import type {
   SharedState,
 } from 'terraso-client-shared/store/store';
 
+export type SerializableSet = Record<string, boolean>;
+
 const executeAuthRequest = <T>(
   dispatch: SharedDispatch,
   action: () => Promise<T>,
@@ -89,13 +91,15 @@ export type ThunkAPI = BaseThunkAPI<
   RejectPayload
 >;
 
+type CreateAsyncThunkParams<Returned, ThunkArg> = (
+  arg: ThunkArg,
+  currentUser: User | null,
+  thunkAPI: ThunkAPI,
+) => Returned | Promise<Returned>;
+
 export const createAsyncThunk = <Returned, ThunkArg = void>(
   typePrefix: string,
-  action: (
-    arg: ThunkArg,
-    currentUser: User | null,
-    thunkAPI: ThunkAPI,
-  ) => Returned | Promise<Returned>,
+  action: CreateAsyncThunkParams<Returned, ThunkArg>,
   onSuccessMessage:
     | ((result: Returned, input: ThunkArg) => Message)
     | null = null,
@@ -166,12 +170,6 @@ export const useFetchData = (
   }, [dispatch, dataFetchCallback]);
 };
 
-export type Thunker<U, T> = Parameters<typeof createAsyncThunk<U, T>>[1];
-
-interface Dehydratable<T> {
-  dehydrated: T;
-}
-
 type DispatchMap<Result> = {
   [Property in keyof Result]: (
     arg: Result[Property],
@@ -180,70 +178,20 @@ type DispatchMap<Result> = {
     | ThunkAction<Result[Property], SharedState, undefined, AnyAction>;
 };
 
-type ThunkFunct<Dehydrated, Hydrated extends Dehydratable<Dehydrated>> = {
-  sing: <T>(fetcher: Thunker<Hydrated, T>) => Thunker<Dehydrated, T>;
-  plural: <T>(fetcher: Thunker<Hydrated[], T>) => Thunker<Dehydrated[], T>;
-};
-
-export function dehydrated<
-  Dehydrated,
-  Hydrated extends Dehydratable<Dehydrated>,
->(
-  dispatchMap: DispatchMap<Omit<Hydrated, 'dehydrated'>>,
-): ThunkFunct<Dehydrated, Hydrated> {
-  const sing = <T>(fetcher: Thunker<Hydrated, T>): Thunker<Dehydrated, T> => {
-    return async (arg, currentUser, thunkAPI) => {
-      const result = await fetcher(arg, currentUser, thunkAPI);
-      let { dehydrated: _, ...toDispatch } = {
-        ...result,
-      };
-      dispatchAll(toDispatch, dispatchMap, thunkAPI.dispatch);
-      return result.dehydrated;
-    };
-  };
-  const plural = <T>(
-    fetcher: Thunker<Hydrated[], T>,
-  ): Thunker<Dehydrated[], T> => {
-    return async (arg, currentUser, thunkAPI) => {
-      const result = await fetcher(arg, currentUser, thunkAPI);
-      if (result.length === 0) {
-        return [];
-      }
-
-      let toDispatch: any = {};
-      for (let key of Object.keys(result[0]) as (keyof Hydrated)[]) {
-        let res = result[0];
-        toDispatch[key] = { ...res[key] };
-      }
-      delete toDispatch['dehydrated'];
-      let returnItems = [result[0].dehydrated];
-      for (let res of result.slice(1)) {
-        for (let key of Object.keys(toDispatch)) {
-          Object.assign(toDispatch[key], {
-            ...res[key as keyof typeof res],
-          });
-        }
-        returnItems.push(res.dehydrated);
-      }
-
-      dispatchAll(toDispatch, dispatchMap, thunkAPI.dispatch);
-      return returnItems;
-    };
-  };
-  return { sing, plural };
-}
-
-function dispatchAll<T>(
-  toDispatch: T,
+export const dispatchByKeys = <T extends object, ThunkArg>(
+  fetcher: CreateAsyncThunkParams<T, ThunkArg>,
   dispatchMap: DispatchMap<T>,
-  dispatch: ThunkAPI['dispatch'],
-) {
-  let dispatches = [];
-  for (let key in toDispatch) {
-    let f = dispatchMap[key];
-    let args = toDispatch[key];
-    dispatches.push(dispatch(f(args)));
-  }
-  // in case we ever wanted to await this
-  return Promise.all(dispatches);
-}
+): CreateAsyncThunkParams<T, ThunkArg> => {
+  return async (arg, currentUser, thunkAPI) => {
+    return Object.fromEntries(
+      await Promise.all(
+        Object.entries(await fetcher(arg, currentUser, thunkAPI)).map(
+          async ([key, result]) => {
+            await thunkAPI.dispatch(dispatchMap[key as keyof T](result));
+            return [key, result];
+          },
+        ),
+      ),
+    );
+  };
+};

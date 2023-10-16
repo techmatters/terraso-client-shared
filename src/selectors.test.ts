@@ -38,7 +38,7 @@ const generateProject = (
     privacy: privacy ?? 'PRIVATE',
     description: '',
     updatedAt: '2023-10-12',
-    siteIds: {},
+    sites: {},
     archived: false,
     memberships: keyBy(memberships, 'id'),
   };

@@ -29,6 +29,7 @@ import membershipsReducer from 'terraso-client-shared/memberships/membershipsSli
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
 import projectReducer from 'terraso-client-shared/project/projectSlice';
 import siteReducer from 'terraso-client-shared/site/siteSlice';
+import soilIdReducer from 'terraso-client-shared/soilId/soilIdSlice';
 
 const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {
@@ -47,6 +48,7 @@ const sharedReducers = {
   notifications: notificationsReducer,
   site: siteReducer,
   project: projectReducer,
+  soilId: soilIdReducer,
 };
 
 // Using some advanced TypeScript features here: since we have

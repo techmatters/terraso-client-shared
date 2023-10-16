@@ -24,9 +24,12 @@ import type {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Site } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
-import { collapseConnectionEdges } from 'terraso-client-shared/terrasoApi/utils';
+import {
+  collapseEdges,
+  Connection,
+} from 'terraso-client-shared/terrasoApi/utils';
 
-export const collapseSiteFields = (site: SiteDataFragment): Site => {
+export const collapseSite = (site: SiteDataFragment): Site => {
   const { project, owner, ...rest } = site;
   return {
     ...rest,
@@ -34,6 +37,10 @@ export const collapseSiteFields = (site: SiteDataFragment): Site => {
     ownerId: owner?.id,
   };
 };
+export const collapseSites = (sites: Connection<SiteDataFragment>) =>
+  Object.fromEntries(
+    collapseEdges(sites).map(site => [site.id, collapseSite(site)]),
+  );
 
 export const fetchSite = (id: string) => {
   const query = graphql(`
@@ -46,7 +53,7 @@ export const fetchSite = (id: string) => {
 
   return terrasoApi
     .requestGraphQL(query, { id })
-    .then(resp => collapseSiteFields(resp.site));
+    .then(resp => collapseSite(resp.site));
 };
 
 export const fetchSitesForProject = (id: string) => {
@@ -64,7 +71,7 @@ export const fetchSitesForProject = (id: string) => {
 
   return terrasoApi
     .requestGraphQL(query, { id })
-    .then(resp => collapseConnectionEdges(resp.sites).map(collapseSiteFields));
+    .then(resp => collapseEdges(resp.sites).map(collapseSite));
 };
 
 export const fetchSitesForUser = async (_: undefined, user: User | null) => {
@@ -94,9 +101,9 @@ export const fetchSitesForUser = async (_: undefined, user: User | null) => {
   return terrasoApi
     .requestGraphQL(query, { id: user.id })
     .then(resp =>
-      collapseConnectionEdges(resp.userSites)
-        .concat(collapseConnectionEdges(resp.projectSites))
-        .map(collapseSiteFields),
+      collapseEdges(resp.userSites)
+        .concat(collapseEdges(resp.projectSites))
+        .map(collapseSite),
     );
 };
 
@@ -114,7 +121,7 @@ export const addSite = (site: SiteAddMutationInput) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: site })
-    .then(resp => collapseSiteFields(resp.addSite.site));
+    .then(resp => collapseSite(resp.addSite.site));
 };
 
 export const updateSite = (site: SiteUpdateMutationInput) => {
@@ -131,7 +138,7 @@ export const updateSite = (site: SiteUpdateMutationInput) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: site })
-    .then(resp => collapseSiteFields(resp.updateSite.site!));
+    .then(resp => collapseSite(resp.updateSite.site!));
 };
 
 export const deleteSite = (site: Site) => {
