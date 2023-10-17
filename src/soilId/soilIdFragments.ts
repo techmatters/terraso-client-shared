@@ -54,6 +54,15 @@ export const soilData = /* GraphQL */ `
     slopeSteepnessSelect
     slopeSteepnessPercent
     slopeSteepnessDegree
+    surfaceCracksSelect
+    surfaceSaltSelect
+    floodingSelect
+    limeRequirementsSelect
+    surfaceStoninessSelect
+    waterTableDepthSelect
+    soilDepthSelect
+    landCoverSelect
+    grazingSelect
     depthIntervals {
       ...soilDataDepthInterval
     }
