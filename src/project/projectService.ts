@@ -26,6 +26,7 @@ import type {
   ProjectDeleteMutationInput,
   ProjectMembershipFieldsFragment,
   ProjectUpdateMutationInput,
+  ProjectUpdateUserRoleMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import { collapseSites } from 'terraso-client-shared/site/siteService';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
@@ -206,4 +207,33 @@ export const addUserToProject = (input: ProjectAddUserMutationInput) => {
   return terrasoApi
     .requestGraphQL(command, { input })
     .then(output => output.addUserToProject);
+};
+
+export const updateUserRole = (input: ProjectUpdateUserRoleMutationInput) => {
+  const command = graphql(`
+    mutation updateRole($input: ProjectUpdateUserRoleMutationInput!) {
+      updateUserRoleInProject(input: $input) {
+        project {
+          id
+        }
+        membership {
+          id
+          userRole
+        }
+      }
+    }
+  `);
+
+  return terrasoApi.requestGraphQL(command, { input }).then(
+    ({
+      updateUserRoleInProject: {
+        project: { id: projectId },
+        membership: { id: membershipId, userRole },
+      },
+    }) => ({
+      projectId,
+      membershipId,
+      userRole,
+    }),
+  );
 };
