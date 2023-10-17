@@ -126,6 +126,13 @@ const projectSlice = createSlice({
         };
       },
     );
+
+    builder.addCase(
+      updateUserRole.fulfilled,
+      (state, { payload: { projectId, membershipId, userRole } }) => {
+        state.projects[projectId].memberships[membershipId].userRole = userRole;
+      },
+    );
   },
 });
 
@@ -208,5 +215,10 @@ export const addUserToProject = createAsyncThunk<
     id: res.membership.id,
   };
 });
+
+export const updateUserRole = createAsyncThunk(
+  'project/updateUserRole',
+  projectService.updateUserRole,
+);
 
 export default projectSlice.reducer;
