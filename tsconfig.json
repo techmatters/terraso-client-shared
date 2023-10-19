@@ -27,6 +27,7 @@
     }
   },
 
-  "include": ["src", "src/custom.d.ts"],
+  "files": ["globals.d.ts"],
+  "include": ["src"],
   "exclude": ["dist"]
 }
