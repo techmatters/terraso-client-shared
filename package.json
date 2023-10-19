@@ -38,6 +38,7 @@
     "@babel/cli": "^7.23.0",
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.2",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
@@ -110,7 +111,8 @@
   "babel": {
     "presets": [
       "@babel/preset-env",
-      "@babel/preset-typescript"
+      "@babel/preset-typescript",
+      "@babel/preset-react"
     ],
     "plugins": [
       [
