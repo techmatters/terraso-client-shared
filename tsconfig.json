@@ -27,7 +27,6 @@
     }
   },
 
-  "files": ["globals.d.ts"],
   "include": ["src"],
   "exclude": ["dist"]
 }
