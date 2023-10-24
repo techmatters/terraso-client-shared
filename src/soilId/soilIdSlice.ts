@@ -153,12 +153,12 @@ const soilIdSlice = createSlice({
       state.projectSettings[action.meta.arg.projectId] = action.payload;
     });
 
-    builder.addCase(fetchSoilDataForUser.fulfilled, state => {
-      state.loading = false;
-    });
-
     builder.addCase(fetchSoilDataForUser.pending, state => {
       state.loading = true;
+    });
+
+    builder.addCase(fetchSoilDataForUser.rejected, state => {
+      state.loading = false;
     });
   },
 });
