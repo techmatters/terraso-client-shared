@@ -20,6 +20,7 @@ import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
   SiteAddMutationInput,
   SiteDataFragment,
+  SiteTransferMutationInput,
   SiteUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Site } from 'terraso-client-shared/site/siteSlice';
@@ -153,4 +154,28 @@ export const deleteSite = (site: Site) => {
   return terrasoApi
     .requestGraphQL(query, { input: { id: site.id } })
     .then(_ => site.id);
+};
+
+export const transferSites = (input: SiteTransferMutationInput) => {
+  const mutation = graphql(`
+    mutation transferSites($input: SiteTransferMutationInput!) {
+      transferSites(input: $input) {
+        project {
+          id
+        }
+        updated {
+          site {
+            id
+          }
+          oldProject {
+            id
+          }
+        }
+      }
+    }
+  `);
+
+  return terrasoApi
+    .requestGraphQL(mutation, { input })
+    .then(results => results.transferSites);
 };
