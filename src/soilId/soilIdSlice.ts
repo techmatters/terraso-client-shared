@@ -89,6 +89,7 @@ export type ProjectSoilSettings = Omit<
 const initialState = {
   soilData: {} as Record<string, SoilData>,
   projectSettings: {} as Record<string, ProjectSoilSettings>,
+  loading: false,
 };
 
 export const sameDepth =
@@ -150,6 +151,14 @@ const soilIdSlice = createSlice({
 
     builder.addCase(deleteProjectDepthInterval.fulfilled, (state, action) => {
       state.projectSettings[action.meta.arg.projectId] = action.payload;
+    });
+
+    builder.addCase(fetchSoilDataForUser.pending, state => {
+      state.loading = true;
+    });
+
+    builder.addCase(fetchSoilDataForUser.rejected, state => {
+      state.loading = false;
     });
   },
 });
