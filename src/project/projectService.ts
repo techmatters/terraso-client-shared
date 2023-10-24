@@ -24,6 +24,7 @@ import type {
   ProjectArchiveMutationInput,
   ProjectDataFragment,
   ProjectDeleteMutationInput,
+  ProjectDeleteUserMutationInput,
   ProjectMembershipFieldsFragment,
   ProjectUpdateMutationInput,
   ProjectUpdateUserRoleMutationInput,
@@ -234,6 +235,35 @@ export const updateUserRole = (input: ProjectUpdateUserRoleMutationInput) => {
       projectId,
       membershipId,
       userRole,
+    }),
+  );
+};
+
+export const deleteUserFromProject = (
+  input: ProjectDeleteUserMutationInput,
+) => {
+  const command = graphql(`
+    mutation removeUser($input: ProjectDeleteUserMutationInput!) {
+      deleteUserFromProject(input: $input) {
+        membership {
+          id
+        }
+        project {
+          id
+        }
+      }
+    }
+  `);
+
+  return terrasoApi.requestGraphQL(command, { input }).then(
+    ({
+      deleteUserFromProject: {
+        project: { id: projectId },
+        membership: { id: membershipId },
+      },
+    }) => ({
+      projectId,
+      membershipId,
     }),
   );
 };
