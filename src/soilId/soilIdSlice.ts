@@ -160,6 +160,10 @@ const soilIdSlice = createSlice({
     builder.addCase(fetchSoilDataForUser.rejected, state => {
       state.loading = false;
     });
+
+    builder.addCase(fetchSoilDataForUser.fulfilled, state => {
+      state.loading = false;
+    });
   },
 });
 
