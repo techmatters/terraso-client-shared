@@ -133,6 +133,13 @@ const projectSlice = createSlice({
         state.projects[projectId].memberships[membershipId].userRole = userRole;
       },
     );
+
+    builder.addCase(
+      deleteUserFromProject.fulfilled,
+      (state, { payload: { projectId, membershipId } }) => {
+        delete state.projects[projectId].memberships[membershipId];
+      },
+    );
   },
 });
 
@@ -219,6 +226,11 @@ export const addUserToProject = createAsyncThunk<
 export const updateUserRole = createAsyncThunk(
   'project/updateUserRole',
   projectService.updateUserRole,
+);
+
+export const deleteUserFromProject = createAsyncThunk(
+  'project/deleteUserFromProject',
+  projectService.deleteUserFromProject,
 );
 
 export default projectSlice.reducer;
