@@ -30,13 +30,18 @@ import {
 } from 'terraso-client-shared/terrasoApi/utils';
 
 export const collapseSite = (site: SiteDataFragment): Site => {
-  const { project, owner, ...rest } = site;
+  const { project, owner, notes, ...rest } = site;
   return {
     ...rest,
     projectId: project?.id,
     ownerId: owner?.id,
+    notes: notes.edges.map(({ node }) => ({
+      ...node,
+      authorId: node.author?.id,
+    })),
   };
 };
+
 export const collapseSites = (sites: Connection<SiteDataFragment>) =>
   Object.fromEntries(
     collapseEdges(sites).map(site => [site.id, collapseSite(site)]),
