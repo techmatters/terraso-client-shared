@@ -45,6 +45,7 @@ export const projectData = /* GraphQL */ `
     name
     privacy
     description
+    site_instructions
     updatedAt
     archived
     membershipList {
