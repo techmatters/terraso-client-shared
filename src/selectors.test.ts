@@ -154,22 +154,26 @@ test('can access all projects with role', () => {
   const project2 = generateProject([
     generateMembership(user.id, 'contributor'),
   ]);
+  const project3 = generateProject([generateMembership(user.id, 'manager')]);
   const site1 = generateSite(project1);
   const site2 = generateSite(project2);
 
   const store = createStore(
-    initState([project1, project2], [user], [site1, site2]),
+    initState([project1, project2, project3], [user], [site1, site2]),
   );
   const pairs = selectProjectsWithTransferrableSites(
     store.getState(),
     'manager',
   );
-  expect(pairs).toStrictEqual([
-    {
-      projectId: project1.id,
-      projectName: project1.name,
-      siteId: site1.id,
-      siteName: site1.name,
-    },
-  ]);
+  expect(pairs).toStrictEqual({
+    [project1.id]: [
+      {
+        projectId: project1.id,
+        projectName: project1.name,
+        siteId: site1.id,
+        siteName: site1.name,
+      },
+    ],
+    [project3.id]: [],
+  });
 });

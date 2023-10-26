@@ -38,7 +38,7 @@ const selectProjectsWithUserRole = createSelector(
 export const selectProjectsWithTransferrableSites = createSelector(
   [selectProjectsWithUserRole, selectSites],
   (projects, sites) => {
-    return projects.flatMap(project =>
+    const projectSites = projects.flatMap(project =>
       Object.keys(project.sites)
         .filter(siteId => siteId in project.sites)
         .map(siteId => {
@@ -52,5 +52,18 @@ export const selectProjectsWithTransferrableSites = createSelector(
           };
         }),
     );
+    const m = new Map();
+    for (const p of projects) {
+      m.set(p.id, []);
+    }
+    for (const s of projectSites) {
+      const key = s.projectId;
+      const list = m.get(key);
+      list.push(s);
+    }
+    return Object.fromEntries(m) as Record<
+      string,
+      (typeof projectSites)[number][]
+    >;
   },
 );
