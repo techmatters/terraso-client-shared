@@ -57,7 +57,7 @@ export const selectProjectsWithTransferrableSites = createSelector(
         ...x,
         [id]: { projectId: id, projectName: name },
       }),
-      {},
+      {} as Record<string, { projectId: string; projectName: string }>,
     );
     return { projects: projectRecord, sites: projectSites };
   },
