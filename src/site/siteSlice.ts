@@ -41,6 +41,15 @@ export type Site = {
   privacy: SitePrivacy;
   archived: boolean;
   updatedAt: string;
+  notes?: SiteNote[];
+};
+
+export type SiteNote = {
+  id: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId?: string;
 };
 
 const initialState = {

@@ -30,5 +30,20 @@ export const siteData = /* GraphQL */ `
     project {
       id
     }
+    notes {
+      edges {
+        node {
+          id
+          content
+          createdAt
+          updatedAt
+          author {
+            id
+            username
+          }
+        }
+      }
+    }
   }
 `;
+
