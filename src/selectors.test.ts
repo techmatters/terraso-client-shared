@@ -166,7 +166,11 @@ test('can access all projects with role', () => {
     'manager',
   );
   expect(pairs).toStrictEqual({
-    [project1.id]: [
+    projects: {
+      [project1.id]: { projectName: project1.name, projectId: project1.id },
+      [project3.id]: { projectName: project3.name, projectId: project3.id },
+    },
+    sites: [
       {
         projectId: project1.id,
         projectName: project1.name,
@@ -174,6 +178,5 @@ test('can access all projects with role', () => {
         siteName: site1.name,
       },
     ],
-    [project3.id]: [],
   });
 });

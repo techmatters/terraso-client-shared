@@ -52,18 +52,13 @@ export const selectProjectsWithTransferrableSites = createSelector(
           };
         }),
     );
-    const m = new Map();
-    for (const p of projects) {
-      m.set(p.id, []);
-    }
-    for (const s of projectSites) {
-      const key = s.projectId;
-      const list = m.get(key);
-      list.push(s);
-    }
-    return Object.fromEntries(m) as Record<
-      string,
-      (typeof projectSites)[number][]
-    >;
+    let projectRecord = projects.reduce(
+      (x, { id, name }) => ({
+        ...x,
+        [id]: { projectId: id, projectName: name },
+      }),
+      {},
+    );
+    return { projects: projectRecord, sites: projectSites };
   },
 );
