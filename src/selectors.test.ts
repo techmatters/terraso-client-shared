@@ -55,10 +55,10 @@ const generateProject = (
   };
 };
 
-const generateSite = (project: Project): Site => {
+const generateSite = (project?: Project): Site => {
   const id = uuidv4();
   const site: Site = {
-    projectId: project.id,
+    projectId: project?.id,
     ownerId: undefined,
     id,
     name: 'Test Site',
@@ -68,7 +68,9 @@ const generateSite = (project: Project): Site => {
     archived: false,
     updatedAt: '2023-10-24',
   };
-  project.sites[site.id] = true;
+  if (project !== undefined) {
+    project.sites[site.id] = true;
+  }
   return site;
 };
 
@@ -157,9 +159,10 @@ test('can access all projects with role', () => {
   const project3 = generateProject([generateMembership(user.id, 'manager')]);
   const site1 = generateSite(project1);
   const site2 = generateSite(project2);
+  const site3 = generateSite();
 
   const store = createStore(
-    initState([project1, project2, project3], [user], [site1, site2]),
+    initState([project1, project2, project3], [user], [site1, site2, site3]),
   );
   const pairs = selectProjectsWithTransferrableSites(
     store.getState(),
@@ -178,5 +181,6 @@ test('can access all projects with role', () => {
         siteName: site1.name,
       },
     ],
+    unaffiliatedSites: [{ siteId: site3.id, siteName: site3.name }],
   });
 });

@@ -52,13 +52,17 @@ export const selectProjectsWithTransferrableSites = createSelector(
           };
         }),
     );
-    let projectRecord = projects.reduce(
+
+    const unaffiliatedSites = Object.values(sites)
+      .filter(({ projectId }) => projectId === undefined)
+      .map(({ id, name }) => ({ siteId: id, siteName: name }));
+    const projectRecord = projects.reduce(
       (x, { id, name }) => ({
         ...x,
         [id]: { projectId: id, projectName: name },
       }),
       {} as Record<string, { projectId: string; projectName: string }>,
     );
-    return { projects: projectRecord, sites: projectSites };
+    return { projects: projectRecord, sites: projectSites, unaffiliatedSites };
   },
 );
