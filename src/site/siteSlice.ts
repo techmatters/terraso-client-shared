@@ -18,11 +18,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   SiteAddMutationInput,
+  SiteTransferMutationInput,
   SiteUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   addSiteToProject,
   removeSiteFromAllProjects,
+  removeSiteFromProject,
 } from 'terraso-client-shared/project/projectSlice';
 import * as siteService from 'terraso-client-shared/site/siteService';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
@@ -94,6 +96,20 @@ export const deleteSite = createAsyncThunk<string, Site>(
   },
 );
 
+export const transferSites = createAsyncThunk<
+  Awaited<ReturnType<typeof siteService.transferSitesToProject>>,
+  SiteTransferMutationInput
+>('site/transferSites', async (input, _currentUser, { dispatch }) => {
+  const result = await siteService.transferSitesToProject(input);
+  for (const { siteId, oldProjectId } of result.updated) {
+    if (oldProjectId !== undefined) {
+      dispatch(removeSiteFromProject({ siteId, projectId: oldProjectId }));
+    }
+    dispatch(addSiteToProject({ siteId, projectId: result.projectId }));
+  }
+  return result;
+});
+
 const siteSlice = createSlice({
   name: 'site',
   initialState,
@@ -145,6 +161,15 @@ const siteSlice = createSlice({
     builder.addCase(deleteSite.fulfilled, (state, { meta }) => {
       delete state.sites[meta.arg.id];
     });
+
+    builder.addCase(
+      transferSites.fulfilled,
+      (state, { payload: { projectId, updated } }) => {
+        for (const { siteId } of updated) {
+          state.sites[siteId].projectId = projectId;
+        }
+      },
+    );
   },
 });
 
