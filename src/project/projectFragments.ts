@@ -45,7 +45,7 @@ export const projectData = /* GraphQL */ `
     name
     privacy
     description
-    site_instructions
+    siteInstructions
     updatedAt
     archived
     measurementUnits

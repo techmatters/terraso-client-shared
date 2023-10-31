@@ -119,6 +119,27 @@ export const transferSites = createAsyncThunk<
   return result;
 });
 
+export const addSiteNote = createAsyncThunk<SiteNote, SiteNoteAddMutationInput>(
+  'site/addSiteNote',
+  async (siteNote, _,) => {
+    let res = await siteService.addSiteNote(siteNote);
+    return res;
+  },
+);
+
+export const deleteSiteNote = createAsyncThunk<string, SiteNote>(
+  'site/deleteSiteNote',
+  async (siteNote, _,) => {
+    let res = await siteService.deleteSiteNote(siteNote);
+    return res;
+  },
+);
+
+export const updateSiteNote = createAsyncThunk(
+  'site/updateSiteNote',
+  siteService.updateSiteNote,
+);
+
 const siteSlice = createSlice({
   name: 'site',
   initialState,
@@ -128,6 +149,31 @@ const siteSlice = createSlice({
     },
     updateSites: (state, { payload }: PayloadAction<Record<string, Site>>) => {
       Object.assign(state.sites, payload.sites);
+    },
+    addSiteNote: (state, action: PayloadAction<{ siteId: string, note: SiteNote }>) => {
+      const { siteId, note } = action.payload;
+      const site = state.sites[siteId];
+      if (site) {
+        site.notes = site.notes || [];
+        site.notes.push(note);
+      }
+    },
+    deleteSiteNote: (state, action: PayloadAction<{ siteId: string, noteId: string }>) => {
+      const { siteId, noteId } = action.payload;
+      const site = state.sites[siteId];
+      if (site && site.notes) {
+        site.notes = site.notes.filter(note => note.id !== noteId);
+      }
+    },
+    updateSiteNote: (state, action: PayloadAction<{ siteId: string, noteId: string, changes: SiteNote }>) => {
+      const { siteId, noteId, changes } = action.payload;
+      const site = state.sites[siteId];
+      if (site && site.notes) {
+        const noteIndex = site.notes.findIndex(note => note.id === noteId);
+        if (noteIndex !== -1) {
+          site.notes[noteIndex] = { ...site.notes[noteIndex], ...changes };
+        }
+      }
     },
   },
   extraReducers: builder => {

@@ -45,7 +45,7 @@ export type Project = {
   name: string;
   privacy: 'PRIVATE' | 'PUBLIC';
   description: string;
-  site_instructions: string;
+  siteInstructions: string;
   updatedAt: string; // this should be Date.toLocaleDateString; redux can't serialize Dates
   memberships: Record<string, ProjectMembership>;
   sites: SerializableSet;
