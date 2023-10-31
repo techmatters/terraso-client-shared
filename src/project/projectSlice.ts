@@ -22,6 +22,7 @@ import {
   updateUsers,
 } from 'terraso-client-shared/account/accountSlice';
 import {
+  MeasurementUnits,
   ProjectAddUserMutationInput,
   UserRole,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -48,6 +49,7 @@ export type Project = {
   memberships: Record<string, ProjectMembership>;
   sites: SerializableSet;
   archived: boolean;
+  measurementUnits: MeasurementUnits;
 };
 
 interface MembershipKey {

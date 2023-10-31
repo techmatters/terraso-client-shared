@@ -52,6 +52,7 @@ const generateProject = (
     sites: siteSet,
     archived: false,
     memberships: keyBy(memberships, 'id'),
+    measurementUnits: 'METRIC',
   };
 };
 
