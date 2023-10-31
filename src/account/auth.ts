@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
-import jwt from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { UNAUTHENTICATED } from 'terraso-client-shared/account/authConstants';
 import { getAPIConfig } from 'terraso-client-shared/config';
 
@@ -68,5 +68,5 @@ export const refreshToken = async () => {
 
 export const getUserEmail = async () => {
   const token = await getToken();
-  return token === undefined ? undefined : jwt<AccessToken>(token).email;
+  return token === undefined ? undefined : jwtDecode<AccessToken>(token).email;
 };
