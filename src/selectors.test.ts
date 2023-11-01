@@ -203,9 +203,9 @@ test('select user sites with project role', () => {
 
   const roles = selectSitesAndUserRoles(store.getState(), user.id);
   expect(roles).toStrictEqual({
-    [site1.id]: [site1, 'manager'],
-    [site2.id]: [site2, 'contributor'],
-    [site3.id]: [site3, undefined],
-    [site4.id]: [site4, 'contributor'],
+    [site1.id]: 'manager',
+    [site2.id]: 'contributor',
+    [site3.id]: undefined,
+    [site4.id]: 'contributor',
   });
 });

@@ -57,7 +57,7 @@ export const selectSitesAndUserRoles = createSelector(
         if (site.projectId !== undefined) {
           role = userRoleMap[site.projectId];
         }
-        return [site.id, [site, role]];
+        return [site.id, role];
       }),
     );
   },
