@@ -24,6 +24,7 @@ import type {
   SiteUpdateMutationInput,
   SiteNoteAddMutationInput,
   SiteNoteUpdateMutationInput,
+  SiteNoteDataFragment,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Site, SiteNote } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
@@ -38,10 +39,7 @@ export const collapseSite = (site: SiteDataFragment): Site => {
     ...rest,
     projectId: project?.id,
     ownerId: owner?.id,
-    notes: notes.edges.map(({ node }) => ({
-      ...node,
-      authorId: node.author?.id,
-    })),
+    notes: collapseSiteNotes(notes),
   };
 };
 
@@ -49,6 +47,22 @@ export const collapseSites = (sites: Connection<SiteDataFragment>) =>
   Object.fromEntries(
     collapseEdges(sites).map(site => [site.id, collapseSite(site)]),
   );
+
+export const collapseSiteNotes = (siteNotes: Connection<SiteNoteDataFragment>) =>
+Object.fromEntries(
+  collapseEdges(siteNotes).map(siteNote => [siteNote.id, collapseSiteNote(siteNote)]),
+);
+
+export const collapseSiteNote = (siteNote: SiteNoteDataFragment): SiteNote => {
+  const { author, site, ...rest } = siteNote;
+  return {
+    ...rest,
+    authorId: author.id,
+    authorFirstName: author.firstName,
+    authorLastName: author.lastName,
+    siteId: site.id,
+  };
+};
 
 export const fetchSite = (id: string) => {
   const query = graphql(`
@@ -229,7 +243,7 @@ export const deleteSiteNote = (siteNote: SiteNote) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: { id: siteNote.id } })
-    .then(_ => siteNote.id);
+    .then(_ => siteNote);
 };
 
 export const updateSiteNote = (siteNote: SiteNoteUpdateMutationInput) => {

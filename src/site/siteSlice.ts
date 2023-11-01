@@ -41,15 +41,18 @@ export type Site = {
   privacy: SitePrivacy;
   archived: boolean;
   updatedAt: string;
-  notes?: SiteNote[];
+  notes: Record<string, SiteNote>;
 };
 
 export type SiteNote = {
   id: string;
+  siteId: string;
   content: string;
   createdAt: string;
   updatedAt: string;
-  authorId?: string;
+  authorId: string;
+  authorFirstName: string;
+  authorLastName: string;
 };
 
 const initialState = {
@@ -122,22 +125,30 @@ export const transferSites = createAsyncThunk<
 export const addSiteNote = createAsyncThunk<SiteNote, SiteNoteAddMutationInput>(
   'site/addSiteNote',
   async (siteNote, _,) => {
-    let res = await siteService.addSiteNote(siteNote);
-    return res;
+    let result = await siteService.addSiteNote(siteNote);
+    return siteService.collapseSiteNote(result);
   },
 );
 
-export const deleteSiteNote = createAsyncThunk<string, SiteNote>(
+export const deleteSiteNote = createAsyncThunk<SiteNote, SiteNote>(
   'site/deleteSiteNote',
-  async (siteNote, _,) => {
-    let res = await siteService.deleteSiteNote(siteNote);
-    return res;
+  async (siteNote) => {
+    let result = await siteService.deleteSiteNote(siteNote);
+    return result;
   },
 );
 
-export const updateSiteNote = createAsyncThunk(
+export const updateSiteNoteOld = createAsyncThunk(
   'site/updateSiteNote',
   siteService.updateSiteNote,
+);
+
+export const updateSiteNote = createAsyncThunk<SiteNote, SiteNoteUpdateMutationInput>(
+  'site/updateSiteNote',
+  async (siteNote, _,) => {
+    let result = await siteService.updateSiteNote(siteNote);
+    return siteService.collapseSiteNote(result);
+  },
 );
 
 const siteSlice = createSlice({
@@ -149,31 +160,6 @@ const siteSlice = createSlice({
     },
     updateSites: (state, { payload }: PayloadAction<Record<string, Site>>) => {
       Object.assign(state.sites, payload.sites);
-    },
-    addSiteNote: (state, action: PayloadAction<{ siteId: string, note: SiteNote }>) => {
-      const { siteId, note } = action.payload;
-      const site = state.sites[siteId];
-      if (site) {
-        site.notes = site.notes || [];
-        site.notes.push(note);
-      }
-    },
-    deleteSiteNote: (state, action: PayloadAction<{ siteId: string, noteId: string }>) => {
-      const { siteId, noteId } = action.payload;
-      const site = state.sites[siteId];
-      if (site && site.notes) {
-        site.notes = site.notes.filter(note => note.id !== noteId);
-      }
-    },
-    updateSiteNote: (state, action: PayloadAction<{ siteId: string, noteId: string, changes: SiteNote }>) => {
-      const { siteId, noteId, changes } = action.payload;
-      const site = state.sites[siteId];
-      if (site && site.notes) {
-        const noteIndex = site.notes.findIndex(note => note.id === noteId);
-        if (noteIndex !== -1) {
-          site.notes[noteIndex] = { ...site.notes[noteIndex], ...changes };
-        }
-      }
     },
   },
   extraReducers: builder => {
@@ -225,6 +211,18 @@ const siteSlice = createSlice({
         }
       },
     );
+
+    builder.addCase(addSiteNote.fulfilled, (state, { payload: siteNote }) => {
+      state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
+    });
+
+    builder.addCase(deleteSiteNote.fulfilled, (state, { payload: siteNote }) => {
+      delete state.sites[siteNote.siteId].notes[siteNote.id];
+    });
+
+    builder.addCase(updateSiteNote.fulfilled, (state, { payload: siteNote }) => {
+      state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
+    });
   },
 });
 
