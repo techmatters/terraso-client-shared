@@ -33,15 +33,7 @@ export const siteData = /* GraphQL */ `
     notes {
       edges {
         node {
-          id
-          content
-          createdAt
-          updatedAt
-          author {
-            id
-            firstName
-            lastName
-          }
+          ...siteNoteData
         }
       }
     }
@@ -60,8 +52,7 @@ export const siteNoteData = /* GraphQL */ `
         lastName
     }
     site {
-        id
-        name
+      id
     }
   }
 `;
