@@ -35,9 +35,12 @@ const selectProjectsWithUserRole = createSelector(
     ),
 );
 
-const selectProjectUserRoles = (state: SharedState, userId: string) => {
+const selectProjectUserRoles = (state: SharedState, userId?: string) => {
   return Object.fromEntries(
     mapValues(state.project.projects, project => {
+      if (userId === undefined) {
+        return {};
+      }
       const membership = Object.values(project.memberships).find(
         ({ userId: membUserId }) => membUserId === userId,
       );
