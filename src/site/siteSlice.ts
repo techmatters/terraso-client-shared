@@ -126,7 +126,7 @@ export const transferSites = createAsyncThunk<
 
 export const addSiteNote = createAsyncThunk<SiteNote, SiteNoteAddMutationInput>(
   'site/addSiteNote',
-  async (siteNote, _,) => {
+  async (siteNote, _) => {
     let result = await siteService.addSiteNote(siteNote);
     return siteService.collapseSiteNote(result);
   },
@@ -134,7 +134,7 @@ export const addSiteNote = createAsyncThunk<SiteNote, SiteNoteAddMutationInput>(
 
 export const deleteSiteNote = createAsyncThunk<SiteNote, SiteNote>(
   'site/deleteSiteNote',
-  async (siteNote) => {
+  async siteNote => {
     let result = await siteService.deleteSiteNote(siteNote);
     return result;
   },
@@ -145,13 +145,13 @@ export const updateSiteNoteOld = createAsyncThunk(
   siteService.updateSiteNote,
 );
 
-export const updateSiteNote = createAsyncThunk<SiteNote, SiteNoteUpdateMutationInput>(
-  'site/updateSiteNote',
-  async (siteNote, _,) => {
-    let result = await siteService.updateSiteNote(siteNote);
-    return siteService.collapseSiteNote(result);
-  },
-);
+export const updateSiteNote = createAsyncThunk<
+  SiteNote,
+  SiteNoteUpdateMutationInput
+>('site/updateSiteNote', async (siteNote, _) => {
+  let result = await siteService.updateSiteNote(siteNote);
+  return siteService.collapseSiteNote(result);
+});
 
 const siteSlice = createSlice({
   name: 'site',
@@ -218,13 +218,19 @@ const siteSlice = createSlice({
       state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
     });
 
-    builder.addCase(deleteSiteNote.fulfilled, (state, { payload: siteNote }) => {
-      delete state.sites[siteNote.siteId].notes[siteNote.id];
-    });
+    builder.addCase(
+      deleteSiteNote.fulfilled,
+      (state, { payload: siteNote }) => {
+        delete state.sites[siteNote.siteId].notes[siteNote.id];
+      },
+    );
 
-    builder.addCase(updateSiteNote.fulfilled, (state, { payload: siteNote }) => {
-      state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
-    });
+    builder.addCase(
+      updateSiteNote.fulfilled,
+      (state, { payload: siteNote }) => {
+        state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
+      },
+    );
   },
 });
 

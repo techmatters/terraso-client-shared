@@ -48,10 +48,15 @@ export const collapseSites = (sites: Connection<SiteDataFragment>) =>
     collapseEdges(sites).map(site => [site.id, collapseSite(site)]),
   );
 
-export const collapseSiteNotes = (siteNotes: Connection<SiteNoteDataFragment>) =>
-Object.fromEntries(
-  collapseEdges(siteNotes).map(siteNote => [siteNote.id, collapseSiteNote(siteNote)]),
-);
+export const collapseSiteNotes = (
+  siteNotes: Connection<SiteNoteDataFragment>,
+) =>
+  Object.fromEntries(
+    collapseEdges(siteNotes).map(siteNote => [
+      siteNote.id,
+      collapseSiteNote(siteNote),
+    ]),
+  );
 
 export const collapseSiteNote = (siteNote: SiteNoteDataFragment): SiteNote => {
   const { author, site, ...rest } = siteNote;

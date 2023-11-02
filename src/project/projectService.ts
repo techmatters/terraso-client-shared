@@ -79,7 +79,6 @@ export const collapseProject = ({
   };
 };
 
-
 export const collapseProjects = (
   projectConnection: Connection<ProjectDataFragment>,
 ) => {

@@ -47,9 +47,9 @@ export const siteNoteData = /* GraphQL */ `
     createdAt
     updatedAt
     author {
-        id
-        firstName
-        lastName
+      id
+      firstName
+      lastName
     }
     site {
       id
