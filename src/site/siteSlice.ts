@@ -20,6 +20,8 @@ import {
   SiteAddMutationInput,
   SiteTransferMutationInput,
   SiteUpdateMutationInput,
+  SiteNoteAddMutationInput,
+  SiteNoteUpdateMutationInput
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   addSiteToProject,

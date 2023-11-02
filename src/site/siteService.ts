@@ -214,6 +214,7 @@ export const transferSitesToProject = (input: SiteTransferMutationInput) => {
       return { projectId, updated: condensedUpdated };
     },
   );
+};
 
 export const addSiteNote = (siteNote: SiteNoteAddMutationInput) => {
   const query = graphql(`
