@@ -61,7 +61,6 @@ const collapseProjectMemberships = (
 export const collapseProject = ({
   membershipList,
   siteSet,
-  siteInstructions,
   ...project
 }: ProjectDataFragment) => {
   const sites = collapseSites(siteSet);
@@ -71,7 +70,6 @@ export const collapseProject = ({
   return {
     project: {
       ...project,
-      siteInstructions,
       sites: collapseToSet(Object.keys(sites)),
       memberships,
     },
