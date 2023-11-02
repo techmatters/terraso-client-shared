@@ -20,11 +20,11 @@ import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
   SiteAddMutationInput,
   SiteDataFragment,
+  SiteNoteAddMutationInput,
+  SiteNoteDataFragment,
+  SiteNoteUpdateMutationInput,
   SiteTransferMutationInput,
   SiteUpdateMutationInput,
-  SiteNoteAddMutationInput,
-  SiteNoteUpdateMutationInput,
-  SiteNoteDataFragment,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import type { Site, SiteNote } from 'terraso-client-shared/site/siteSlice';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';

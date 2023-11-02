@@ -18,10 +18,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   SiteAddMutationInput,
+  SiteNoteAddMutationInput,
+  SiteNoteUpdateMutationInput,
   SiteTransferMutationInput,
   SiteUpdateMutationInput,
-  SiteNoteAddMutationInput,
-  SiteNoteUpdateMutationInput
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   addSiteToProject,
