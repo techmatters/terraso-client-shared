@@ -14,6 +14,7 @@ import {
 import {
   selectProjectMembershipsWithUsers,
   selectProjectsWithTransferrableSites,
+  selectSitesAndUserRoles,
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
 import { SerializableSet } from 'terraso-client-shared/store/utils';
@@ -183,5 +184,29 @@ test('can access all projects with role', () => {
       },
     ],
     unaffiliatedSites: [{ siteId: site3.id, siteName: site3.name }],
+  });
+});
+
+test('select user sites with project role', () => {
+  const user = generateUser();
+  const project1 = generateProject([generateMembership(user.id, 'manager')]);
+  const project2 = generateProject([
+    generateMembership(user.id, 'contributor'),
+  ]);
+  const site1 = generateSite(project1);
+  const site2 = generateSite(project2);
+  const site3 = generateSite();
+  const site4 = generateSite(project2);
+
+  const store = createStore(
+    initState([project1, project2], [user], [site1, site2, site3, site4]),
+  );
+
+  const roles = selectSitesAndUserRoles(store.getState(), user.id);
+  expect(roles).toStrictEqual({
+    [site1.id]: 'manager',
+    [site2.id]: 'contributor',
+    [site3.id]: undefined,
+    [site4.id]: 'contributor',
   });
 });

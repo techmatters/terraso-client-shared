@@ -35,6 +35,37 @@ const selectProjectsWithUserRole = createSelector(
     ),
 );
 
+const selectProjectUserRoles = (state: SharedState, userId?: string) => {
+  return Object.fromEntries(
+    mapValues(state.project.projects, project => {
+      if (userId === undefined) {
+        return {};
+      }
+      const membership = Object.values(project.memberships).find(
+        ({ userId: membUserId }) => membUserId === userId,
+      );
+      if (membership) {
+        return [project.id, membership.userRole];
+      }
+    }).filter((item): item is [string, UserRole] => item !== undefined),
+  );
+};
+
+export const selectSitesAndUserRoles = createSelector(
+  [selectProjectUserRoles, selectSites],
+  (userRoleMap, sites) => {
+    return Object.fromEntries(
+      mapValues(sites, site => {
+        let role = undefined;
+        if (site.projectId !== undefined) {
+          role = userRoleMap[site.projectId];
+        }
+        return [site.id, role];
+      }),
+    );
+  },
+);
+
 export const selectProjectsWithTransferrableSites = createSelector(
   [selectProjectsWithUserRole, selectSites],
   (projects, sites) => {
