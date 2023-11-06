@@ -101,9 +101,12 @@ export const userSlice = createSlice({
   initialState,
 
   reducers: {
-    setUser: (state, action) => ({
+    setCurrentUser: (state, action) => ({
       ...state,
-      user: action.payload,
+      currentUser: {
+        data: action.payload,
+        fetching: false,
+      },
     }),
     setHasToken: (state, action) => ({
       ...state,
@@ -270,7 +273,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUser, setUsers, updateUsers, setHasToken, addUser } =
+export const { setCurrentUser, setUsers, updateUsers, setHasToken, addUser } =
   userSlice.actions;
 
 export default userSlice.reducer;
@@ -281,4 +284,5 @@ export const signOut = () => (dispatch: SharedDispatch) => {
   });
   removeToken();
   dispatch(setHasToken(false));
+  dispatch(setCurrentUser(null));
 };
