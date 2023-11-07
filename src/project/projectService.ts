@@ -70,6 +70,7 @@ export const collapseProject = ({
   return {
     project: {
       ...project,
+      siteInstructions: project.siteInstructions || undefined,
       sites: collapseToSet(Object.keys(sites)),
       memberships,
     },

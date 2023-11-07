@@ -54,6 +54,7 @@ const generateProject = (
     archived: false,
     memberships: keyBy(memberships, 'id'),
     measurementUnits: 'METRIC',
+    siteInstructions: '',
   };
 };
 
@@ -69,6 +70,7 @@ const generateSite = (project?: Project): Site => {
     privacy: 'PRIVATE',
     archived: false,
     updatedAt: '2023-10-24',
+    notes: {},
   };
   if (project !== undefined) {
     project.sites[site.id] = true;

@@ -18,6 +18,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   SiteAddMutationInput,
+  SiteNoteAddMutationInput,
+  SiteNoteUpdateMutationInput,
   SiteTransferMutationInput,
   SiteUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -41,6 +43,18 @@ export type Site = {
   privacy: SitePrivacy;
   archived: boolean;
   updatedAt: string;
+  notes: Record<string, SiteNote>;
+};
+
+export type SiteNote = {
+  id: string;
+  siteId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId: string;
+  authorFirstName: string;
+  authorLastName: string;
 };
 
 const initialState = {
@@ -110,6 +124,30 @@ export const transferSites = createAsyncThunk<
   return result;
 });
 
+export const addSiteNote = createAsyncThunk<SiteNote, SiteNoteAddMutationInput>(
+  'site/addSiteNote',
+  async (siteNote, _) => {
+    let result = await siteService.addSiteNote(siteNote);
+    return siteService.collapseSiteNote(result);
+  },
+);
+
+export const deleteSiteNote = createAsyncThunk<SiteNote, SiteNote>(
+  'site/deleteSiteNote',
+  async siteNote => {
+    let result = await siteService.deleteSiteNote(siteNote);
+    return result;
+  },
+);
+
+export const updateSiteNote = createAsyncThunk<
+  SiteNote,
+  SiteNoteUpdateMutationInput
+>('site/updateSiteNote', async (siteNote, _) => {
+  let result = await siteService.updateSiteNote(siteNote);
+  return siteService.collapseSiteNote(result);
+});
+
 const siteSlice = createSlice({
   name: 'site',
   initialState,
@@ -168,6 +206,24 @@ const siteSlice = createSlice({
         for (const { siteId } of updated) {
           state.sites[siteId].projectId = projectId;
         }
+      },
+    );
+
+    builder.addCase(addSiteNote.fulfilled, (state, { payload: siteNote }) => {
+      state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
+    });
+
+    builder.addCase(
+      deleteSiteNote.fulfilled,
+      (state, { payload: siteNote }) => {
+        delete state.sites[siteNote.siteId].notes[siteNote.id];
+      },
+    );
+
+    builder.addCase(
+      updateSiteNote.fulfilled,
+      (state, { payload: siteNote }) => {
+        state.sites[siteNote.siteId].notes[siteNote.id] = siteNote;
       },
     );
   },
