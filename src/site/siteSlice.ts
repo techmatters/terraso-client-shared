@@ -140,11 +140,6 @@ export const deleteSiteNote = createAsyncThunk<SiteNote, SiteNote>(
   },
 );
 
-export const updateSiteNoteOld = createAsyncThunk(
-  'site/updateSiteNote',
-  siteService.updateSiteNote,
-);
-
 export const updateSiteNote = createAsyncThunk<
   SiteNote,
   SiteNoteUpdateMutationInput
