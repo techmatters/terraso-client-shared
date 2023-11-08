@@ -1,7 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
 import { UserRole } from 'terraso-client-shared/graphqlSchema/graphql';
-import { ProjectMembership } from 'terraso-client-shared/project/projectSlice';
+import {
+  Project,
+  ProjectMembership,
+} from 'terraso-client-shared/project/projectSlice';
 import { type SharedState } from 'terraso-client-shared/store/store';
 import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
 
@@ -35,9 +38,12 @@ const selectProjectsWithUserRole = createSelector(
     ),
 );
 
-export const selectProjectUserRoles = (state: SharedState, userId?: string) => {
+const createUserRoleMap = (
+  projects: Record<string, Project>,
+  userId?: string,
+) => {
   return Object.fromEntries(
-    mapValues(state.project.projects, project => {
+    mapValues(projects, project => {
       if (userId === undefined) {
         return {};
       }
@@ -51,9 +57,18 @@ export const selectProjectUserRoles = (state: SharedState, userId?: string) => {
   );
 };
 
+const selectCurrentUserID = (state: SharedState) =>
+  state.account.currentUser?.data?.id;
+
+export const selectProjectUserRolesMap = createSelector(
+  [selectCurrentUserID, selectProjects],
+  (currentUserID, projects) => createUserRoleMap(projects, currentUserID),
+);
+
 export const selectSitesAndUserRoles = createSelector(
-  [selectProjectUserRoles, selectSites],
-  (userRoleMap, sites) => {
+  [selectCurrentUserID, selectProjects, selectSites],
+  (userID, projects, sites) => {
+    const userRoleMap = createUserRoleMap(projects, userID);
     return Object.fromEntries(
       mapValues(sites, site => {
         let role = undefined;
