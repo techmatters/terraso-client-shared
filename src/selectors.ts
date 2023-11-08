@@ -35,7 +35,7 @@ const selectProjectsWithUserRole = createSelector(
     ),
 );
 
-const selectProjectUserRoles = (state: SharedState, userId?: string) => {
+export const selectProjectUserRoles = (state: SharedState, userId?: string) => {
   return Object.fromEntries(
     mapValues(state.project.projects, project => {
       if (userId === undefined) {
