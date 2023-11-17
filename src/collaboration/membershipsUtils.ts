@@ -35,7 +35,7 @@ export type MembershipList = {
     totalCount?: number;
     pendingCount?: number;
     accountMembership?: Membership;
-    membersSample?: Membership[];
+    membershipsSample?: Membership[];
   };
   id: string;
   slug: string;
