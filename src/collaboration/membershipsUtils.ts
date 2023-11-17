@@ -45,6 +45,7 @@ export type MembershipList = {
 
 export type Membership = {
   membershipId: string;
+  userId: string;
   membershipStatus: 'APPROVED' | 'PENDING';
   user: User;
 };
