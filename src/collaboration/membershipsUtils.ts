@@ -15,6 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 import _ from 'lodash/fp';
+import { User } from 'terraso-client-shared/account/accountSlice';
 import type {
   AccountCollaborationMembershipFragment,
   CollaborationMembershipFieldsFragment,
@@ -45,8 +46,8 @@ export type MembershipList = {
 export type Membership = {
   membershipId: string;
   membershipStatus: 'APPROVED' | 'PENDING';
+  user: User;
 };
-
 
 export const extractMembershipsInfo = (
   membershipList?: MembershipQuery | null,
