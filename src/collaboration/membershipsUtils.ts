@@ -63,8 +63,7 @@ export const extractMembershipsInfo = (
 export const extractMembership = (
   membership: Partial<CollaborationMembershipFieldsFragment>,
 ) => ({
-  ...membership.user,
-  ..._.omit('user', membership),
+  ...membership,
   membershipId: membership.id,
   userId: membership.user?.id,
 });
