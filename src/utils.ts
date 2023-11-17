@@ -9,3 +9,7 @@ export const exists = <T>(haystack: T[], needle: T) =>
 
 export const mapValues = <T, U>(obj: Record<any, T>, f: (arg: T) => U) =>
   Object.values(obj).map(f);
+
+export const isValidLatitude = (lat: number) => lat >= -90 && lat <= 90;
+
+export const isValidLongitude = (lng: number) => lng >= -180 && lng <= 180;
