@@ -72,6 +72,9 @@ export const accountCollaborationMembership = /* GraphQL */ `
       id
       userRole
       membershipStatus
+      user {
+        ...userFields
+      }
     }
   }
 `;

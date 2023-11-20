@@ -30,14 +30,18 @@ type MembershipQuery = Partial<
     CollaborationMembershipsPendingFragment
 >;
 
+export type MembershipInfo = {
+  totalCount?: number;
+  pendingCount?: number;
+  accountMembership?: Membership;
+  membershipsSample?: Membership[];
+  enrollMethod?: string;
+  membershipType?: string;
+};
+
 export type MembershipList = {
   // TODO: massage membershipsUtils/Service so more of these can be required
-  membershipsInfo?: {
-    totalCount?: number;
-    pendingCount?: number;
-    accountMembership?: Membership;
-    membershipsSample?: Membership[];
-  };
+  membershipsInfo?: MembershipInfo;
   id: string;
   slug: string;
   membershipType: 'CLOSED' | 'OPEN';
@@ -45,15 +49,15 @@ export type MembershipList = {
 
 export type Membership = {
   membershipId: string;
-  userId: string;
-  userRole: string;
-  membershipStatus: 'APPROVED' | 'PENDING';
-  user: User;
+  userId?: string;
+  userRole?: string;
+  membershipStatus?: 'APPROVED' | 'PENDING';
+  user?: User;
 };
 
 export const extractMembershipsInfo = (
   membershipList?: MembershipQuery | null,
-) => ({
+): MembershipInfo => ({
   totalCount:
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
@@ -71,7 +75,7 @@ export const extractMembership = (
   userId: membership.user?.id,
 });
 
-export const extractMemberships = (membershipList?: MembershipQuery | null) =>
+export const extractMemberships = (membershipList?: MembershipQuery | null): Membership[] =>
   (
     (
       membershipList as
@@ -80,14 +84,17 @@ export const extractMemberships = (membershipList?: MembershipQuery | null) =>
         | null
         | undefined
     )?.memberships?.edges || []
-  ).map(edge => extractMembership(edge.node));
+  )
+  .map(edge => extractMembership(edge.node) as Membership);
 
 export const extractAccountMembership = (
   membershipList?: AccountCollaborationMembershipFragment | null,
-) =>
+): Membership | undefined =>
   membershipList?.accountMembership
     ? {
         ..._.omit('id', membershipList.accountMembership),
         membershipId: membershipList.accountMembership.id,
+        userId: membershipList.accountMembership.user?.id,
+        user: membershipList.accountMembership.user as User,
       }
     : undefined;
