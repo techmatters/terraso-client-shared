@@ -30,7 +30,7 @@ type MembershipQuery = Partial<
     CollaborationMembershipsPendingFragment
 >;
 
-export type MembershipInfo = {
+export type MembershipsInfo = {
   totalCount?: number;
   pendingCount?: number;
   accountMembership?: Membership;
@@ -41,7 +41,7 @@ export type MembershipInfo = {
 
 export type MembershipList = {
   // TODO: massage membershipsUtils/Service so more of these can be required
-  membershipsInfo?: MembershipInfo;
+  membershipsInfo?: MembershipsInfo;
   id: string;
   slug: string;
   membershipType: 'CLOSED' | 'OPEN';
