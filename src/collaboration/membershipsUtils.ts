@@ -57,7 +57,7 @@ export type Membership = {
 
 export const extractMembershipsInfo = (
   membershipList?: MembershipQuery | null,
-): MembershipInfo => ({
+): MembershipsInfo => ({
   totalCount:
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
@@ -75,7 +75,9 @@ export const extractMembership = (
   userId: membership.user?.id,
 });
 
-export const extractMemberships = (membershipList?: MembershipQuery | null): Membership[] =>
+export const extractMemberships = (
+  membershipList?: MembershipQuery | null,
+): Membership[] =>
   (
     (
       membershipList as
@@ -84,8 +86,7 @@ export const extractMemberships = (membershipList?: MembershipQuery | null): Mem
         | null
         | undefined
     )?.memberships?.edges || []
-  )
-  .map(edge => extractMembership(edge.node) as Membership);
+  ).map(edge => extractMembership(edge.node) as Membership);
 
 export const extractAccountMembership = (
   membershipList?: AccountCollaborationMembershipFragment | null,
