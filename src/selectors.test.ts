@@ -96,11 +96,22 @@ const keyBy = <T, Index extends keyof T>(
   );
 };
 
-function initState(projects: Project[], users: User[], sites: Site[] = []) {
+function initState(
+  projects: Project[],
+  users: User[],
+  sites: Site[] = [],
+  currentUserID?: string,
+) {
   return merge(
+    { account: { ...accountInitialState } },
     {
       account: {
         users: keyBy(users, 'id'),
+        currentUser: {
+          data: {
+            id: currentUserID ?? users[0]?.id,
+          },
+        },
       },
       project: {
         projects: keyBy(projects, 'id'),
@@ -109,7 +120,6 @@ function initState(projects: Project[], users: User[], sites: Site[] = []) {
         sites: keyBy(sites, 'id'),
       },
     },
-    { account: { ...accountInitialState } },
   );
 }
 
@@ -166,7 +176,12 @@ test('can access all projects with role', () => {
   const site3 = generateSite();
 
   const store = createStore(
-    initState([project1, project2, project3], [user], [site1, site2, site3]),
+    initState(
+      [project1, project2, project3],
+      [user],
+      [site1, site2, site3],
+      user.id,
+    ),
   );
   const pairs = selectProjectsWithTransferrableSites(
     store.getState(),
@@ -201,10 +216,15 @@ test('select user sites with project role', () => {
   const site4 = generateSite(project2);
 
   const store = createStore(
-    initState([project1, project2], [user], [site1, site2, site3, site4]),
+    initState(
+      [project1, project2],
+      [user],
+      [site1, site2, site3, site4],
+      user.id,
+    ),
   );
 
-  const roles = selectSitesAndUserRoles(store.getState(), user.id);
+  const roles = selectSitesAndUserRoles(store.getState());
   expect(roles).toStrictEqual({
     [site1.id]: 'manager',
     [site2.id]: 'contributor',
