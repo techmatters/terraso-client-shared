@@ -13,3 +13,10 @@ export const mapValues = <T, U>(obj: Record<any, T>, f: (arg: T) => U) =>
 export const isValidLatitude = (lat: number) => lat >= -90 && lat <= 90;
 
 export const isValidLongitude = (lng: number) => lng >= -180 && lng <= 180;
+
+export const normalizeText = (text: string) =>
+  text
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, ''); // unicode range for combining diacritical marks
