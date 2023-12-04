@@ -15,6 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 import _ from 'lodash/fp';
+import { User } from 'terraso-client-shared/account/accountSlice';
 import type {
   AccountCollaborationMembershipFragment,
   CollaborationMembershipFieldsFragment,
@@ -29,26 +30,54 @@ type MembershipQuery = Partial<
     CollaborationMembershipsPendingFragment
 >;
 
+export type MembershipsInfo = {
+  totalCount?: number;
+  pendingCount?: number;
+  accountMembership?: Membership;
+  membershipsSample?: Membership[];
+  enrollMethod?: string;
+  membershipType?: string;
+};
+
+export type MembershipList = {
+  // TODO: massage membershipsUtils/Service so more of these can be required
+  membershipsInfo?: MembershipsInfo;
+  id: string;
+  slug: string;
+  membershipType: 'CLOSED' | 'OPEN';
+};
+
+export type Membership = {
+  membershipId: string;
+  userId?: string;
+  userRole?: string;
+  membershipStatus?: 'APPROVED' | 'PENDING';
+  user?: User;
+};
+
 export const extractMembershipsInfo = (
   membershipList?: MembershipQuery | null,
-) => ({
+): MembershipsInfo => ({
   totalCount:
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
   accountMembership: extractAccountMembership(membershipList),
   membershipsSample: extractMemberships(membershipList),
+  enrollMethod: membershipList?.enrollMethod,
+  membershipType: membershipList?.membershipType,
 });
 
 export const extractMembership = (
   membership: Partial<CollaborationMembershipFieldsFragment>,
 ) => ({
-  ...membership.user,
-  ..._.omit('user', membership),
+  ...membership,
   membershipId: membership.id,
   userId: membership.user?.id,
 });
 
-export const extractMemberships = (membershipList?: MembershipQuery | null) =>
+export const extractMemberships = (
+  membershipList?: MembershipQuery | null,
+): Membership[] =>
   (
     (
       membershipList as
@@ -57,14 +86,16 @@ export const extractMemberships = (membershipList?: MembershipQuery | null) =>
         | null
         | undefined
     )?.memberships?.edges || []
-  ).map(edge => extractMembership(edge.node));
+  ).map(edge => extractMembership(edge.node) as Membership);
 
 export const extractAccountMembership = (
   membershipList?: AccountCollaborationMembershipFragment | null,
-) =>
+): Membership | undefined =>
   membershipList?.accountMembership
     ? {
         ..._.omit('id', membershipList.accountMembership),
         membershipId: membershipList.accountMembership.id,
+        userId: membershipList.accountMembership.user?.id,
+        user: membershipList.accountMembership.user as User,
       }
     : undefined;
