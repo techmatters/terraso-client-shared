@@ -86,10 +86,16 @@ export type ProjectSoilSettings = Omit<
   depthIntervals: ProjectDepthInterval[];
 };
 
-const initialState = {
-  soilData: {} as Record<string, SoilData>,
-  projectSettings: {} as Record<string, ProjectSoilSettings>,
-  loading: false,
+type SoilState = {
+  soilData: Record<string, SoilData>;
+  projectSettings: Record<string, ProjectSoilSettings>;
+  status: 'loading' | 'error' | 'ready';
+};
+
+const initialState: SoilState = {
+  soilData: {},
+  projectSettings: {},
+  status: 'loading',
 };
 
 export const sameDepth =
@@ -137,6 +143,31 @@ const soilIdSlice = createSlice({
       state.soilData[action.meta.arg.siteId] = action.payload;
     });
 
+    builder.addCase(
+      updateSoilDataDepthIntervalAsync.pending,
+      (state, action) => {
+        const currentState = state.soilData[action.meta.arg.siteId];
+        const update = Object.fromEntries(
+          Object.entries(action.meta.arg).filter(
+            ([key, result]) => result !== null && key !== 'siteId',
+          ),
+        );
+        const index = currentState.depthIntervals.findIndex(
+          a => a.depthInterval.start === action.meta.arg.depthInterval.start,
+        );
+        const interval =
+          state.soilData[action.meta.arg.siteId].depthIntervals[index];
+        state.soilData[action.meta.arg.siteId].depthIntervals[index] = {
+          ...interval,
+          ...update,
+        };
+      },
+    );
+
+    builder.addCase(updateSoilDataDepthIntervalAsync.rejected, state => {
+      state.status = 'error';
+    });
+
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
     });
@@ -154,15 +185,15 @@ const soilIdSlice = createSlice({
     });
 
     builder.addCase(fetchSoilDataForUser.pending, state => {
-      state.loading = true;
+      state.status = 'loading';
     });
 
     builder.addCase(fetchSoilDataForUser.rejected, state => {
-      state.loading = false;
+      state.status = 'error';
     });
 
     builder.addCase(fetchSoilDataForUser.fulfilled, state => {
-      state.loading = false;
+      state.status = 'ready';
     });
   },
 });
@@ -192,6 +223,11 @@ export const updateDepthDependentSoilData = createAsyncThunk(
 
 export const updateSoilDataDepthInterval = createAsyncThunk(
   'soilId/updateSoilDataDepthInterval',
+  soilIdService.updateSoilDataDepthInterval,
+);
+
+export const updateSoilDataDepthIntervalAsync = createAsyncThunk(
+  'soilId/updateSoilDataDepthIntervalAsync',
   soilIdService.updateSoilDataDepthInterval,
 );
 
