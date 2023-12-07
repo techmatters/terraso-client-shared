@@ -15,6 +15,7 @@ import {
   selectProjectMembershipsWithUsers,
   selectProjectsWithTransferrableSites,
   selectSitesAndUserRoles,
+  selectUserRoleSite,
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
 import { SerializableSet } from 'terraso-client-shared/store/utils';
@@ -58,11 +59,18 @@ const generateProject = (
   };
 };
 
-const generateSite = (project?: Project): Site => {
+const generateSite = (args?: { project: Project } | { owner: User }): Site => {
+  let project = undefined,
+    owner = undefined;
+  if (args && 'project' in args) {
+    project = args.project;
+  } else if (args) {
+    owner = args.owner;
+  }
   const id = uuidv4();
   const site: Site = {
     projectId: project?.id,
-    ownerId: undefined,
+    ownerId: owner?.id,
     id,
     name: 'Test Site',
     latitude: 0,
@@ -171,8 +179,8 @@ test('can access all projects with role', () => {
     generateMembership(user.id, 'contributor'),
   ]);
   const project3 = generateProject([generateMembership(user.id, 'manager')]);
-  const site1 = generateSite(project1);
-  const site2 = generateSite(project2);
+  const site1 = generateSite({ project: project1 });
+  const site2 = generateSite({ project: project2 });
   const site3 = generateSite();
 
   const store = createStore(
@@ -210,10 +218,10 @@ test('select user sites with project role', () => {
   const project2 = generateProject([
     generateMembership(user.id, 'contributor'),
   ]);
-  const site1 = generateSite(project1);
-  const site2 = generateSite(project2);
+  const site1 = generateSite({ project: project1 });
+  const site2 = generateSite({ project: project2 });
   const site3 = generateSite();
-  const site4 = generateSite(project2);
+  const site4 = generateSite({ project: project2 });
 
   const store = createStore(
     initState(
@@ -231,4 +239,23 @@ test('select user sites with project role', () => {
     [site3.id]: undefined,
     [site4.id]: 'contributor',
   });
+});
+
+test('select user role when site owned', () => {
+  const user = generateUser();
+  const site = generateSite({ owner: user });
+  const store = createStore(initState([], [user], [site]));
+
+  const siteRole = selectUserRoleSite(store.getState(), site.id, user.id);
+  expect(siteRole).toStrictEqual({ kind: 'site', role: 'owner' });
+});
+
+test('select user role in project of site', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'viewer')]);
+  const site = generateSite({ project });
+  const store = createStore(initState([project], [user], [site]));
+
+  const siteRole = selectUserRoleSite(store.getState(), site.id, user.id);
+  expect(siteRole).toStrictEqual({ kind: 'project', role: 'viewer' });
 });

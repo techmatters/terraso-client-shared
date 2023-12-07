@@ -112,3 +112,38 @@ export const selectProjectsWithTransferrableSites = createSelector(
     return { projects: projectRecord, sites: projectSites, unaffiliatedSites };
   },
 );
+
+// Note on "site" kind: In the future, there will also be site level roles, like manager and viewer
+// For now we only care if a user owns a site or not.
+export type SiteUserRole =
+  | { kind: 'site'; role: 'owner' }
+  | { kind: 'project'; role: UserRole };
+
+const selectSiteId = (_state: any, siteId: string, userId: string) => [
+  siteId,
+  userId,
+];
+
+export const selectUserRoleSite = createSelector(
+  [selectSites, selectProjects, selectSiteId],
+  (sites, projects, [siteId, userId]) => {
+    const site = sites[siteId];
+    if (!site) {
+      return null;
+    }
+    if (site.ownerId === userId) {
+      return { kind: 'site', role: 'owner' };
+    }
+    if (site.projectId === undefined) {
+      return null;
+    }
+    const project = projects[site.projectId];
+    const membership = Object.values(project.memberships).find(
+      ({ userId: projectUserId }) => userId === projectUserId,
+    );
+    if (membership === undefined) {
+      return null;
+    }
+    return { kind: 'project', role: membership.userRole };
+  },
+);
