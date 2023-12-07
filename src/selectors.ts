@@ -119,14 +119,11 @@ export type SiteUserRole =
   | { kind: 'site'; role: 'owner' }
   | { kind: 'project'; role: UserRole };
 
-const selectSiteId = (_state: any, siteId: string, userId: string) => [
-  siteId,
-  userId,
-];
+const selectSiteId = (_state: any, siteId: string) => siteId;
 
 export const selectUserRoleSite = createSelector(
-  [selectSites, selectProjects, selectSiteId],
-  (sites, projects, [siteId, userId]) => {
+  [selectSites, selectProjects, selectSiteId, selectCurrentUserID],
+  (sites, projects, siteId, userId) => {
     const site = sites[siteId];
     if (!site) {
       return null;

@@ -244,9 +244,9 @@ test('select user sites with project role', () => {
 test('select user role when site owned', () => {
   const user = generateUser();
   const site = generateSite({ owner: user });
-  const store = createStore(initState([], [user], [site]));
+  const store = createStore(initState([], [user], [site], user.id));
 
-  const siteRole = selectUserRoleSite(store.getState(), site.id, user.id);
+  const siteRole = selectUserRoleSite(store.getState(), site.id);
   expect(siteRole).toStrictEqual({ kind: 'site', role: 'owner' });
 });
 
@@ -254,8 +254,8 @@ test('select user role in project of site', () => {
   const user = generateUser();
   const project = generateProject([generateMembership(user.id, 'viewer')]);
   const site = generateSite({ project });
-  const store = createStore(initState([project], [user], [site]));
+  const store = createStore(initState([project], [user], [site], user.id));
 
-  const siteRole = selectUserRoleSite(store.getState(), site.id, user.id);
+  const siteRole = selectUserRoleSite(store.getState(), site.id);
   expect(siteRole).toStrictEqual({ kind: 'project', role: 'viewer' });
 });
