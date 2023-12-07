@@ -129,7 +129,7 @@ const soilIdSlice = createSlice({
     ) => {
       Object.assign(state.projectSettings, action.payload);
     },
-    setSoilDataStatus: (
+    setSoilIdStatus: (
       state,
       action: PayloadAction<'loading' | 'error' | 'ready'>,
     ) => {
@@ -170,9 +170,27 @@ const soilIdSlice = createSlice({
       },
     );
 
-    builder.addCase(updateSoilDataDepthIntervalAsync.rejected, state => {
-      state.status = 'error';
-    });
+    builder.addCase(
+      updateSoilDataDepthIntervalAsync.rejected,
+      (state, action) => {
+        state.status = 'error';
+        const currentState = state.soilData[action.meta.arg.siteId];
+        const reverseUpdate = Object.fromEntries(
+          Object.entries(action.meta.arg)
+            .filter(([, result]) => typeof result === 'boolean')
+            .map(([key, result]) => [key, !result]),
+        );
+        const index = currentState.depthIntervals.findIndex(
+          a => a.depthInterval.start === action.meta.arg.depthInterval.start,
+        );
+        const interval =
+          state.soilData[action.meta.arg.siteId].depthIntervals[index];
+        state.soilData[action.meta.arg.siteId].depthIntervals[index] = {
+          ...interval,
+          ...reverseUpdate,
+        };
+      },
+    );
 
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
@@ -204,7 +222,8 @@ const soilIdSlice = createSlice({
   },
 });
 
-export const { setProjectSettings, setSoilData } = soilIdSlice.actions;
+export const { setProjectSettings, setSoilData, setSoilIdStatus } =
+  soilIdSlice.actions;
 
 export const fetchSoilDataForUser = createAsyncThunk(
   'soilId/fetchSoilDataForUser',
