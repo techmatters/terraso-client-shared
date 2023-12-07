@@ -129,6 +129,12 @@ const soilIdSlice = createSlice({
     ) => {
       Object.assign(state.projectSettings, action.payload);
     },
+    setSoilDataStatus: (
+      state,
+      action: PayloadAction<'loading' | 'error' | 'ready'>,
+    ) => {
+      state.status = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(updateSoilData.fulfilled, (state, action) => {
