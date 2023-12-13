@@ -123,7 +123,7 @@ const selectSiteId = (_state: any, siteId: string) => siteId;
 
 export const selectUserRoleSite = createSelector(
   [selectSites, selectProjects, selectSiteId, selectCurrentUserID],
-  (sites, projects, siteId, userId) => {
+  (sites, projects, siteId, userId): SiteUserRole | null => {
     const site = sites[siteId];
     if (!site) {
       return null;
