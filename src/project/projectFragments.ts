@@ -59,5 +59,8 @@ export const projectData = /* GraphQL */ `
         }
       }
     }
+    soilSettings {
+      ...projectSoilSettings
+    }
   }
 `;

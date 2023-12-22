@@ -61,6 +61,7 @@ const collapseProjectMemberships = (
 export const collapseProject = ({
   membershipList,
   siteSet,
+  soilSettings,
   ...project
 }: ProjectDataFragment) => {
   const sites = collapseSites(siteSet);
@@ -76,6 +77,7 @@ export const collapseProject = ({
     },
     sites,
     users,
+    soilSettings: { [project.id]: { ...soilSettings } },
   };
 };
 
@@ -89,6 +91,9 @@ export const collapseProjects = (
     ),
     sites: collapseMaps(...projects.map(({ sites }) => sites)),
     users: collapseMaps(...projects.map(({ users }) => users)),
+    soilSettings: collapseMaps(
+      ...projects.map(({ soilSettings }) => soilSettings),
+    ),
   };
 };
 

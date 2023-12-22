@@ -28,6 +28,7 @@ import {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, updateSites } from 'terraso-client-shared/site/siteSlice';
+import { updateProjectSettings } from 'terraso-client-shared/soilId/soilIdSlice';
 import {
   createAsyncThunk,
   dispatchByKeys,
@@ -172,6 +173,7 @@ const updateDispatchMap = {
   project: (project: Project) => updateProjects({ [project.id]: project }),
   sites: updateSites,
   users: updateUsers,
+  soilSettings: updateProjectSettings,
 };
 
 export const fetchProject = createAsyncThunk(
@@ -185,6 +187,7 @@ export const fetchProjectsForUser = createAsyncThunk(
     projects: setProjects,
     sites: setSites,
     users: setUsers,
+    soilSettings: updateProjectSettings,
   }),
 );
 
