@@ -222,8 +222,12 @@ const soilIdSlice = createSlice({
   },
 });
 
-export const { setProjectSettings, setSoilData, setSoilIdStatus } =
-  soilIdSlice.actions;
+export const {
+  setProjectSettings,
+  setSoilData,
+  setSoilIdStatus,
+  updateProjectSettings,
+} = soilIdSlice.actions;
 
 export const fetchSoilDataForUser = createAsyncThunk(
   'soilId/fetchSoilDataForUser',

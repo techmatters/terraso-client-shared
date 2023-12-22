@@ -77,7 +77,7 @@ export const collapseProject = ({
     },
     sites,
     users,
-    soilSettings: { [project.id]: soilSettings },
+    soilSettings: { [project.id]: { ...soilSettings } },
   };
 };
 
