@@ -91,6 +91,9 @@ export const collapseProjects = (
     ),
     sites: collapseMaps(...projects.map(({ sites }) => sites)),
     users: collapseMaps(...projects.map(({ users }) => users)),
+    soilSettings: collapseMaps(
+      ...projects.map(({ soilSettings }) => soilSettings),
+    ),
   };
 };
 

@@ -187,6 +187,7 @@ export const fetchProjectsForUser = createAsyncThunk(
     projects: setProjects,
     sites: setSites,
     users: setUsers,
+    soilSettings: updateProjectSettings,
   }),
 );
 
