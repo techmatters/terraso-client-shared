@@ -1,10 +1,15 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
+import { PRESETS } from 'terraso-client-shared/constants';
 import { UserRole } from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   Project,
   ProjectMembership,
 } from 'terraso-client-shared/project/projectSlice';
+import {
+  ProjectDepthInterval,
+  ProjectSoilSettings,
+} from 'terraso-client-shared/soilId/soilIdSlice';
 import { type SharedState } from 'terraso-client-shared/store/store';
 import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
 
@@ -142,5 +147,38 @@ export const selectUserRoleSite = createSelector(
       return null;
     }
     return { kind: 'project', role: membership.userRole };
+  },
+);
+
+const generateProjectIntervals = (settings: ProjectSoilSettings) => {
+  let depthIntervals: ProjectDepthInterval[] | undefined;
+  switch (settings.depthIntervalPreset) {
+    case 'LANDPKS':
+    case 'NRCS':
+      depthIntervals = PRESETS[settings.depthIntervalPreset].map(
+        depthInterval => ({ depthInterval, label: '' }),
+      );
+      break;
+    case 'CUSTOM':
+      depthIntervals = settings.depthIntervals;
+      break;
+    case 'NONE':
+      depthIntervals = undefined;
+      break;
+  }
+  return depthIntervals;
+};
+
+export const selectProjectSettings = createSelector(
+  [
+    (state: SharedState, projectId: string) =>
+      state.soilId.projectSettings[projectId],
+  ],
+  (projectSettings: ProjectSoilSettings) => {
+    if (!projectSettings) {
+      return undefined;
+    }
+    const depthIntervals = generateProjectIntervals(projectSettings) || [];
+    return { ...projectSettings, depthIntervals };
   },
 );
