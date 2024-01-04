@@ -150,6 +150,25 @@ export const selectUserRoleSite = createSelector(
   },
 );
 
+const selectProjectId = (_state: SharedState, projectId: string) => projectId;
+
+export const selectUserRoleProject = createSelector(
+  [selectProjects, selectCurrentUserID, selectProjectId],
+  (projects, userId, projectId) => {
+    const project = projects[projectId];
+    if (project === undefined) {
+      return null;
+    }
+    const membership = Object.values(project.memberships).find(
+      ({ userId: projectUserId }) => userId === projectUserId,
+    );
+    if (membership === undefined) {
+      return null;
+    }
+    return membership.userRole;
+  },
+);
+
 const generateProjectIntervals = (settings: ProjectSoilSettings) => {
   let depthIntervals: ProjectDepthInterval[] | undefined;
   switch (settings.depthIntervalPreset) {
