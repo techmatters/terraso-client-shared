@@ -158,9 +158,13 @@ const soilIdSlice = createSlice({
             ([key, result]) => result !== null && key !== 'siteId',
           ),
         );
+        if (action.meta.arg.newDepthInterval) {
+          update.depthInterval = action.meta.arg.newDepthInterval;
+        }
         const index = currentState.depthIntervals.findIndex(
           a => a.depthInterval.start === action.meta.arg.depthInterval.start,
         );
+
         const interval =
           state.soilData[action.meta.arg.siteId].depthIntervals[index];
         state.soilData[action.meta.arg.siteId].depthIntervals[index] = {
