@@ -1,9 +1,6 @@
-type DepthIntervalBounds = {
-  start: number;
-  end: number;
-};
+import { DepthInterval } from './graphqlSchema/graphql';
 
-export const PRESETS: Record<'LANDPKS' | 'NRCS', DepthIntervalBounds[]> = {
+export const PRESETS: Record<'LANDPKS' | 'NRCS', DepthInterval[]> = {
   LANDPKS: [
     { start: 0, end: 10 },
     { start: 10, end: 20 },

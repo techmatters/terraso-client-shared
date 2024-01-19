@@ -104,6 +104,12 @@ export const sameDepth =
     a.depthInterval.start === b.depthInterval.start &&
     a.depthInterval.end === b.depthInterval.end;
 
+export const checkOverlap =
+  (a: { depthInterval: DepthInterval }) =>
+  (b: { depthInterval: DepthInterval }) =>
+    Math.max(a.depthInterval.start, b.depthInterval.start) <=
+    Math.min(a.depthInterval.end, b.depthInterval.end);
+
 const soilIdSlice = createSlice({
   name: 'soilId',
   initialState,
