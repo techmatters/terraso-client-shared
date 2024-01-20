@@ -15,12 +15,16 @@ import {
   selectProjectMembershipsWithUsers,
   selectProjectsWithTransferrableSites,
   selectSitesAndUserRoles,
+  selectSoilDataIntervals,
   selectUserRoleSite,
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
 import { SerializableSet } from 'terraso-client-shared/store/utils';
 import { createStore } from 'terraso-client-shared/tests/utils';
 import { v4 as uuidv4 } from 'uuid';
+
+import { PRESETS } from './constants';
+import { ProjectSoilSettings, SoilData, SoilState } from './soilId/soilIdSlice';
 
 const generateUser = () => {
   const id = uuidv4();
@@ -90,6 +94,48 @@ const generateMembership = (userId: string, userRole: UserRole) => {
   return { id: uuidv4(), userId, userRole };
 };
 
+const createSoilData = (
+  site: Site,
+  defaults?: Partial<SoilData>,
+): Record<string, SoilData> => {
+  return {
+    [site.id]: {
+      depthDependentData: [],
+      depthIntervals: [],
+      ...defaults,
+    },
+  };
+};
+
+const createProjectSettings = (
+  project: Project,
+  defaults?: Partial<ProjectSoilSettings>,
+): Record<string, ProjectSoilSettings> => {
+  return {
+    [project.id]: {
+      carbonatesRequired: false,
+      depthIntervalPreset: 'LANDPKS',
+      depthIntervals: [],
+      electricalConductivityRequired: false,
+      landUseLandCoverRequired: false,
+      measurementUnits: 'METRIC',
+      notesRequired: false,
+      phRequired: false,
+      photosRequired: false,
+      slopeRequired: false,
+      sodiumAdsorptionRatioRequired: false,
+      soilColorRequired: false,
+      soilLimitationsRequired: false,
+      soilOrganicCarbonMatterRequired: false,
+      soilPitRequired: false,
+      soilStructureRequired: false,
+      soilTextureRequired: false,
+      verticalCrackingRequired: false,
+      ...defaults,
+    },
+  };
+};
+
 type Indexable<T, Index extends keyof T> = T[Index] extends string | number
   ? T
   : never;
@@ -109,7 +155,13 @@ function initState(
   users: User[],
   sites: Site[] = [],
   currentUserID?: string,
+  soilId?: {
+    soilData?: Record<string, SoilData>;
+    projectSettings?: Record<string, ProjectSoilSettings>;
+  },
 ) {
+  const soilData = soilId?.soilData || {};
+  const projectSettings = soilId?.projectSettings || {};
   return merge(
     { account: { ...accountInitialState } },
     {
@@ -127,6 +179,11 @@ function initState(
       site: {
         sites: keyBy(sites, 'id'),
       },
+      soilId: {
+        soilData,
+        projectSettings,
+        status: 'ready',
+      } as SoilState,
     },
   );
 }
@@ -258,4 +315,30 @@ test('select user role in project of site', () => {
 
   const siteRole = selectUserRoleSite(store.getState(), site.id);
   expect(siteRole).toStrictEqual({ kind: 'project', role: 'viewer' });
+});
+
+test('select predefined selector', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const site = generateSite({ project });
+  const soilData = createSoilData(site);
+  const projectSettings = createProjectSettings(project, {
+    depthIntervalPreset: 'LANDPKS',
+  });
+
+  const store = createStore(
+    initState([project], [user], [site], user.id, {
+      soilData,
+      projectSettings,
+    }),
+  );
+
+  const aggregatedIntervals = selectSoilDataIntervals(
+    store.getState(),
+    site.id,
+  );
+
+  expect(
+    aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
+  ).toStrictEqual(PRESETS['LANDPKS']);
 });

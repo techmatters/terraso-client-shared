@@ -86,7 +86,7 @@ export type ProjectSoilSettings = Omit<
   depthIntervals: ProjectDepthInterval[];
 };
 
-type SoilState = {
+export type SoilState = {
   soilData: Record<string, SoilData>;
   projectSettings: Record<string, ProjectSoilSettings>;
   status: 'loading' | 'error' | 'ready';

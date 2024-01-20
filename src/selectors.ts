@@ -276,11 +276,6 @@ const matchIntervals = (
         intervals.push({ mutable: false, interval: B });
       } else if (A.depthInterval.start < B.depthInterval.start) {
         // no more site soil intervals that can overlap with preset
-        // add preset and continue to next
-        intervals.push({
-          mutable: false,
-          interval: makeSoilDepth(A, soilSettings),
-        });
         break;
       } else {
         // only add the "mutable" interval if it doesn't overlap with others
@@ -292,6 +287,10 @@ const matchIntervals = (
         }
       }
     }
+    intervals.push({
+      mutable: false,
+      interval: makeSoilDepth(A, soilSettings),
+    });
   }
   return intervals;
 };
