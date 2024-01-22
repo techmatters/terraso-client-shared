@@ -267,7 +267,17 @@ const matchIntervals = (
 
   const intervals: AggregatedInterval[] = [];
 
-  for (let i = 0, j = 0; i < sortedPresets.length; i++) {
+  let j = 0;
+
+  while (
+    j < sortedSoilDepth.length &&
+    sortedSoilDepth[j].depthInterval.end <= sortedPresets[0].depthInterval.start
+  ) {
+    intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
+    j++;
+  }
+
+  for (let i = 0; i < sortedPresets.length; i++) {
     const A = sortedPresets[i];
     for (; j < sortedSoilDepth.length; j++) {
       const B = sortedSoilDepth[j];
@@ -279,10 +289,7 @@ const matchIntervals = (
         break;
       } else {
         // only add the "mutable" interval if it doesn't overlap with others
-        if (
-          i >= sortedPresets.length ||
-          !checkOverlap(sortedPresets[i + 1])(B)
-        ) {
+        if (!checkOverlap(A)(B)) {
           intervals.push({ mutable: true, interval: B });
         }
       }
@@ -291,6 +298,11 @@ const matchIntervals = (
       mutable: false,
       interval: makeSoilDepth(A, soilSettings),
     });
+  }
+  while (j < sortedSoilDepth.length) {
+    // add any additional soil depth intervals
+    intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
+    j++;
   }
   return intervals;
 };

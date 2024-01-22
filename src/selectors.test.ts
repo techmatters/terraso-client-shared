@@ -3,7 +3,9 @@ import {
   initialState as accountInitialState,
   User,
 } from 'terraso-client-shared/account/accountSlice';
+import { PRESETS } from 'terraso-client-shared/constants';
 import {
+  DepthInterval,
   ProjectPrivacy,
   UserRole,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -19,12 +21,20 @@ import {
   selectUserRoleSite,
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
+import {
+  methodEnabled,
+  methodRequired,
+  ProjectDepthInterval,
+  ProjectSoilSettings,
+  SoilData,
+  SoilDataDepthInterval,
+  SoilPitMethod,
+  soilPitMethods,
+  SoilState,
+} from 'terraso-client-shared/soilId/soilIdSlice';
 import { SerializableSet } from 'terraso-client-shared/store/utils';
 import { createStore } from 'terraso-client-shared/tests/utils';
 import { v4 as uuidv4 } from 'uuid';
-
-import { PRESETS } from './constants';
-import { ProjectSoilSettings, SoilData, SoilState } from './soilId/soilIdSlice';
 
 const generateUser = () => {
   const id = uuidv4();
@@ -134,6 +144,39 @@ const createProjectSettings = (
       ...defaults,
     },
   };
+};
+
+const generateSiteInterval = (
+  interval: DepthInterval,
+  label?: string,
+): SoilDataDepthInterval => ({
+  ...(label !== undefined ? { label } : { label: '' }),
+  depthInterval: interval,
+  electricalConductivityEnabled: false,
+  phEnabled: false,
+  sodiumAdsorptionRatioEnabled: false,
+  soilColorEnabled: false,
+  soilOrganicCarbonMatterEnabled: false,
+  soilStructureEnabled: false,
+  soilTextureEnabled: false,
+  carbonatesEnabled: false,
+});
+
+const projectToSiteInterval = (
+  interval: ProjectDepthInterval,
+  projectSettings?: ProjectSoilSettings,
+) => {
+  const siteInterval: SoilDataDepthInterval = {
+    depthInterval: interval.depthInterval,
+    label: interval.label,
+    ...(Object.fromEntries(
+      soilPitMethods.map(method => [
+        methodEnabled(method),
+        projectSettings ? projectSettings[methodRequired(method)] : false,
+      ]),
+    ) as Record<`${SoilPitMethod}Enabled`, boolean>),
+  };
+  return siteInterval;
 };
 
 type Indexable<T, Index extends keyof T> = T[Index] extends string | number
@@ -317,7 +360,7 @@ test('select user role in project of site', () => {
   expect(siteRole).toStrictEqual({ kind: 'project', role: 'viewer' });
 });
 
-test('select predefined selector', () => {
+test('select predefined project selector', () => {
   const user = generateUser();
   const project = generateProject([generateMembership(user.id, 'manager')]);
   const site = generateSite({ project });
@@ -341,4 +384,57 @@ test('select predefined selector', () => {
   expect(
     aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
   ).toStrictEqual(PRESETS['LANDPKS']);
+});
+
+test('select predefined project selector with custom preset', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const site = generateSite({ project });
+  const projectDepthIntervals = [
+    { depthInterval: { start: 2, end: 3 }, label: 'first' },
+    { depthInterval: { start: 5, end: 6 }, label: '' },
+  ];
+  const projectSettings = createProjectSettings(project, {
+    depthIntervalPreset: 'CUSTOM',
+    depthIntervals: projectDepthIntervals,
+  });
+  const siteDepthIntervals = [
+    generateSiteInterval({ start: 1, end: 2 }, 'site-0'),
+    generateSiteInterval({ start: 4, end: 6 }, 'site-1'),
+    generateSiteInterval({ start: 7, end: 10 }, 'site-2'),
+  ];
+  const soilData = createSoilData(site, {
+    depthIntervals: siteDepthIntervals,
+  });
+
+  const store = createStore(
+    initState([project], [user], [site], user.id, {
+      soilData,
+      projectSettings,
+    }),
+  );
+
+  const aggregatedIntervals = selectSoilDataIntervals(
+    store.getState(),
+    site.id,
+  );
+
+  expect(aggregatedIntervals).toStrictEqual([
+    { mutable: true, interval: siteDepthIntervals[0] },
+    {
+      mutable: false,
+      interval: projectToSiteInterval(
+        projectDepthIntervals[0],
+        projectSettings[project.id],
+      ),
+    },
+    {
+      mutable: false,
+      interval: projectToSiteInterval(
+        projectDepthIntervals[1],
+        projectSettings[project.id],
+      ),
+    },
+    { mutable: true, interval: siteDepthIntervals[2] },
+  ]);
 });
