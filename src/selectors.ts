@@ -18,6 +18,7 @@ import {
   sameDepth,
   SoilData,
   SoilDataDepthInterval,
+  SoilPitMethod,
   soilPitMethods,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import { type SharedState } from 'terraso-client-shared/store/store';
@@ -243,7 +244,7 @@ export const makeSoilDepth = (
       methodEnabled(method),
       soilSettings ? soilSettings[methodRequired(method)] : false,
     ]),
-  ) as Record<`${(typeof soilPitMethods)[number]}Enabled`, boolean>;
+  ) as Record<`${SoilPitMethod}Enabled`, boolean>;
   return { ...depthInterval, ...methodsEnabled };
 };
 
@@ -271,7 +272,9 @@ const matchIntervals = (
 
   while (
     j < sortedSoilDepth.length &&
-    sortedSoilDepth[j].depthInterval.end <= sortedPresets[0].depthInterval.start
+    (sortedPresets.length == 0 ||
+      sortedSoilDepth[j].depthInterval.end <=
+        sortedPresets[0].depthInterval.start)
   ) {
     intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
     j++;
@@ -279,11 +282,13 @@ const matchIntervals = (
 
   for (let i = 0; i < sortedPresets.length; i++) {
     const A = sortedPresets[i];
+    let addPresetInterval = true;
     for (; j < sortedSoilDepth.length; j++) {
       const B = sortedSoilDepth[j];
       if (sameDepth(A)(B)) {
         // site soil interval already created for preset depth
         intervals.push({ mutable: false, interval: B });
+        addPresetInterval = false;
       } else if (A.depthInterval.start < B.depthInterval.start) {
         // no more site soil intervals that can overlap with preset
         break;
@@ -294,10 +299,12 @@ const matchIntervals = (
         }
       }
     }
-    intervals.push({
-      mutable: false,
-      interval: makeSoilDepth(A, soilSettings),
-    });
+    if (addPresetInterval) {
+      intervals.push({
+        mutable: false,
+        interval: makeSoilDepth(A, soilSettings),
+      });
+    }
   }
   while (j < sortedSoilDepth.length) {
     // add any additional soil depth intervals

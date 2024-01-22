@@ -149,8 +149,8 @@ const createProjectSettings = (
 const generateSiteInterval = (
   interval: DepthInterval,
   label?: string,
+  defaults?: Partial<SoilDataDepthInterval>,
 ): SoilDataDepthInterval => ({
-  ...(label !== undefined ? { label } : { label: '' }),
   depthInterval: interval,
   electricalConductivityEnabled: false,
   phEnabled: false,
@@ -160,6 +160,8 @@ const generateSiteInterval = (
   soilStructureEnabled: false,
   soilTextureEnabled: false,
   carbonatesEnabled: false,
+  ...(label !== undefined ? { label } : { label: '' }),
+  ...(defaults || {}),
 });
 
 const projectToSiteInterval = (
@@ -436,5 +438,46 @@ test('select predefined project selector with custom preset', () => {
       ),
     },
     { mutable: true, interval: siteDepthIntervals[2] },
+  ]);
+});
+
+test('overlapping site intervals get the project values of the preset interval', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const site = generateSite({ project });
+
+  const projectDepthIntervals = [
+    { depthInterval: { start: 1, end: 2 }, label: 'first' },
+  ];
+  const projectSettings = createProjectSettings(project, {
+    depthIntervalPreset: 'CUSTOM',
+    depthIntervals: projectDepthIntervals,
+  });
+  const siteDepthIntervals = [
+    generateSiteInterval({ start: 1, end: 2 }, 'label', {
+      carbonatesEnabled: true,
+    }),
+  ];
+  const soilData = createSoilData(site, {
+    depthIntervals: siteDepthIntervals,
+  });
+
+  const store = createStore(
+    initState([project], [user], [site], user.id, {
+      soilData,
+      projectSettings,
+    }),
+  );
+
+  const aggregatedIntervals = selectSoilDataIntervals(
+    store.getState(),
+    site.id,
+  );
+
+  expect(aggregatedIntervals).toStrictEqual([
+    {
+      mutable: false,
+      interval: { ...siteDepthIntervals[0], carbonatesEnabled: true },
+    },
   ]);
 });
