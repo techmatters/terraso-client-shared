@@ -152,6 +152,7 @@ const soilIdSlice = createSlice({
     });
 
     builder.addCase(updateSoilDataDepthInterval.fulfilled, (state, action) => {
+      console.debug(action.payload);
       state.soilData[action.meta.arg.siteId] = action.payload;
     });
 

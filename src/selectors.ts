@@ -272,7 +272,7 @@ const matchIntervals = (
 
   while (
     j < sortedSoilDepth.length &&
-    (sortedPresets.length == 0 ||
+    (sortedPresets.length === 0 ||
       sortedSoilDepth[j].depthInterval.end <=
         sortedPresets[0].depthInterval.start)
   ) {
