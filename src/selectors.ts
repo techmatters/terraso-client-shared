@@ -337,7 +337,7 @@ export const selectSoilDataIntervals = createSelector(
       const presetIntervals = generateSiteIntervalPreset({
         ...soilData,
         // default is LANDPKS if preset is not set
-        ...(!soilData.depthIntervalPreset
+        ...(soilData.depthIntervalPreset === undefined
           ? { depthIntervalPreset: 'LANDPKS' }
           : {}),
       });
