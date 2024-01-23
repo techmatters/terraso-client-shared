@@ -334,7 +334,13 @@ export const selectSoilDataIntervals = createSelector(
   (soilData: SoilData, projectSettings: ProjectSoilSettings | undefined) => {
     if (projectSettings === undefined) {
       // check site presets
-      const presetIntervals = generateSiteIntervalPreset(soilData);
+      const presetIntervals = generateSiteIntervalPreset({
+        ...soilData,
+        // default is LANDPKS if preset is not set
+        ...(!soilData.depthIntervalPreset
+          ? { depthIntervalPreset: 'LANDPKS' }
+          : {}),
+      });
       // match with overlapping site intervals
       return matchIntervals(
         presetIntervals.map(depthInterval => ({
