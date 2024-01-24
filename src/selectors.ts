@@ -208,7 +208,7 @@ const generateSiteIntervalPreset = (soilData: SoilData) => {
   switch (soilData.depthIntervalPreset) {
     case 'LANDPKS':
     case 'NRCS':
-      return PRESETS.LANDPKS;
+      return PRESETS[soilData.depthIntervalPreset];
     default:
       return [];
   }

@@ -441,7 +441,7 @@ test('select predefined project selector with custom preset', () => {
   ]);
 });
 
-test.only('overlapping site intervals get the project values of the preset interval', () => {
+test('overlapping site intervals get the project values of the preset interval', () => {
   const user = generateUser();
   const project = generateProject([generateMembership(user.id, 'manager')]);
   const site = generateSite({ project });
