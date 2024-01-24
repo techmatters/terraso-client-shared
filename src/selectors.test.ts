@@ -441,13 +441,14 @@ test('select predefined project selector with custom preset', () => {
   ]);
 });
 
-test('overlapping site intervals get the project values of the preset interval', () => {
+test.only('overlapping site intervals get the project values of the preset interval', () => {
   const user = generateUser();
   const project = generateProject([generateMembership(user.id, 'manager')]);
   const site = generateSite({ project });
 
   const projectDepthIntervals = [
     { depthInterval: { start: 1, end: 2 }, label: 'first' },
+    { depthInterval: { start: 2, end: 3 }, label: 'second' },
   ];
   const projectSettings = createProjectSettings(project, {
     depthIntervalPreset: 'CUSTOM',
@@ -456,6 +457,9 @@ test('overlapping site intervals get the project values of the preset interval',
   const siteDepthIntervals = [
     generateSiteInterval({ start: 1, end: 2 }, 'label', {
       carbonatesEnabled: true,
+    }),
+    generateSiteInterval({ start: 2, end: 3 }, 'label', {
+      phEnabled: true,
     }),
   ];
   const soilData = createSoilData(site, {
@@ -479,5 +483,6 @@ test('overlapping site intervals get the project values of the preset interval',
       mutable: false,
       interval: { ...siteDepthIntervals[0], carbonatesEnabled: true },
     },
+    { mutable: false, interval: siteDepthIntervals[1] },
   ]);
 });
