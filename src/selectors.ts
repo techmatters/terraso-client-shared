@@ -268,49 +268,47 @@ const matchIntervals = (
 
   const intervals: AggregatedInterval[] = [];
 
-  let j = 0;
-
-  while (
-    j < sortedSoilDepth.length &&
-    (sortedPresets.length === 0 ||
-      sortedSoilDepth[j].depthInterval.end <=
-        sortedPresets[0].depthInterval.start)
-  ) {
-    intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
-    j++;
-  }
-
-  for (let i = 0; i < sortedPresets.length; i++) {
-    const A = sortedPresets[i];
-    let addPresetInterval = true;
-    for (; j < sortedSoilDepth.length; j++) {
-      const B = sortedSoilDepth[j];
-      if (sameDepth(A)(B)) {
-        // site soil interval already created for preset depth
-        intervals.push({ mutable: false, interval: B });
-        addPresetInterval = false;
-      } else if (A.depthInterval.start < B.depthInterval.start) {
-        // no more site soil intervals that can overlap with preset
-        break;
-      } else {
-        // only add the "mutable" interval if it doesn't overlap with others
-        if (!checkOverlap(A)(B)) {
-          intervals.push({ mutable: true, interval: B });
-        }
-      }
+  let i = 0,
+    j = 0;
+  while (i < sortedPresets.length || j < sortedSoilDepth.length) {
+    if (i === sortedPresets.length) {
+      // no more preset intervals, and we know B_j doesn't overlap with any A
+      // so B_j can be added
+      intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
+      j++;
+      continue;
     }
-    if (addPresetInterval) {
+    const A_i = sortedPresets[i];
+    let presetCovered = false;
+    while (j < sortedSoilDepth.length) {
+      const B_j = sortedSoilDepth[j];
+      if (B_j.depthInterval.end <= A_i.depthInterval.start) {
+        // B doesn't overlap with A_i-1, and not with A_i, so it can be added
+        intervals.push({ mutable: true, interval: B_j });
+      } else if (sameDepth(A_i)(B_j)) {
+        // if they are the same depth, B_j contains soil info for A_i
+        intervals.push({
+          mutable: false,
+          interval: B_j,
+        });
+        presetCovered = true;
+      } else if (!checkOverlap(A_i)(B_j)) {
+        // we break out of the loop when B_j no longer overlaps with A_i
+        // (which means we don't add any overlapping B_j's)
+        break;
+      }
+      j++;
+    }
+    if (!presetCovered) {
+      // all preset intervals added as mutable = false
       intervals.push({
         mutable: false,
-        interval: makeSoilDepth(A, soilSettings),
+        interval: makeSoilDepth(A_i, soilSettings),
       });
     }
+    i++;
   }
-  while (j < sortedSoilDepth.length) {
-    // add any additional soil depth intervals
-    intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
-    j++;
-  }
+
   return intervals;
 };
 
