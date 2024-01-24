@@ -155,9 +155,12 @@ const soilIdSlice = createSlice({
       state.soilData[action.meta.arg.siteId] = action.payload;
     });
 
-    builder.addCase(updateSoilDataDepthInterval.fulfilled, (state, action) => {
-      state.soilData[action.meta.arg.siteId] = action.payload;
-    });
+    builder.addCase(
+      updateSoilDataDepthIntervalAsync.fulfilled,
+      (state, action) => {
+        state.soilData[action.meta.arg.siteId] = action.payload;
+      },
+    );
 
     builder.addCase(
       updateSoilDataDepthIntervalAsync.pending,
