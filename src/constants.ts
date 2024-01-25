@@ -1,4 +1,5 @@
 import { DepthInterval } from './graphqlSchema/graphql';
+import { SoilPitMethod } from './soilId/soilIdSlice';
 
 export const PRESETS: Record<'LANDPKS' | 'NRCS', DepthInterval[]> = {
   LANDPKS: [
@@ -18,3 +19,9 @@ export const PRESETS: Record<'LANDPKS' | 'NRCS', DepthInterval[]> = {
     { start: 100, end: 200 },
   ],
 };
+
+export const DEFAULT_ENABLED_METHODS: SoilPitMethod[] = [
+  'soilTexture',
+  'soilStructure',
+  'soilColor',
+];
