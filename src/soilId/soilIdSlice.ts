@@ -32,6 +32,7 @@ import {
   createAsyncThunk,
   dispatchByKeys,
 } from 'terraso-client-shared/store/utils';
+import { Optional } from 'terraso-client-shared/utils';
 
 export const soilPitMethods = [
   'soilTexture',
@@ -78,12 +79,17 @@ export type SoilData = Omit<
   depthIntervals: SoilDataDepthInterval[];
   depthDependentData: DepthDependentSoilData[];
 };
+
+export type LabelOptional<Type extends { label: string }> = Optional<
+  Type,
+  'label'
+>;
 export type ProjectDepthInterval = Omit<ProjectDepthIntervalNode, 'project'>;
 export type ProjectSoilSettings = Omit<
   ProjectSoilSettingsNode,
   'project' | 'depthIntervals'
 > & {
-  depthIntervals: ProjectDepthInterval[];
+  depthIntervals: LabelOptional<ProjectDepthInterval>[];
 };
 
 export type SoilState = {

@@ -11,6 +11,7 @@ import {
 } from 'terraso-client-shared/project/projectSlice';
 import {
   checkOverlap,
+  LabelOptional,
   methodEnabled,
   methodRequired,
   ProjectDepthInterval,
@@ -22,12 +23,7 @@ import {
   soilPitMethods,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import { type SharedState } from 'terraso-client-shared/store/store';
-import {
-  exists,
-  filterValues,
-  mapValues,
-  Optional,
-} from 'terraso-client-shared/utils';
+import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
 
 const selectProjectMemberships = (state: SharedState, projectId: string) =>
   state.project.projects[projectId]?.memberships ?? [];
@@ -247,8 +243,6 @@ export const makeSoilDepth = (
   ) as Record<`${SoilPitMethod}Enabled`, boolean>;
   return { ...depthInterval, ...methodsEnabled };
 };
-
-type LabelOptional<Type extends { label: string }> = Optional<Type, 'label'>;
 
 export type AggregatedInterval = {
   /* can this interval be deleted + can its bounds be updated? */
