@@ -247,7 +247,7 @@ export const makeSoilDepth = (
 export type AggregatedInterval = {
   /* can this interval be deleted + can its bounds be updated? */
   mutable: boolean;
-  /* if label missing, label should not be assigned to this interval */
+  // if label missing, label should not be assigned to this interval
   interval: LabelOptional<SoilDataDepthInterval>;
 };
 
