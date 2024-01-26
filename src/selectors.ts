@@ -229,8 +229,8 @@ const sortFn = (
   { depthInterval: B }: { depthInterval: DepthInterval },
 ) => A.start - B.start;
 
-/** transform a project depth interval into a site soil interval + input methods
-ie. a site soil interval */
+//  transform a project depth interval into a site soil interval + input methods
+//  i.e. a site soil interval
 export const makeSoilDepth = (
   depthInterval: LabelOptional<ProjectDepthInterval>,
   soilSettings?: ProjectSoilSettings,
