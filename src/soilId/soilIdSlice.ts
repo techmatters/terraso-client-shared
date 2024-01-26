@@ -17,44 +17,22 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
-import type {
-  DepthDependentSoilDataNode,
-  DepthInterval,
-  ProjectDepthIntervalNode,
-  ProjectSoilSettingsNode,
-  SoilDataDepthIntervalNode,
-  SoilDataNode,
-} from 'terraso-client-shared/graphqlSchema/graphql';
 import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
+import {
+  CollectionMethod,
+  DepthInterval,
+  ProjectSoilSettings,
+  SoilData,
+  SoilPitMethod,
+} from 'terraso-client-shared/soilId/soilIdTypes';
 import {
   createAsyncThunk,
   dispatchByKeys,
 } from 'terraso-client-shared/store/utils';
 
-export const soilPitMethods = [
-  'soilTexture',
-  'soilColor',
-  'carbonates',
-  'ph',
-  'soilOrganicCarbonMatter',
-  'electricalConductivity',
-  'sodiumAdsorptionRatio',
-  'soilStructure',
-] as const;
-export const collectionMethods = [
-  'slope',
-  'verticalCracking',
-  ...soilPitMethods,
-  'landUseLandCover',
-  'soilLimitations',
-  'photos',
-  'notes',
-] as const;
-
-export type SoilPitMethod = (typeof soilPitMethods)[number];
-export type CollectionMethod = (typeof collectionMethods)[number];
+export * from 'terraso-client-shared/soilId/soilIdTypes';
 
 export const methodEnabled = <T extends SoilPitMethod>(
   method: T,
@@ -63,28 +41,6 @@ export const methodEnabled = <T extends SoilPitMethod>(
 export const methodRequired = <T extends CollectionMethod>(
   method: T,
 ): `${T}Required` => `${method}Required`;
-
-export { DepthInterval };
-export type LabelledDepthInterval = {
-  label: string;
-  depthInterval: DepthInterval;
-};
-export type SoilDataDepthInterval = Omit<SoilDataDepthIntervalNode, 'site'>;
-export type DepthDependentSoilData = Omit<DepthDependentSoilDataNode, 'site'>;
-export type SoilData = Omit<
-  SoilDataNode,
-  'site' | 'depthIntervals' | 'depthDependentData'
-> & {
-  depthIntervals: SoilDataDepthInterval[];
-  depthDependentData: DepthDependentSoilData[];
-};
-export type ProjectDepthInterval = Omit<ProjectDepthIntervalNode, 'project'>;
-export type ProjectSoilSettings = Omit<
-  ProjectSoilSettingsNode,
-  'project' | 'depthIntervals'
-> & {
-  depthIntervals: ProjectDepthInterval[];
-};
 
 type SoilState = {
   soilData: Record<string, SoilData>;

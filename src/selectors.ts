@@ -6,10 +6,12 @@ import {
   Project,
   ProjectMembership,
 } from 'terraso-client-shared/project/projectSlice';
+import { sameDepth } from 'terraso-client-shared/soilId/soilIdSlice';
 import {
+  DepthInterval,
   ProjectDepthInterval,
   ProjectSoilSettings,
-} from 'terraso-client-shared/soilId/soilIdSlice';
+} from 'terraso-client-shared/soilId/soilIdTypes';
 import { type SharedState } from 'terraso-client-shared/store/store';
 import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
 
@@ -27,6 +29,9 @@ export const selectProjectMembershipsWithUsers = createSelector(
 );
 
 const selectProjects = (state: SharedState) => state.project.projects;
+
+export const selectSite = (siteId: string) => (state: SharedState) =>
+  state.site.sites[siteId];
 
 const selectSites = (state: SharedState) => state.site.sites;
 
@@ -150,6 +155,23 @@ export const selectUserRoleSite = createSelector(
   },
 );
 
+export const selectUserRoleProject = createSelector(
+  [selectProjects, selectCurrentUserID, (_, projectId) => projectId],
+  (projects, userId, projectId) => {
+    const project = projects[projectId];
+    if (project === undefined) {
+      return null;
+    }
+    const membership = Object.values(project.memberships).find(
+      ({ userId: projectUserId }) => userId === projectUserId,
+    );
+    if (membership === undefined) {
+      return null;
+    }
+    return membership.userRole;
+  },
+);
+
 const generateProjectIntervals = (settings: ProjectSoilSettings) => {
   let depthIntervals: ProjectDepthInterval[] | undefined;
   switch (settings.depthIntervalPreset) {
@@ -182,3 +204,24 @@ export const selectProjectSettings = createSelector(
     return { ...projectSettings, depthIntervals };
   },
 );
+
+export const selectSiteSoilProjectSettings =
+  (siteId: string) => (state: SharedState) => {
+    const projectId = state.site.sites[siteId].projectId;
+    return projectId === undefined
+      ? undefined
+      : state.soilId.projectSettings[projectId];
+  };
+
+export const selectDepthDependentData =
+  ({
+    siteId,
+    depthInterval,
+  }: {
+    siteId: string;
+    depthInterval: { depthInterval: DepthInterval };
+  }) =>
+  (state: SharedState) =>
+    state.soilId.soilData[siteId].depthDependentData.find(
+      sameDepth(depthInterval),
+    );
