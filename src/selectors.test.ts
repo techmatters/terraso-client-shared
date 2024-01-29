@@ -3,7 +3,7 @@ import {
   initialState as accountInitialState,
   User,
 } from 'terraso-client-shared/account/accountSlice';
-import { PRESETS } from 'terraso-client-shared/constants';
+import { DEPTH_INTERVAL_PRESETS } from 'terraso-client-shared/constants';
 import {
   DepthInterval,
   ProjectPrivacy,
@@ -385,7 +385,7 @@ test('select predefined project selector', () => {
 
   expect(
     aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
-  ).toStrictEqual(PRESETS['LANDPKS']);
+  ).toStrictEqual(DEPTH_INTERVAL_PRESETS['LANDPKS']);
 });
 
 test('select predefined project selector with custom preset', () => {

@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
-import { PRESETS } from 'terraso-client-shared/constants';
+import { DEPTH_INTERVAL_PRESETS } from 'terraso-client-shared/constants';
 import {
   DepthInterval,
   UserRole,
@@ -18,7 +18,6 @@ import {
   soilPitMethods,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import {
-  LabelOptional,
   ProjectDepthInterval,
   ProjectSoilSettings,
   SoilDataDepthInterval,
@@ -187,12 +186,12 @@ export const selectUserRoleProject = createSelector(
 );
 
 const generateProjectIntervals = (settings: ProjectSoilSettings) => {
-  let depthIntervals: LabelOptional<ProjectDepthInterval>[] | undefined;
+  let depthIntervals: ProjectDepthInterval[] | undefined;
   switch (settings.depthIntervalPreset) {
     case 'LANDPKS':
     case 'NRCS':
-      depthIntervals = PRESETS[settings.depthIntervalPreset].map(
-        depthInterval => ({ depthInterval }),
+      depthIntervals = DEPTH_INTERVAL_PRESETS[settings.depthIntervalPreset].map(
+        depthInterval => ({ depthInterval, label: '' }),
       );
       break;
     case 'CUSTOM':
@@ -209,7 +208,7 @@ const generateSiteIntervalPreset = (soilData: SoilData) => {
   switch (soilData.depthIntervalPreset) {
     case 'LANDPKS':
     case 'NRCS':
-      return PRESETS[soilData.depthIntervalPreset];
+      return DEPTH_INTERVAL_PRESETS[soilData.depthIntervalPreset];
     default:
       return [];
   }
@@ -237,9 +236,9 @@ const sortFn = (
 //  transform a project depth interval into a site soil interval + input methods
 //  i.e. a site soil interval
 export const makeSoilDepth = (
-  depthInterval: LabelOptional<ProjectDepthInterval>,
+  depthInterval: ProjectDepthInterval,
   soilSettings?: ProjectSoilSettings,
-): LabelOptional<SoilDataDepthInterval> => {
+): SoilDataDepthInterval => {
   const methodsEnabled = Object.fromEntries(
     soilPitMethods.map(method => [
       methodEnabled(method),
@@ -253,11 +252,11 @@ export type AggregatedInterval = {
   // can this interval be deleted + can its bounds be updated?
   mutable: boolean;
   // if label missing, label should not be assigned to this interval
-  interval: LabelOptional<SoilDataDepthInterval>;
+  interval: SoilDataDepthInterval;
 };
 
 const matchIntervals = (
-  presetIntervals: LabelOptional<ProjectDepthInterval>[],
+  presetIntervals: ProjectDepthInterval[],
   soilDepthIntervals: SoilDataDepthInterval[],
   soilSettings: ProjectSoilSettings | undefined,
 ) => {
@@ -342,6 +341,7 @@ export const selectSoilDataIntervals = createSelector(
       return matchIntervals(
         presetIntervals.map(depthInterval => ({
           depthInterval,
+          label: '',
         })),
         soilData.depthIntervals,
         undefined,
