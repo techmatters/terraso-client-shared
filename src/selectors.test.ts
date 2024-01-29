@@ -5,7 +5,7 @@ import {
 } from 'terraso-client-shared/account/accountSlice';
 import {
   DEFAULT_ENABLED_METHODS,
-  PRESETS,
+  DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
 import {
   DepthInterval,
@@ -182,15 +182,14 @@ const projectToSiteInterval = (
     depthInterval: interval.depthInterval,
     label: interval.label,
     ...(Object.fromEntries(
-      soilPitMethods.map(method => [
+      soilPitMethods.map((method: SoilPitMethod) => [
         methodEnabled(method),
-        projectSettings ? projectSettings[methodRequired(method)] : false,
+        projectSettings
+          ? projectSettings[methodRequired(method)]
+          : false || DEFAULT_ENABLED_METHODS.findIndex(a => a === method) > 0,
       ]),
     ) as Record<`${SoilPitMethod}Enabled`, boolean>),
   };
-  for (const method of DEFAULT_ENABLED_METHODS) {
-    siteInterval[methodEnabled(method)] = true;
-  }
   return siteInterval;
 };
 
@@ -398,7 +397,7 @@ test('select predefined project selector', () => {
 
   expect(
     aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
-  ).toStrictEqual(PRESETS['LANDPKS']);
+  ).toStrictEqual(DEPTH_INTERVAL_PRESETS['LANDPKS']);
 });
 
 test('select predefined project selector with custom preset', () => {

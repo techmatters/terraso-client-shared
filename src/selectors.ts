@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
 import {
   DEFAULT_ENABLED_METHODS,
-  PRESETS,
+  DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
 import {
   DepthInterval,
@@ -17,15 +17,14 @@ import {
   methodEnabled,
   methodRequired,
   sameDepth,
+  SoilData,
+  soilPitMethods,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import {
-  LabelOptional,
   ProjectDepthInterval,
   ProjectSoilSettings,
-  SoilData,
   SoilDataDepthInterval,
   SoilPitMethod,
-  soilPitMethods,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import { type SharedState } from 'terraso-client-shared/store/store';
 import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
@@ -190,12 +189,12 @@ export const selectUserRoleProject = createSelector(
 );
 
 const generateProjectIntervals = (settings: ProjectSoilSettings) => {
-  let depthIntervals: LabelOptional<ProjectDepthInterval>[] | undefined;
+  let depthIntervals: ProjectDepthInterval[] | undefined;
   switch (settings.depthIntervalPreset) {
     case 'LANDPKS':
     case 'NRCS':
-      depthIntervals = PRESETS[settings.depthIntervalPreset].map(
-        depthInterval => ({ depthInterval }),
+      depthIntervals = DEPTH_INTERVAL_PRESETS[settings.depthIntervalPreset].map(
+        depthInterval => ({ depthInterval, label: '' }),
       );
       break;
     case 'CUSTOM':
@@ -212,7 +211,7 @@ const generateSiteIntervalPreset = (soilData: SoilData) => {
   switch (soilData.depthIntervalPreset) {
     case 'LANDPKS':
     case 'NRCS':
-      return PRESETS[soilData.depthIntervalPreset];
+      return DEPTH_INTERVAL_PRESETS[soilData.depthIntervalPreset];
     default:
       return [];
   }
@@ -237,21 +236,20 @@ const sortFn = (
   { depthInterval: B }: { depthInterval: DepthInterval },
 ) => A.start - B.start;
 
-/** transform a project depth interval into a site soil interval + input methods
-ie. a site soil interval */
+//  transform a project depth interval into a site soil interval + input methods
+//  i.e. a site soil interval
 export const makeSoilDepth = (
-  depthInterval: LabelOptional<ProjectDepthInterval>,
+  depthInterval: ProjectDepthInterval,
   soilSettings?: ProjectSoilSettings,
-): LabelOptional<SoilDataDepthInterval> => {
+): SoilDataDepthInterval => {
   const methodsEnabled = Object.fromEntries(
     soilPitMethods.map(method => [
       methodEnabled(method),
-      soilSettings ? soilSettings[methodRequired(method)] : false,
+      soilSettings
+        ? soilSettings[methodRequired(method)]
+        : false || DEFAULT_ENABLED_METHODS.includes(method),
     ]),
   ) as Record<`${SoilPitMethod}Enabled`, boolean>;
-  for (const method of DEFAULT_ENABLED_METHODS) {
-    methodsEnabled[methodEnabled(method)] = true;
-  }
   return { ...depthInterval, ...methodsEnabled };
 };
 
@@ -259,13 +257,13 @@ export type AggregatedInterval = {
   /* can this interval be deleted + can its bounds be updated? */
   mutable: boolean;
   /* if label missing, label should not be assigned to this interval */
-  interval: LabelOptional<SoilDataDepthInterval>;
+  interval: SoilDataDepthInterval;
   /* there is an existing backend interval that matches this one */
   backendIntervalExists: boolean;
 };
 
 const matchIntervals = (
-  presetIntervals: LabelOptional<ProjectDepthInterval>[],
+  presetIntervals: ProjectDepthInterval[],
   soilDepthIntervals: SoilDataDepthInterval[],
   soilSettings: ProjectSoilSettings | undefined,
 ) => {
@@ -360,6 +358,7 @@ export const selectSoilDataIntervals = createSelector(
       return matchIntervals(
         presetIntervals.map(depthInterval => ({
           depthInterval,
+          label: '',
         })),
         soilData.depthIntervals,
         undefined,
