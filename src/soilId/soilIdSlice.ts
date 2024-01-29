@@ -42,7 +42,7 @@ export const methodRequired = <T extends CollectionMethod>(
   method: T,
 ): `${T}Required` => `${method}Required`;
 
-type SoilState = {
+export type SoilState = {
   soilData: Record<string, SoilData>;
   projectSettings: Record<string, ProjectSoilSettings>;
   status: 'loading' | 'error' | 'ready';
@@ -59,6 +59,12 @@ export const sameDepth =
   (b: { depthInterval: DepthInterval }) =>
     a.depthInterval.start === b.depthInterval.start &&
     a.depthInterval.end === b.depthInterval.end;
+
+export const checkOverlap =
+  (a: { depthInterval: DepthInterval }) =>
+  (b: { depthInterval: DepthInterval }) =>
+    Math.max(a.depthInterval.start, b.depthInterval.start) <
+    Math.min(a.depthInterval.end, b.depthInterval.end);
 
 const soilIdSlice = createSlice({
   name: 'soilId',
@@ -106,6 +112,13 @@ const soilIdSlice = createSlice({
     });
 
     builder.addCase(
+      updateSoilDataDepthIntervalAsync.fulfilled,
+      (state, action) => {
+        state.soilData[action.meta.arg.siteId] = action.payload;
+      },
+    );
+
+    builder.addCase(
       updateSoilDataDepthIntervalAsync.pending,
       (state, action) => {
         const currentState = state.soilData[action.meta.arg.siteId];
@@ -117,6 +130,7 @@ const soilIdSlice = createSlice({
         const index = currentState.depthIntervals.findIndex(
           a => a.depthInterval.start === action.meta.arg.depthInterval.start,
         );
+
         const interval =
           state.soilData[action.meta.arg.siteId].depthIntervals[index];
         state.soilData[action.meta.arg.siteId].depthIntervals[index] = {

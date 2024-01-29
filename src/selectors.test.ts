@@ -3,7 +3,9 @@ import {
   initialState as accountInitialState,
   User,
 } from 'terraso-client-shared/account/accountSlice';
+import { DEPTH_INTERVAL_PRESETS } from 'terraso-client-shared/constants';
 import {
+  DepthInterval,
   ProjectPrivacy,
   UserRole,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -15,9 +17,21 @@ import {
   selectProjectMembershipsWithUsers,
   selectProjectsWithTransferrableSites,
   selectSitesAndUserRoles,
+  selectSoilDataIntervals,
   selectUserRoleSite,
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
+import {
+  methodEnabled,
+  methodRequired,
+  ProjectDepthInterval,
+  ProjectSoilSettings,
+  SoilData,
+  SoilDataDepthInterval,
+  SoilPitMethod,
+  soilPitMethods,
+  SoilState,
+} from 'terraso-client-shared/soilId/soilIdSlice';
 import { SerializableSet } from 'terraso-client-shared/store/utils';
 import { createStore } from 'terraso-client-shared/tests/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -90,6 +104,83 @@ const generateMembership = (userId: string, userRole: UserRole) => {
   return { id: uuidv4(), userId, userRole };
 };
 
+const createSoilData = (
+  site: Site,
+  defaults?: Partial<SoilData>,
+): Record<string, SoilData> => {
+  return {
+    [site.id]: {
+      depthDependentData: [],
+      depthIntervals: [],
+      ...defaults,
+    },
+  };
+};
+
+const createProjectSettings = (
+  project: Project,
+  defaults?: Partial<ProjectSoilSettings>,
+): Record<string, ProjectSoilSettings> => {
+  return {
+    [project.id]: {
+      carbonatesRequired: false,
+      depthIntervalPreset: 'LANDPKS',
+      depthIntervals: [],
+      electricalConductivityRequired: false,
+      landUseLandCoverRequired: false,
+      measurementUnits: 'METRIC',
+      notesRequired: false,
+      phRequired: false,
+      photosRequired: false,
+      slopeRequired: false,
+      sodiumAdsorptionRatioRequired: false,
+      soilColorRequired: false,
+      soilLimitationsRequired: false,
+      soilOrganicCarbonMatterRequired: false,
+      soilPitRequired: false,
+      soilStructureRequired: false,
+      soilTextureRequired: false,
+      verticalCrackingRequired: false,
+      ...defaults,
+    },
+  };
+};
+
+const generateSiteInterval = (
+  interval: DepthInterval,
+  label?: string,
+  defaults?: Partial<SoilDataDepthInterval>,
+): SoilDataDepthInterval => ({
+  depthInterval: interval,
+  electricalConductivityEnabled: false,
+  phEnabled: false,
+  sodiumAdsorptionRatioEnabled: false,
+  soilColorEnabled: false,
+  soilOrganicCarbonMatterEnabled: false,
+  soilStructureEnabled: false,
+  soilTextureEnabled: false,
+  carbonatesEnabled: false,
+  ...(label !== undefined ? { label } : { label: '' }),
+  ...(defaults || {}),
+});
+
+const projectToSiteInterval = (
+  interval: ProjectDepthInterval,
+  projectSettings?: ProjectSoilSettings,
+) => {
+  const siteInterval: SoilDataDepthInterval = {
+    depthInterval: interval.depthInterval,
+    label: interval.label,
+    ...(Object.fromEntries(
+      soilPitMethods.map(method => [
+        methodEnabled(method),
+        projectSettings ? projectSettings[methodRequired(method)] : false,
+      ]),
+    ) as Record<`${SoilPitMethod}Enabled`, boolean>),
+  };
+  return siteInterval;
+};
+
 type Indexable<T, Index extends keyof T> = T[Index] extends string | number
   ? T
   : never;
@@ -109,7 +200,13 @@ function initState(
   users: User[],
   sites: Site[] = [],
   currentUserID?: string,
+  soilId?: {
+    soilData?: Record<string, SoilData>;
+    projectSettings?: Record<string, ProjectSoilSettings>;
+  },
 ) {
+  const soilData = soilId?.soilData || {};
+  const projectSettings = soilId?.projectSettings || {};
   return merge(
     { account: { ...accountInitialState } },
     {
@@ -127,6 +224,11 @@ function initState(
       site: {
         sites: keyBy(sites, 'id'),
       },
+      soilId: {
+        soilData,
+        projectSettings,
+        status: 'ready',
+      } as SoilState,
     },
   );
 }
@@ -258,4 +360,129 @@ test('select user role in project of site', () => {
 
   const siteRole = selectUserRoleSite(store.getState(), site.id);
   expect(siteRole).toStrictEqual({ kind: 'project', role: 'viewer' });
+});
+
+test('select predefined project selector', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const site = generateSite({ project });
+  const soilData = createSoilData(site);
+  const projectSettings = createProjectSettings(project, {
+    depthIntervalPreset: 'LANDPKS',
+  });
+
+  const store = createStore(
+    initState([project], [user], [site], user.id, {
+      soilData,
+      projectSettings,
+    }),
+  );
+
+  const aggregatedIntervals = selectSoilDataIntervals(
+    store.getState(),
+    site.id,
+  );
+
+  expect(
+    aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
+  ).toStrictEqual(DEPTH_INTERVAL_PRESETS['LANDPKS']);
+});
+
+test('select predefined project selector with custom preset', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const site = generateSite({ project });
+  const projectDepthIntervals = [
+    { depthInterval: { start: 2, end: 3 }, label: 'first' },
+    { depthInterval: { start: 5, end: 6 }, label: '' },
+  ];
+  const projectSettings = createProjectSettings(project, {
+    depthIntervalPreset: 'CUSTOM',
+    depthIntervals: projectDepthIntervals,
+  });
+  const siteDepthIntervals = [
+    generateSiteInterval({ start: 1, end: 2 }, 'site-0'),
+    generateSiteInterval({ start: 4, end: 6 }, 'site-1'),
+    generateSiteInterval({ start: 7, end: 10 }, 'site-2'),
+  ];
+  const soilData = createSoilData(site, {
+    depthIntervals: siteDepthIntervals,
+  });
+
+  const store = createStore(
+    initState([project], [user], [site], user.id, {
+      soilData,
+      projectSettings,
+    }),
+  );
+
+  const aggregatedIntervals = selectSoilDataIntervals(
+    store.getState(),
+    site.id,
+  );
+
+  expect(aggregatedIntervals).toStrictEqual([
+    { mutable: true, interval: siteDepthIntervals[0] },
+    {
+      mutable: false,
+      interval: projectToSiteInterval(
+        projectDepthIntervals[0],
+        projectSettings[project.id],
+      ),
+    },
+    {
+      mutable: false,
+      interval: projectToSiteInterval(
+        projectDepthIntervals[1],
+        projectSettings[project.id],
+      ),
+    },
+    { mutable: true, interval: siteDepthIntervals[2] },
+  ]);
+});
+
+test('overlapping site intervals get the project values of the preset interval', () => {
+  const user = generateUser();
+  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const site = generateSite({ project });
+
+  const projectDepthIntervals = [
+    { depthInterval: { start: 1, end: 2 }, label: 'first' },
+    { depthInterval: { start: 2, end: 3 }, label: 'second' },
+  ];
+  const projectSettings = createProjectSettings(project, {
+    depthIntervalPreset: 'CUSTOM',
+    depthIntervals: projectDepthIntervals,
+  });
+  const siteDepthIntervals = [
+    generateSiteInterval({ start: 1, end: 2 }, 'label', {
+      carbonatesEnabled: true,
+    }),
+    generateSiteInterval({ start: 2, end: 3 }, 'label', {
+      phEnabled: true,
+    }),
+  ];
+  const soilData = createSoilData(site, {
+    depthIntervals: siteDepthIntervals,
+  });
+
+  const store = createStore(
+    initState([project], [user], [site], user.id, {
+      soilData,
+      projectSettings,
+    }),
+  );
+
+  const aggregatedIntervals = selectSoilDataIntervals(
+    store.getState(),
+    site.id,
+  );
+
+  expect(aggregatedIntervals).toStrictEqual([
+    {
+      mutable: false,
+      interval: { ...siteDepthIntervals[0], carbonatesEnabled: true },
+    },
+    { mutable: false, interval: siteDepthIntervals[1] },
+  ]);
 });

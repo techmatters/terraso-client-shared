@@ -49,6 +49,7 @@ export const soilData = /* GraphQL */ `
     downSlope
     crossSlope
     bedrock
+    depthIntervalPreset
     slopeLandscapePosition
     slopeAspect
     slopeSteepnessSelect

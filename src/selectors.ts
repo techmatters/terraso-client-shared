@@ -1,16 +1,27 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
-import { PRESETS } from 'terraso-client-shared/constants';
-import { UserRole } from 'terraso-client-shared/graphqlSchema/graphql';
+import { DEPTH_INTERVAL_PRESETS } from 'terraso-client-shared/constants';
+import {
+  DepthInterval,
+  UserRole,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 import {
   Project,
   ProjectMembership,
 } from 'terraso-client-shared/project/projectSlice';
-import { sameDepth } from 'terraso-client-shared/soilId/soilIdSlice';
 import {
-  DepthInterval,
+  checkOverlap,
+  methodEnabled,
+  methodRequired,
+  sameDepth,
+  SoilData,
+  soilPitMethods,
+} from 'terraso-client-shared/soilId/soilIdSlice';
+import {
   ProjectDepthInterval,
   ProjectSoilSettings,
+  SoilDataDepthInterval,
+  SoilPitMethod,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import { type SharedState } from 'terraso-client-shared/store/store';
 import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
@@ -155,8 +166,10 @@ export const selectUserRoleSite = createSelector(
   },
 );
 
+const selectProjectId = (_state: SharedState, projectId: string) => projectId;
+
 export const selectUserRoleProject = createSelector(
-  [selectProjects, selectCurrentUserID, (_, projectId) => projectId],
+  [selectProjects, selectCurrentUserID, selectProjectId],
   (projects, userId, projectId) => {
     const project = projects[projectId];
     if (project === undefined) {
@@ -177,7 +190,7 @@ const generateProjectIntervals = (settings: ProjectSoilSettings) => {
   switch (settings.depthIntervalPreset) {
     case 'LANDPKS':
     case 'NRCS':
-      depthIntervals = PRESETS[settings.depthIntervalPreset].map(
+      depthIntervals = DEPTH_INTERVAL_PRESETS[settings.depthIntervalPreset].map(
         depthInterval => ({ depthInterval, label: '' }),
       );
       break;
@@ -189,6 +202,16 @@ const generateProjectIntervals = (settings: ProjectSoilSettings) => {
       break;
   }
   return depthIntervals;
+};
+
+const generateSiteIntervalPreset = (soilData: SoilData) => {
+  switch (soilData.depthIntervalPreset) {
+    case 'LANDPKS':
+    case 'NRCS':
+      return DEPTH_INTERVAL_PRESETS[soilData.depthIntervalPreset];
+    default:
+      return [];
+  }
 };
 
 export const selectProjectSettings = createSelector(
@@ -205,6 +228,133 @@ export const selectProjectSettings = createSelector(
   },
 );
 
+const sortFn = (
+  { depthInterval: A }: { depthInterval: DepthInterval },
+  { depthInterval: B }: { depthInterval: DepthInterval },
+) => A.start - B.start;
+
+//  transform a project depth interval into a site soil interval + input methods
+//  i.e. a site soil interval
+export const makeSoilDepth = (
+  depthInterval: ProjectDepthInterval,
+  soilSettings?: ProjectSoilSettings,
+): SoilDataDepthInterval => {
+  const methodsEnabled = Object.fromEntries(
+    soilPitMethods.map(method => [
+      methodEnabled(method),
+      soilSettings ? soilSettings[methodRequired(method)] : false,
+    ]),
+  ) as Record<`${SoilPitMethod}Enabled`, boolean>;
+  return { ...depthInterval, ...methodsEnabled };
+};
+
+export type AggregatedInterval = {
+  // can this interval be deleted + can its bounds be updated?
+  mutable: boolean;
+  // if label missing, label should not be assigned to this interval
+  interval: SoilDataDepthInterval;
+};
+
+const matchIntervals = (
+  presetIntervals: ProjectDepthInterval[],
+  soilDepthIntervals: SoilDataDepthInterval[],
+  soilSettings: ProjectSoilSettings | undefined,
+) => {
+  // TODO: Check if we can rely on these arrays already being sorted
+  const sortedPresets = [...presetIntervals].sort(sortFn);
+  const sortedSoilDepth = [...soilDepthIntervals].sort(sortFn);
+
+  const intervals: AggregatedInterval[] = [];
+
+  let i = 0,
+    j = 0;
+  while (i < sortedPresets.length || j < sortedSoilDepth.length) {
+    if (i === sortedPresets.length) {
+      // no more preset intervals, and we know B_j doesn't overlap with any A
+      // so B_j can be added
+      intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
+      j++;
+      continue;
+    }
+    const A_i = sortedPresets[i];
+    let presetCovered = false;
+    while (j < sortedSoilDepth.length) {
+      const B_j = sortedSoilDepth[j];
+      if (B_j.depthInterval.end <= A_i.depthInterval.start) {
+        // B doesn't overlap with A_i-1, and not with A_i, so it can be added
+        intervals.push({ mutable: true, interval: B_j });
+      } else if (sameDepth(A_i)(B_j)) {
+        // if they are the same depth, B_j contains soil info for A_i
+        intervals.push({
+          mutable: false,
+          interval: B_j,
+        });
+        presetCovered = true;
+      } else if (!checkOverlap(A_i)(B_j)) {
+        // we break out of the loop when B_j no longer overlaps with A_i
+        // (which means we don't add any overlapping B_j's)
+        break;
+      }
+      j++;
+    }
+    if (!presetCovered) {
+      // all preset intervals added as mutable = false
+      intervals.push({
+        mutable: false,
+        interval: makeSoilDepth(A_i, soilSettings),
+      });
+    }
+    i++;
+  }
+
+  return intervals;
+};
+
+/**
+ * Preset intervals can also have soil data intervals on the backend.
+ * These soil data intervals are only used to  store configuration values.
+ * They are created on an ad-hoc basis when a user enables a data input.
+ * This selector performs the "aggregation" logic needed to keep track of all of this.
+ */
+export const selectSoilDataIntervals = createSelector(
+  [
+    (state: SharedState, siteId: string) => state.soilId.soilData[siteId],
+    (state: SharedState, siteId: string) => {
+      const projectId = state.site.sites[siteId]?.projectId;
+      if (projectId === undefined) {
+        return undefined;
+      }
+      return state.soilId.projectSettings[projectId];
+    },
+  ],
+  (soilData: SoilData, projectSettings: ProjectSoilSettings | undefined) => {
+    if (projectSettings === undefined) {
+      // check site presets
+      const presetIntervals = generateSiteIntervalPreset({
+        ...soilData,
+        // default is LANDPKS if preset is not set
+        ...(soilData.depthIntervalPreset === undefined
+          ? { depthIntervalPreset: 'LANDPKS' }
+          : {}),
+      });
+      // match with overlapping site intervals
+      return matchIntervals(
+        presetIntervals.map(depthInterval => ({
+          depthInterval,
+          label: '',
+        })),
+        soilData.depthIntervals,
+        undefined,
+      );
+    }
+    const presetIntervals = generateProjectIntervals(projectSettings);
+    return matchIntervals(
+      presetIntervals || [],
+      soilData.depthIntervals,
+      projectSettings,
+    );
+  },
+);
 export const selectSiteSoilProjectSettings =
   (siteId: string) => (state: SharedState) => {
     const projectId = state.site.sites[siteId].projectId;
