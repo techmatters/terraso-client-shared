@@ -11,17 +11,19 @@ import {
 } from 'terraso-client-shared/project/projectSlice';
 import {
   checkOverlap,
-  LabelOptional,
   methodEnabled,
   methodRequired,
-  ProjectDepthInterval,
-  ProjectSoilSettings,
   sameDepth,
   SoilData,
-  SoilDataDepthInterval,
-  SoilPitMethod,
   soilPitMethods,
 } from 'terraso-client-shared/soilId/soilIdSlice';
+import {
+  LabelOptional,
+  ProjectDepthInterval,
+  ProjectSoilSettings,
+  SoilDataDepthInterval,
+  SoilPitMethod,
+} from 'terraso-client-shared/soilId/soilIdTypes';
 import { type SharedState } from 'terraso-client-shared/store/store';
 import { exists, filterValues, mapValues } from 'terraso-client-shared/utils';
 
@@ -39,6 +41,9 @@ export const selectProjectMembershipsWithUsers = createSelector(
 );
 
 const selectProjects = (state: SharedState) => state.project.projects;
+
+export const selectSite = (siteId: string) => (state: SharedState) =>
+  state.site.sites[siteId];
 
 const selectSites = (state: SharedState) => state.site.sites;
 
@@ -350,3 +355,23 @@ export const selectSoilDataIntervals = createSelector(
     );
   },
 );
+export const selectSiteSoilProjectSettings =
+  (siteId: string) => (state: SharedState) => {
+    const projectId = state.site.sites[siteId].projectId;
+    return projectId === undefined
+      ? undefined
+      : state.soilId.projectSettings[projectId];
+  };
+
+export const selectDepthDependentData =
+  ({
+    siteId,
+    depthInterval,
+  }: {
+    siteId: string;
+    depthInterval: { depthInterval: DepthInterval };
+  }) =>
+  (state: SharedState) =>
+    state.soilId.soilData[siteId].depthDependentData.find(
+      sameDepth(depthInterval),
+    );
