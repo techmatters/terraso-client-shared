@@ -234,8 +234,8 @@ const sortFn = (
   { depthInterval: B }: { depthInterval: DepthInterval },
 ) => A.start - B.start;
 
-/** transform a project depth interval into a site soil interval + input methods
-ie. a site soil interval */
+//  transform a project depth interval into a site soil interval + input methods
+//  i.e. a site soil interval
 export const makeSoilDepth = (
   depthInterval: LabelOptional<ProjectDepthInterval>,
   soilSettings?: ProjectSoilSettings,
@@ -250,9 +250,9 @@ export const makeSoilDepth = (
 };
 
 export type AggregatedInterval = {
-  /* can this interval be deleted + can its bounds be updated? */
+  // can this interval be deleted + can its bounds be updated?
   mutable: boolean;
-  /* if label missing, label should not be assigned to this interval */
+  // if label missing, label should not be assigned to this interval
   interval: LabelOptional<SoilDataDepthInterval>;
 };
 

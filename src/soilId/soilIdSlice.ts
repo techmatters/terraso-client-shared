@@ -42,7 +42,7 @@ export const methodRequired = <T extends CollectionMethod>(
   method: T,
 ): `${T}Required` => `${method}Required`;
 
-type SoilState = {
+export type SoilState = {
   soilData: Record<string, SoilData>;
   projectSettings: Record<string, ProjectSoilSettings>;
   status: 'loading' | 'error' | 'ready';
