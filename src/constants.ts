@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+
 import { DepthInterval } from 'terraso-client-shared/graphqlSchema/graphql';
 
 export const DEPTH_INTERVAL_PRESETS: Record<
