@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+
 import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 import _ from 'lodash/fp';
 import { getAuthHeaders } from 'terraso-client-shared/account/auth';

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+
 import 'terraso-client-shared/account/accountSlice'; // necessary to avoid circular dependency issue
 
 import {
