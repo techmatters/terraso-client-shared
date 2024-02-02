@@ -4,7 +4,7 @@ import {
   User,
 } from 'terraso-client-shared/account/accountSlice';
 import {
-  DEFAULT_ENABLED_METHODS,
+  DEFAULT_ENABLED_SOIL_PIT_METHODS,
   DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
 import {
@@ -164,7 +164,7 @@ const generateSiteInterval = (
   soilTextureEnabled: false,
   carbonatesEnabled: false,
   ...(label !== undefined ? { label } : { label: '' }),
-  ...DEFAULT_ENABLED_METHODS.reduce(
+  ...DEFAULT_ENABLED_SOIL_PIT_METHODS.reduce(
     (x, method) => ({
       ...x,
       [methodEnabled(method)]: true,
@@ -186,7 +186,8 @@ const projectToSiteInterval = (
         methodEnabled(method),
         projectSettings
           ? projectSettings[methodRequired(method)]
-          : false || DEFAULT_ENABLED_METHODS.findIndex(a => a === method) > 0,
+          : false ||
+            DEFAULT_ENABLED_SOIL_PIT_METHODS.findIndex(a => a === method) > 0,
       ]),
     ) as Record<`${SoilPitMethod}Enabled`, boolean>),
   };

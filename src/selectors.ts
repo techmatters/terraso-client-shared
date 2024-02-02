@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
 import {
-  DEFAULT_ENABLED_METHODS,
+  DEFAULT_ENABLED_SOIL_PIT_METHODS,
   DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
 import {
@@ -247,7 +247,7 @@ export const makeSoilDepth = (
       methodEnabled(method),
       soilSettings
         ? soilSettings[methodRequired(method)]
-        : false || DEFAULT_ENABLED_METHODS.includes(method),
+        : false || DEFAULT_ENABLED_SOIL_PIT_METHODS.includes(method),
     ]),
   ) as Record<`${SoilPitMethod}Enabled`, boolean>;
   return { ...depthInterval, ...methodsEnabled };
