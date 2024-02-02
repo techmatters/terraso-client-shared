@@ -247,7 +247,10 @@ export const makeSoilDepth = (
       methodEnabled(method),
       soilSettings
         ? soilSettings[methodRequired(method)]
-        : false || DEFAULT_ENABLED_SOIL_PIT_METHODS.includes(method),
+        : false ||
+          (DEFAULT_ENABLED_SOIL_PIT_METHODS as readonly string[]).includes(
+            method,
+          ),
     ]),
   ) as Record<`${SoilPitMethod}Enabled`, boolean>;
   return { ...depthInterval, ...methodsEnabled };

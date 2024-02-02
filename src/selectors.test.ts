@@ -187,7 +187,9 @@ const projectToSiteInterval = (
         projectSettings
           ? projectSettings[methodRequired(method)]
           : false ||
-            DEFAULT_ENABLED_SOIL_PIT_METHODS.findIndex(a => a === method) > 0,
+            (DEFAULT_ENABLED_SOIL_PIT_METHODS as readonly string[]).includes(
+              method,
+            ),
       ]),
     ) as Record<`${SoilPitMethod}Enabled`, boolean>),
   };
