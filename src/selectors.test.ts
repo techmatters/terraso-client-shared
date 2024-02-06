@@ -20,7 +20,10 @@ import {
   initialState as accountInitialState,
   User,
 } from 'terraso-client-shared/account/accountSlice';
-import { DEPTH_INTERVAL_PRESETS } from 'terraso-client-shared/constants';
+import {
+  DEFAULT_ENABLED_SOIL_PIT_METHODS,
+  DEPTH_INTERVAL_PRESETS,
+} from 'terraso-client-shared/constants';
 import {
   DepthInterval,
   ProjectPrivacy,
@@ -178,6 +181,13 @@ const generateSiteInterval = (
   soilTextureEnabled: false,
   carbonatesEnabled: false,
   ...(label !== undefined ? { label } : { label: '' }),
+  ...DEFAULT_ENABLED_SOIL_PIT_METHODS.reduce(
+    (x, method) => ({
+      ...x,
+      [methodEnabled(method)]: true,
+    }),
+    {},
+  ),
   ...(defaults || {}),
 });
 
@@ -189,9 +199,14 @@ const projectToSiteInterval = (
     depthInterval: interval.depthInterval,
     label: interval.label,
     ...(Object.fromEntries(
-      soilPitMethods.map(method => [
+      soilPitMethods.map((method: SoilPitMethod) => [
         methodEnabled(method),
-        projectSettings ? projectSettings[methodRequired(method)] : false,
+        projectSettings
+          ? projectSettings[methodRequired(method)]
+          : false ||
+            (DEFAULT_ENABLED_SOIL_PIT_METHODS as readonly string[]).includes(
+              method,
+            ),
       ]),
     ) as Record<`${SoilPitMethod}Enabled`, boolean>),
   };
@@ -439,13 +454,18 @@ test('select predefined project selector with custom preset', () => {
   );
 
   expect(aggregatedIntervals).toStrictEqual([
-    { mutable: true, interval: siteDepthIntervals[0] },
+    {
+      mutable: true,
+      interval: siteDepthIntervals[0],
+      backendIntervalExists: true,
+    },
     {
       mutable: false,
       interval: projectToSiteInterval(
         projectDepthIntervals[0],
         projectSettings[project.id],
       ),
+      backendIntervalExists: false,
     },
     {
       mutable: false,
@@ -453,8 +473,13 @@ test('select predefined project selector with custom preset', () => {
         projectDepthIntervals[1],
         projectSettings[project.id],
       ),
+      backendIntervalExists: false,
     },
-    { mutable: true, interval: siteDepthIntervals[2] },
+    {
+      mutable: true,
+      interval: siteDepthIntervals[2],
+      backendIntervalExists: true,
+    },
   ]);
 });
 
@@ -499,7 +524,12 @@ test('overlapping site intervals get the project values of the preset interval',
     {
       mutable: false,
       interval: { ...siteDepthIntervals[0], carbonatesEnabled: true },
+      backendIntervalExists: true,
     },
-    { mutable: false, interval: siteDepthIntervals[1] },
+    {
+      mutable: false,
+      interval: siteDepthIntervals[1],
+      backendIntervalExists: true,
+    },
   ]);
 });

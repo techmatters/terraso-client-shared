@@ -17,7 +17,10 @@
 
 import { createSelector } from '@reduxjs/toolkit';
 import { User } from 'terraso-client-shared/account/accountSlice';
-import { DEPTH_INTERVAL_PRESETS } from 'terraso-client-shared/constants';
+import {
+  DEFAULT_ENABLED_SOIL_PIT_METHODS,
+  DEPTH_INTERVAL_PRESETS,
+} from 'terraso-client-shared/constants';
 import {
   DepthInterval,
   UserRole,
@@ -259,17 +262,24 @@ export const makeSoilDepth = (
   const methodsEnabled = Object.fromEntries(
     soilPitMethods.map(method => [
       methodEnabled(method),
-      soilSettings ? soilSettings[methodRequired(method)] : false,
+      soilSettings
+        ? soilSettings[methodRequired(method)]
+        : false ||
+          (DEFAULT_ENABLED_SOIL_PIT_METHODS as readonly string[]).includes(
+            method,
+          ),
     ]),
   ) as Record<`${SoilPitMethod}Enabled`, boolean>;
   return { ...depthInterval, ...methodsEnabled };
 };
 
 export type AggregatedInterval = {
-  // can this interval be deleted + can its bounds be updated?
+  /* can this interval be deleted + can its bounds be updated? */
   mutable: boolean;
-  // if label missing, label should not be assigned to this interval
+  /* if label missing, label should not be assigned to this interval */
   interval: SoilDataDepthInterval;
+  /* there is an existing backend interval that matches this one */
+  backendIntervalExists: boolean;
 };
 
 const matchIntervals = (
@@ -289,7 +299,11 @@ const matchIntervals = (
     if (i === sortedPresets.length) {
       // no more preset intervals, and we know B_j doesn't overlap with any A
       // so B_j can be added
-      intervals.push({ mutable: true, interval: sortedSoilDepth[j] });
+      intervals.push({
+        mutable: true,
+        interval: sortedSoilDepth[j],
+        backendIntervalExists: true,
+      });
       j++;
       continue;
     }
@@ -299,12 +313,17 @@ const matchIntervals = (
       const B_j = sortedSoilDepth[j];
       if (B_j.depthInterval.end <= A_i.depthInterval.start) {
         // B doesn't overlap with A_i-1, and not with A_i, so it can be added
-        intervals.push({ mutable: true, interval: B_j });
+        intervals.push({
+          mutable: true,
+          interval: B_j,
+          backendIntervalExists: true,
+        });
       } else if (sameDepth(A_i)(B_j)) {
         // if they are the same depth, B_j contains soil info for A_i
         intervals.push({
           mutable: false,
           interval: B_j,
+          backendIntervalExists: true,
         });
         presetCovered = true;
       } else if (!checkOverlap(A_i)(B_j)) {
@@ -319,6 +338,7 @@ const matchIntervals = (
       intervals.push({
         mutable: false,
         interval: makeSoilDepth(A_i, soilSettings),
+        backendIntervalExists: false,
       });
     }
     i++;

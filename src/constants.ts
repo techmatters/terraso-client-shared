@@ -16,11 +16,9 @@
  */
 
 import { DepthInterval } from 'terraso-client-shared/graphqlSchema/graphql';
+import { SoilPitMethod } from 'terraso-client-shared/soilId/soilIdTypes';
 
-export const DEPTH_INTERVAL_PRESETS: Record<
-  'LANDPKS' | 'NRCS',
-  DepthInterval[]
-> = {
+export const DEPTH_INTERVAL_PRESETS = {
   LANDPKS: [
     { start: 0, end: 10 },
     { start: 10, end: 20 },
@@ -37,4 +35,10 @@ export const DEPTH_INTERVAL_PRESETS: Record<
     { start: 60, end: 100 },
     { start: 100, end: 200 },
   ],
-};
+} as const satisfies Record<'LANDPKS' | 'NRCS', readonly DepthInterval[]>;
+
+export const DEFAULT_ENABLED_SOIL_PIT_METHODS = [
+  'soilTexture',
+  'soilStructure',
+  'soilColor',
+] as const satisfies readonly SoilPitMethod[];
