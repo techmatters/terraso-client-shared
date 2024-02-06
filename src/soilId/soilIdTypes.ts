@@ -25,7 +25,6 @@ import type {
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices,
   SoilIdDepthDependentSoilDataTextureChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-import { Optional } from 'terraso-client-shared/utils';
 
 export const soilPitMethods = [
   'soilTexture',
@@ -90,8 +89,3 @@ export const textures = [
 
 export type RockFragmentVolume =
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices;
-
-export type LabelOptional<Type extends { label: string }> = Optional<
-  Type,
-  'label'
->;
