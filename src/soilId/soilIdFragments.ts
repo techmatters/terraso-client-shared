@@ -99,10 +99,13 @@ export const depthDependentSoilData = /* GraphQL */ `
     }
     texture
     rockFragmentVolume
+    clayPercent
     colorHueSubstep
     colorHue
     colorValue
     colorChroma
+    colorPhotoSoilCondition
+    colorPhotoLightingCondition
     conductivity
     conductivityTest
     conductivityUnit

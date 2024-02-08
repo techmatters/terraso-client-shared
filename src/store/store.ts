@@ -60,6 +60,7 @@ export type StateFromStoreFactory<T extends (_: any) => ToolkitStore> =
 export type DispatchFromStoreFactory<T extends (_: any) => ToolkitStore> =
   ReturnType<T>['dispatch'];
 
+// TODO: why doesn't the returned store type include the reducers from S?
 const createStoreFactory = <S>(reducers: ReducersMapObject<S>) => {
   return (intialState?: Partial<SharedState & S>) =>
     configureStore({
