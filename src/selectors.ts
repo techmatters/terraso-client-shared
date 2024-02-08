@@ -123,11 +123,14 @@ export const selectSitesAndUserRoles = createSelector(
 );
 
 export const selectProjectsWithTransferrableSites = createSelector(
-  [selectProjectsWithUserRole, selectSites],
-  (projects, sites) => {
+  [selectProjectsWithUserRole, selectSites, selectSitesAndUserRoles],
+  (projects, sites, sitesWithRoles) => {
     const projectSites = projects.flatMap(project =>
       Object.keys(project.sites)
-        .filter(siteId => siteId in project.sites)
+        .filter(
+          siteId =>
+            siteId in project.sites && sitesWithRoles[siteId] === 'manager',
+        )
         .map(siteId => {
           const joinedSite = sites[siteId];
 
