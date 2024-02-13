@@ -22,8 +22,13 @@ import type {
   ProjectSoilSettingsNode,
   SoilDataDepthIntervalNode,
   SoilDataNode,
+  SoilIdDepthDependentSoilDataColorChromaChoices,
+  SoilIdDepthDependentSoilDataColorHueChoices,
+  SoilIdDepthDependentSoilDataColorHueSubstepChoices,
+  SoilIdDepthDependentSoilDataColorValueChoices,
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices,
   SoilIdDepthDependentSoilDataTextureChoices,
+  SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
 export const soilPitMethods = [
@@ -87,5 +92,58 @@ export const textures = [
   'SILT_LOAM',
 ] as const satisfies readonly SoilTexture[];
 
+export type SoilColorValue = SoilIdDepthDependentSoilDataColorValueChoices;
+export const colorValues = [
+  'VALUE_2_5',
+  'VALUE_3',
+  'VALUE_4',
+  'VALUE_5',
+  'VALUE_6',
+  'VALUE_7',
+  'VALUE_8',
+  'VALUE_8_5',
+  'VALUE_9',
+  'VALUE_9_5',
+] as const satisfies readonly SoilColorValue[];
+
+export type SoilColorChroma = SoilIdDepthDependentSoilDataColorChromaChoices;
+export const colorChromas = [
+  'CHROMA_1',
+  'CHROMA_2',
+  'CHROMA_3',
+  'CHROMA_4',
+  'CHROMA_5',
+  'CHROMA_6',
+  'CHROMA_7',
+  'CHROMA_8',
+] as const satisfies readonly SoilColorChroma[];
+
+export type SoilColorHue = SoilIdDepthDependentSoilDataColorHueChoices;
+export const colorHues = [
+  'B',
+  'BG',
+  'G',
+  'GY',
+  'R',
+  'Y',
+  'YR',
+] as const satisfies readonly SoilColorHue[];
+
+export type SoilColorHueSubstep =
+  SoilIdDepthDependentSoilDataColorHueSubstepChoices;
+export const colorHueSubsteps = [
+  'SUBSTEP_2_5',
+  'SUBSTEP_5',
+  'SUBSTEP_7_5',
+  'SUBSTEP_10',
+] as const satisfies readonly SoilColorHueSubstep[];
+
 export type RockFragmentVolume =
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices;
+
+export type SurfaceCracks = SoilIdSoilDataSurfaceCracksSelectChoices;
+export const surfaceCracks = [
+  'NO_CRACKING',
+  'SURFACE_CRACKING_ONLY',
+  'DEEP_VERTICAL_CRACKS',
+] as const satisfies readonly SurfaceCracks[];
