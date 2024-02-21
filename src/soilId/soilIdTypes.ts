@@ -124,9 +124,9 @@ export const colorHues = [
   'BG',
   'G',
   'GY',
-  'R',
   'Y',
   'YR',
+  'R',
 ] as const satisfies readonly SoilColorHue[];
 
 export type SoilColorHueSubstep =
