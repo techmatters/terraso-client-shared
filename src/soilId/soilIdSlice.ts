@@ -43,7 +43,7 @@ export const methodRequired = <T extends CollectionMethod>(
 ): `${T}Required` => `${method}Required`;
 
 export type SoilState = {
-  soilData: Record<string, SoilData>;
+  soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings>;
   status: 'loading' | 'error' | 'ready';
 };
@@ -111,57 +111,6 @@ const soilIdSlice = createSlice({
       state.soilData[action.meta.arg.siteId] = action.payload;
     });
 
-    builder.addCase(
-      updateSoilDataDepthIntervalAsync.fulfilled,
-      (state, action) => {
-        state.soilData[action.meta.arg.siteId] = action.payload;
-      },
-    );
-
-    builder.addCase(
-      updateSoilDataDepthIntervalAsync.pending,
-      (state, action) => {
-        const currentState = state.soilData[action.meta.arg.siteId];
-        const update = Object.fromEntries(
-          Object.entries(action.meta.arg).filter(
-            ([key, result]) => result !== null && key !== 'siteId',
-          ),
-        );
-        const index = currentState.depthIntervals.findIndex(
-          a => a.depthInterval.start === action.meta.arg.depthInterval.start,
-        );
-
-        const interval =
-          state.soilData[action.meta.arg.siteId].depthIntervals[index];
-        state.soilData[action.meta.arg.siteId].depthIntervals[index] = {
-          ...interval,
-          ...update,
-        };
-      },
-    );
-
-    builder.addCase(
-      updateSoilDataDepthIntervalAsync.rejected,
-      (state, action) => {
-        state.status = 'error';
-        const currentState = state.soilData[action.meta.arg.siteId];
-        const reverseUpdate = Object.fromEntries(
-          Object.entries(action.meta.arg)
-            .filter(([, result]) => typeof result === 'boolean')
-            .map(([key, result]) => [key, !result]),
-        );
-        const index = currentState.depthIntervals.findIndex(
-          a => a.depthInterval.start === action.meta.arg.depthInterval.start,
-        );
-        const interval =
-          state.soilData[action.meta.arg.siteId].depthIntervals[index];
-        state.soilData[action.meta.arg.siteId].depthIntervals[index] = {
-          ...interval,
-          ...reverseUpdate,
-        };
-      },
-    );
-
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
     });
@@ -222,11 +171,6 @@ export const updateDepthDependentSoilData = createAsyncThunk(
 
 export const updateSoilDataDepthInterval = createAsyncThunk(
   'soilId/updateSoilDataDepthInterval',
-  soilIdService.updateSoilDataDepthInterval,
-);
-
-export const updateSoilDataDepthIntervalAsync = createAsyncThunk(
-  'soilId/updateSoilDataDepthIntervalAsync',
   soilIdService.updateSoilDataDepthInterval,
 );
 

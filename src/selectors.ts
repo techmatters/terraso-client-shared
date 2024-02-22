@@ -350,6 +350,13 @@ const matchIntervals = (
   return intervals;
 };
 
+const defaultSoilData: SoilData = {
+  depthDependentData: [],
+  depthIntervals: [],
+};
+export const selectSoilData = (siteId: string) => (state: SharedState) =>
+  state.soilId.soilData[siteId] ?? defaultSoilData;
+
 /**
  * Preset intervals can also have soil data intervals on the backend.
  * These soil data intervals are only used to  store configuration values.
@@ -358,7 +365,7 @@ const matchIntervals = (
  */
 export const selectSoilDataIntervals = createSelector(
   [
-    (state: SharedState, siteId: string) => state.soilId.soilData[siteId],
+    (state: SharedState, siteId: string) => selectSoilData(siteId)(state),
     (state: SharedState, siteId: string) => {
       const projectId = state.site.sites[siteId]?.projectId;
       if (projectId === undefined) {
@@ -413,6 +420,6 @@ export const selectDepthDependentData =
     depthInterval: { depthInterval: DepthInterval };
   }) =>
   (state: SharedState) =>
-    state.soilId.soilData[siteId].depthDependentData.find(
+    selectSoilData(siteId)(state).depthDependentData.find(
       sameDepth(depthInterval),
     );
