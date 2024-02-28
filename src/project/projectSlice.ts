@@ -169,12 +169,12 @@ export const removeSiteFromAllProjects = createAction<string>(
   'project/removeSiteFromAllProjects',
 );
 
-const updateDispatchMap = {
+const updateDispatchMap = () => ({
   project: (project: Project) => updateProjects({ [project.id]: project }),
   sites: updateSites,
   users: updateUsers,
   soilSettings: updateProjectSettings,
-};
+});
 
 export const fetchProject = createAsyncThunk(
   'project/fetchProject',
@@ -183,12 +183,12 @@ export const fetchProject = createAsyncThunk(
 
 export const fetchProjectsForUser = createAsyncThunk(
   'project/fetchProjectsForUser',
-  dispatchByKeys(projectService.fetchProjectsForUser, {
+  dispatchByKeys(projectService.fetchProjectsForUser, () => ({
     projects: setProjects,
     sites: setSites,
     users: setUsers,
     soilSettings: updateProjectSettings,
-  }),
+  })),
 );
 
 export const addProject = createAsyncThunk(
