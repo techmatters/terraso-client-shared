@@ -150,13 +150,13 @@ export const {
 
 export const fetchSoilDataForUser = createAsyncThunk(
   'soilId/fetchSoilDataForUser',
-  dispatchByKeys(soilIdService.fetchSoilDataForUser, {
+  dispatchByKeys(soilIdService.fetchSoilDataForUser, () => ({
     projects: setProjects,
     sites: setSites,
     projectSoilSettings: setProjectSettings,
     soilData: setSoilData,
     users: setUsers,
-  }),
+  })),
 );
 
 export const updateSoilData = createAsyncThunk(

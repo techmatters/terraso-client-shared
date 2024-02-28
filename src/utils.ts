@@ -15,11 +15,13 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-export const fromEntries = <K extends string | number, V>(entries: [K, V][]) =>
-  Object.fromEntries(entries) as Record<K, V>;
+export const fromEntries = <K extends string | number | symbol, V>(
+  entries: [K, V][],
+) => Object.fromEntries(entries) as Record<K, V>;
 
-export const entries = <K extends string | number, V>(object: Record<K, V>) =>
-  Object.entries(object) as [K, V][];
+export const entries = <K extends string | number | symbol, V>(
+  object: Record<K, V>,
+) => Object.entries(object) as [K, V][];
 
 export const filterValues = <T>(obj: Record<any, T>, f: (arg: T) => boolean) =>
   Object.values(obj).filter(f);

@@ -36,6 +36,7 @@ import type {
   SharedDispatch,
   SharedState,
 } from 'terraso-client-shared/store/store';
+import { entries, fromEntries } from 'terraso-client-shared/utils';
 
 export type SerializableSet = Record<string, boolean>;
 
@@ -181,18 +182,19 @@ type DispatchMap<Result> = {
 
 export const dispatchByKeys = <T extends object, ThunkArg>(
   fetcher: CreateAsyncThunkParams<T, ThunkArg>,
-  dispatchMap: DispatchMap<T>,
+  dispatchMapFn: (_: T) => DispatchMap<T>,
 ): CreateAsyncThunkParams<T, ThunkArg> => {
   return async (arg, currentUser, thunkAPI) => {
-    return Object.fromEntries(
+    const result = await fetcher(arg, currentUser, thunkAPI);
+    const dispatchMap = dispatchMapFn(result);
+
+    return fromEntries(
       await Promise.all(
-        Object.entries(await fetcher(arg, currentUser, thunkAPI)).map(
-          async ([key, result]) => {
-            await thunkAPI.dispatch(dispatchMap[key as keyof T](result));
-            return [key, result];
-          },
-        ),
+        entries<keyof T, T[keyof T]>(result).map(async ([key, result]) => {
+          await thunkAPI.dispatch(dispatchMap[key](result));
+          return [key, result];
+        }),
       ),
-    );
+    ) as T;
   };
 };
