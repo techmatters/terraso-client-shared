@@ -15,30 +15,77 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { DepthInterval } from 'terraso-client-shared/graphqlSchema/graphql';
-import { SoilPitMethod } from 'terraso-client-shared/soilId/soilIdTypes';
+import {
+  methodEnabled,
+  methodRequired,
+} from 'terraso-client-shared//soilId/soilIdSlice';
+import {
+  collectionMethods,
+  LabelledDepthInterval,
+  ProjectSoilSettings,
+  SoilData,
+  SoilPitMethod,
+  soilPitMethods,
+} from 'terraso-client-shared/soilId/soilIdTypes';
+import { fromEntries, mapEntries } from 'terraso-client-shared/utils';
 
-export const DEPTH_INTERVAL_PRESETS = {
-  LANDPKS: [
-    { start: 0, end: 10 },
-    { start: 10, end: 20 },
-    { start: 20, end: 50 },
-    { start: 50, end: 70 },
-    { start: 70, end: 100 },
-    { start: 100, end: 200 },
-  ],
-  NRCS: [
-    { start: 0, end: 5 },
-    { start: 5, end: 15 },
-    { start: 15, end: 30 },
-    { start: 30, end: 60 },
-    { start: 60, end: 100 },
-    { start: 100, end: 200 },
-  ],
-} as const satisfies Record<'LANDPKS' | 'NRCS', readonly DepthInterval[]>;
+export const DEPTH_INTERVAL_PRESETS = mapEntries(
+  {
+    LANDPKS: [
+      { start: 0, end: 10 },
+      { start: 10, end: 20 },
+      { start: 20, end: 50 },
+      { start: 50, end: 70 },
+      { start: 70, end: 100 },
+      { start: 100, end: 200 },
+    ],
+    NRCS: [
+      { start: 0, end: 5 },
+      { start: 5, end: 15 },
+      { start: 15, end: 30 },
+      { start: 30, end: 60 },
+      { start: 60, end: 100 },
+      { start: 100, end: 200 },
+    ],
+  } as const,
+  depthIntervals =>
+    depthIntervals.map(depthInterval => ({ label: '', depthInterval })),
+) satisfies Record<'LANDPKS' | 'NRCS', readonly LabelledDepthInterval[]>;
 
-export const DEFAULT_ENABLED_SOIL_PIT_METHODS = [
+export const DEFAULT_ENABLED_SOIL_PIT_METHODS: SoilPitMethod[] = [
   'soilTexture',
-  'soilStructure',
   'soilColor',
-] as const satisfies readonly SoilPitMethod[];
+  'soilStructure',
+];
+
+export const DEFAULT_PROJECT_SOIL_INTERVAL = fromEntries(
+  soilPitMethods.map(method => [methodEnabled(method), false]),
+);
+
+export const DEFAULT_SITE_SOIL_INTERVAL = fromEntries(
+  soilPitMethods.map(method => [
+    methodEnabled(method),
+    DEFAULT_ENABLED_SOIL_PIT_METHODS.includes(method),
+  ]),
+);
+
+export const DEFAULT_PROJECT_SETTINGS: ProjectSoilSettings = {
+  ...fromEntries(
+    collectionMethods.map(method => [methodRequired(method), false]),
+  ),
+  ...fromEntries(
+    DEFAULT_ENABLED_SOIL_PIT_METHODS.map(method => [
+      methodRequired(method),
+      true,
+    ]),
+  ),
+  soilPitRequired: true,
+  depthIntervalPreset: 'LANDPKS',
+  depthIntervals: [],
+};
+
+export const DEFAULT_SOIL_DATA: SoilData = {
+  depthDependentData: [],
+  depthIntervals: [],
+  depthIntervalPreset: 'LANDPKS',
+};

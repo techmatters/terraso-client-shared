@@ -44,7 +44,7 @@ export const methodRequired = <T extends CollectionMethod>(
 
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
-  projectSettings: Record<string, ProjectSoilSettings>;
+  projectSettings: Record<string, ProjectSoilSettings | undefined>;
   status: 'loading' | 'error' | 'ready';
 };
 
@@ -55,16 +55,19 @@ const initialState: SoilState = {
 };
 
 export const sameDepth =
-  (a: { depthInterval: DepthInterval }) =>
-  (b: { depthInterval: DepthInterval }) =>
-    a.depthInterval.start === b.depthInterval.start &&
-    a.depthInterval.end === b.depthInterval.end;
+  ({ depthInterval: a }: { depthInterval: DepthInterval }) =>
+  ({ depthInterval: b }: { depthInterval: DepthInterval }) =>
+    a.start === b.start && a.end === b.end;
 
-export const checkOverlap =
-  (a: { depthInterval: DepthInterval }) =>
-  (b: { depthInterval: DepthInterval }) =>
-    Math.max(a.depthInterval.start, b.depthInterval.start) <
-    Math.min(a.depthInterval.end, b.depthInterval.end);
+export const overlaps =
+  ({ depthInterval: a }: { depthInterval: DepthInterval }) =>
+  ({ depthInterval: b }: { depthInterval: DepthInterval }) =>
+    Math.max(a.start, b.start) < Math.min(a.end, b.end);
+
+export const compareInterval = (
+  { depthInterval: a }: { depthInterval: DepthInterval },
+  { depthInterval: b }: { depthInterval: DepthInterval },
+) => a.start - b.start;
 
 const soilIdSlice = createSlice({
   name: 'soilId',

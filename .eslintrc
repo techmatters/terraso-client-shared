@@ -9,7 +9,8 @@
   },
   "plugins": [
     "prettier",
-    "lodash-fp"
+    "lodash-fp",
+    "eslint-plugin-react"
   ],
   "extends": [
     "react-app",
