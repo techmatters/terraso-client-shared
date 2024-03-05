@@ -35,7 +35,7 @@ export type TestAppDispatch = DispatchFromStoreFactory<typeof createStore>;
 
 const baseRender = (component: ReactElement, intialState?: TestAppState) => {
   const store = createStore(intialState);
-  const Wrapper = ({ children }: { children: ReactElement }) => (
+  const Wrapper = ({ children }: React.PropsWithChildren<{}>) => (
     <Provider store={store}>{children}</Provider>
   );
   return { renderResult: rtlRender(component, { wrapper: Wrapper }), store };
