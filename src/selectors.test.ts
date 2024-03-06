@@ -417,7 +417,9 @@ test('select predefined project selector', () => {
 
   expect(
     aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
-  ).toStrictEqual(DEPTH_INTERVAL_PRESETS['LANDPKS']);
+  ).toStrictEqual(
+    DEPTH_INTERVAL_PRESETS['LANDPKS'].map(({ depthInterval }) => depthInterval),
+  );
 });
 
 test('select predefined project selector with custom preset', () => {
@@ -451,30 +453,26 @@ test('select predefined project selector with custom preset', () => {
 
   expect(aggregatedIntervals).toStrictEqual([
     {
-      mutable: true,
+      isFromPreset: false,
       interval: siteDepthIntervals[0],
-      backendIntervalExists: true,
     },
     {
-      mutable: false,
+      isFromPreset: true,
       interval: projectToSiteInterval(
         projectDepthIntervals[0],
         projectSettings[project.id],
       ),
-      backendIntervalExists: false,
     },
     {
-      mutable: false,
+      isFromPreset: true,
       interval: projectToSiteInterval(
         projectDepthIntervals[1],
         projectSettings[project.id],
       ),
-      backendIntervalExists: false,
     },
     {
-      mutable: true,
+      isFromPreset: false,
       interval: siteDepthIntervals[2],
-      backendIntervalExists: true,
     },
   ]);
 });
@@ -514,14 +512,16 @@ test('overlapping site intervals get the project values of the preset interval',
 
   expect(aggregatedIntervals).toStrictEqual([
     {
-      mutable: false,
-      interval: { ...siteDepthIntervals[0], carbonatesEnabled: true },
-      backendIntervalExists: true,
+      isFromPreset: true,
+      interval: {
+        ...siteDepthIntervals[0],
+        label: 'first',
+        carbonatesEnabled: true,
+      },
     },
     {
-      mutable: false,
-      interval: siteDepthIntervals[1],
-      backendIntervalExists: true,
+      isFromPreset: true,
+      interval: { ...siteDepthIntervals[1], label: 'second' },
     },
   ]);
 });

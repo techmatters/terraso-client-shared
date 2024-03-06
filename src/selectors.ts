@@ -25,8 +25,6 @@ import { User } from 'terraso-client-shared/account/accountSlice';
 import {
   DEFAULT_ENABLED_SOIL_PIT_METHODS,
   DEFAULT_PROJECT_SETTINGS,
-  DEFAULT_PROJECT_SOIL_INTERVAL,
-  DEFAULT_SITE_SOIL_INTERVAL,
   DEFAULT_SOIL_DATA,
   DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
@@ -251,11 +249,15 @@ const sitePresetIntervals = (soilData: SoilData) => {
 const useProjectSoilSettingsBase = <ID extends string | undefined>(
   projectId: ID,
 ): ID extends undefined ? undefined : ProjectSoilSettings => {
-  const projectSettings = useSelector(state =>
-    projectId === undefined
-      ? undefined
-      : state.soilId.projectSettings[projectId] ?? DEFAULT_PROJECT_SETTINGS,
-  );
+  const projectSettings = useSelector(state => {
+    if (projectId === undefined) {
+      return undefined;
+    } else {
+      return (
+        state.soilId.projectSettings[projectId] ?? DEFAULT_PROJECT_SETTINGS
+      );
+    }
+  });
 
   return useMemo(
     () =>
