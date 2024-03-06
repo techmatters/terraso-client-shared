@@ -23,6 +23,11 @@ export const entries = <K extends string | number | symbol, V>(
   object: Record<K, V>,
 ) => Object.entries(object) as [K, V][];
 
+export const mapEntries = <K extends string | number | symbol, V, R>(
+  o: Record<K, V>,
+  f: (v: V, k: K) => R,
+): Record<K, R> => fromEntries(entries(o).map(([k, v]) => [k, f(v, k)]));
+
 export const filterValues = <T>(obj: Record<any, T>, f: (arg: T) => boolean) =>
   Object.values(obj).filter(f);
 

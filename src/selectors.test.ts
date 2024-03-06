@@ -37,8 +37,8 @@ import {
   selectProjectMembershipsWithUsers,
   selectProjectsWithTransferrableSites,
   selectSitesAndUserRoles,
-  selectSoilDataIntervals,
   selectUserRoleSite,
+  useSiteSoilIntervals,
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
 import {
@@ -53,7 +53,10 @@ import {
   SoilState,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import { SerializableSet } from 'terraso-client-shared/store/utils';
-import { createStore } from 'terraso-client-shared/tests/utils';
+import {
+  createStore,
+  renderSelectorHook,
+} from 'terraso-client-shared/tests/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const generateUser = () => {
@@ -132,6 +135,7 @@ const createSoilData = (
     [site.id]: {
       depthDependentData: [],
       depthIntervals: [],
+      depthIntervalPreset: 'LANDPKS',
       ...defaults,
     },
   };
@@ -403,21 +407,19 @@ test('select predefined project selector', () => {
     depthIntervalPreset: 'LANDPKS',
   });
 
-  const store = createStore(
+  const aggregatedIntervals = renderSelectorHook(
+    () => useSiteSoilIntervals(site.id),
     initState([project], [user], [site], user.id, {
       soilData,
       projectSettings,
     }),
   );
 
-  const aggregatedIntervals = selectSoilDataIntervals(
-    store.getState(),
-    site.id,
-  );
-
   expect(
     aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
-  ).toStrictEqual(DEPTH_INTERVAL_PRESETS['LANDPKS']);
+  ).toStrictEqual(
+    DEPTH_INTERVAL_PRESETS['LANDPKS'].map(({ depthInterval }) => depthInterval),
+  );
 });
 
 test('select predefined project selector with custom preset', () => {
@@ -441,44 +443,36 @@ test('select predefined project selector with custom preset', () => {
     depthIntervals: siteDepthIntervals,
   });
 
-  const store = createStore(
+  const aggregatedIntervals = renderSelectorHook(
+    () => useSiteSoilIntervals(site.id),
     initState([project], [user], [site], user.id, {
       soilData,
       projectSettings,
     }),
   );
 
-  const aggregatedIntervals = selectSoilDataIntervals(
-    store.getState(),
-    site.id,
-  );
-
   expect(aggregatedIntervals).toStrictEqual([
     {
-      mutable: true,
+      isFromPreset: false,
       interval: siteDepthIntervals[0],
-      backendIntervalExists: true,
     },
     {
-      mutable: false,
+      isFromPreset: true,
       interval: projectToSiteInterval(
         projectDepthIntervals[0],
         projectSettings[project.id],
       ),
-      backendIntervalExists: false,
     },
     {
-      mutable: false,
+      isFromPreset: true,
       interval: projectToSiteInterval(
         projectDepthIntervals[1],
         projectSettings[project.id],
       ),
-      backendIntervalExists: false,
     },
     {
-      mutable: true,
+      isFromPreset: false,
       interval: siteDepthIntervals[2],
-      backendIntervalExists: true,
     },
   ]);
 });
@@ -508,28 +502,26 @@ test('overlapping site intervals get the project values of the preset interval',
     depthIntervals: siteDepthIntervals,
   });
 
-  const store = createStore(
+  const aggregatedIntervals = renderSelectorHook(
+    () => useSiteSoilIntervals(site.id),
     initState([project], [user], [site], user.id, {
       soilData,
       projectSettings,
     }),
   );
 
-  const aggregatedIntervals = selectSoilDataIntervals(
-    store.getState(),
-    site.id,
-  );
-
   expect(aggregatedIntervals).toStrictEqual([
     {
-      mutable: false,
-      interval: { ...siteDepthIntervals[0], carbonatesEnabled: true },
-      backendIntervalExists: true,
+      isFromPreset: true,
+      interval: {
+        ...siteDepthIntervals[0],
+        label: 'first',
+        carbonatesEnabled: true,
+      },
     },
     {
-      mutable: false,
-      interval: siteDepthIntervals[1],
-      backendIntervalExists: true,
+      isFromPreset: true,
+      interval: { ...siteDepthIntervals[1], label: 'second' },
     },
   ]);
 });

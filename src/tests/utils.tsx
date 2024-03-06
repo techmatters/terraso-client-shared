@@ -18,12 +18,13 @@
 import 'terraso-client-shared/tests/config';
 
 import React, { ReactElement } from 'react';
-import { render as rtlRender } from '@testing-library/react';
+import { renderHook, render as rtlRender } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import createStoreFactory, {
   DispatchFromStoreFactory,
+  SharedState,
   StateFromStoreFactory,
 } from 'terraso-client-shared/store/store';
 
@@ -57,5 +58,15 @@ export const render = async (
   }
   return result;
 };
+
+export const renderSelectorHook = <Result,>(
+  callback: () => Result,
+  initialStoreState: Partial<SharedState>,
+) =>
+  renderHook(callback, {
+    wrapper: props => (
+      <Provider store={createStore(initialStoreState)} {...props} />
+    ),
+  }).result.current;
 
 export { mockLogger } from 'terraso-client-shared/tests/config';

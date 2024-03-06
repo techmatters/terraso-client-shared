@@ -9,7 +9,8 @@
   },
   "plugins": [
     "prettier",
-    "lodash-fp"
+    "lodash-fp",
+    "eslint-plugin-react"
   ],
   "extends": [
     "react-app",
@@ -21,6 +22,7 @@
   "rules": {
     "prettier/prettier": "error",
     "testing-library/no-unnecessary-act": "off",
+    "testing-library/render-result-naming-convention": "off",
     "curly": "error"
   }
 }
