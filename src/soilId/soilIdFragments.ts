@@ -100,10 +100,10 @@ export const depthDependentSoilData = /* GraphQL */ `
     texture
     rockFragmentVolume
     clayPercent
-    colorHueSubstep
     colorHue
     colorValue
     colorChroma
+    colorPhotoUsed
     colorPhotoSoilCondition
     colorPhotoLightingCondition
     conductivity
