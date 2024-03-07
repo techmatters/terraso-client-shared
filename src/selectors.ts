@@ -252,11 +252,9 @@ const useProjectSoilSettingsBase = <ID extends string | undefined>(
   const projectSettings = useSelector(state => {
     if (projectId === undefined) {
       return undefined;
-    } else {
-      return (
-        state.soilId.projectSettings[projectId] ?? DEFAULT_PROJECT_SETTINGS
-      );
     }
+
+    return state.soilId.projectSettings[projectId] ?? DEFAULT_PROJECT_SETTINGS;
   });
 
   return useMemo(
