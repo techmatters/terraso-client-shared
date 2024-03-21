@@ -382,7 +382,7 @@ test('select user role when site owned', () => {
   const store = createStore(initState([], [user], [site], user.id));
 
   const siteRole = selectUserRoleSite(store.getState(), site.id);
-  expect(siteRole).toStrictEqual({ kind: 'site', role: 'owner' });
+  expect(siteRole).toStrictEqual({ kind: 'site', role: 'OWNER' });
 });
 
 test('select user role in project of site', () => {
