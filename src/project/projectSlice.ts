@@ -24,7 +24,7 @@ import {
 import {
   ProjectAddUserMutationInput,
   ProjectManagementProjectPrivacyChoices,
-  ProjectManagementProjectRoleChoices,
+  ProjectMembershipProjectRoleChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, updateSites } from 'terraso-client-shared/site/siteSlice';
@@ -41,7 +41,7 @@ export type ProjectMembership = {
   id: string;
 };
 
-export type ProjectRole = ProjectManagementProjectRoleChoices;
+export type ProjectRole = ProjectMembershipProjectRoleChoices;
 export const PROJECT_ROLES = [
   'MANAGER',
   'CONTRIBUTOR',
