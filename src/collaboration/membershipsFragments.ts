@@ -40,7 +40,7 @@ export const collaborationMembershipsInfo = /* GraphQL */ `
     membershipType
     membershipsCount
     enrollMethod
-    memberships(first: 5, membershipStatus: APPROVED) {
+    memberships(first: 10, membershipStatus: APPROVED) {
       totalCount
       edges {
         node {
