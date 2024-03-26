@@ -29,15 +29,13 @@ import {
   DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
 import {
-  DepthInterval,
-  UserRole,
-} from 'terraso-client-shared/graphqlSchema/graphql';
-import {
   Project,
   ProjectMembership,
+  ProjectRole,
 } from 'terraso-client-shared/project/projectSlice';
 import {
   compareInterval,
+  DepthInterval,
   methodEnabled,
   methodRequired,
   overlaps,
@@ -82,7 +80,7 @@ export const selectSite = (siteId: string) => (state: SharedState) =>
 
 const selectSites = (state: SharedState) => state.site.sites;
 
-const selectUserRole = (_state: SharedState, userRole: UserRole) => userRole;
+const selectUserRole = (_state: SharedState, userRole: ProjectRole) => userRole;
 
 const selectProjectsWithUserRole = createSelector(
   [selectProjects, selectUserRole],
@@ -110,7 +108,7 @@ const createUserRoleMap = (
       if (membership) {
         return [project.id, membership.userRole];
       }
-    }).filter((item): item is [string, UserRole] => item !== undefined),
+    }).filter((item): item is [string, ProjectRole] => item !== undefined),
   );
 };
 
@@ -145,7 +143,7 @@ export const selectProjectsWithTransferrableSites = createSelector(
       Object.keys(project.sites)
         .filter(
           siteId =>
-            siteId in project.sites && sitesWithRoles[siteId] === 'manager',
+            siteId in project.sites && sitesWithRoles[siteId] === 'MANAGER',
         )
         .map(siteId => {
           const joinedSite = sites[siteId];
@@ -176,8 +174,8 @@ export const selectProjectsWithTransferrableSites = createSelector(
 // Note on "site" kind: In the future, there will also be site level roles, like manager and viewer
 // For now we only care if a user owns a site or not.
 export type SiteUserRole =
-  | { kind: 'site'; role: 'owner' }
-  | { kind: 'project'; role: UserRole };
+  | { kind: 'site'; role: 'OWNER' }
+  | { kind: 'project'; role: ProjectRole };
 
 const selectSiteId = (_state: any, siteId: string) => siteId;
 
@@ -189,7 +187,7 @@ export const selectUserRoleSite = createSelector(
       return null;
     }
     if (site.ownerId === userId) {
-      return { kind: 'site', role: 'owner' };
+      return { kind: 'site', role: 'OWNER' };
     }
     if (site.projectId === undefined) {
       return null;

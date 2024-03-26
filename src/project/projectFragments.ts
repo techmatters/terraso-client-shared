@@ -48,7 +48,6 @@ export const projectData = /* GraphQL */ `
     siteInstructions
     updatedAt
     archived
-    measurementUnits
     membershipList {
       ...projectMembershipList
     }

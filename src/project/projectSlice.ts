@@ -22,9 +22,9 @@ import {
   updateUsers,
 } from 'terraso-client-shared/account/accountSlice';
 import {
-  MeasurementUnits,
   ProjectAddUserMutationInput,
-  UserRole,
+  ProjectManagementProjectPrivacyChoices,
+  ProjectMembershipProjectRoleChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as projectService from 'terraso-client-shared/project/projectService';
 import { setSites, updateSites } from 'terraso-client-shared/site/siteSlice';
@@ -37,9 +37,22 @@ import {
 
 export type ProjectMembership = {
   userId: string;
-  userRole: UserRole;
+  userRole: ProjectRole;
   id: string;
 };
+
+export type ProjectRole = ProjectMembershipProjectRoleChoices;
+export const PROJECT_ROLES = [
+  'MANAGER',
+  'CONTRIBUTOR',
+  'VIEWER',
+] as const satisfies readonly ProjectRole[];
+
+export type ProjectPrivacy = ProjectManagementProjectPrivacyChoices;
+export const PROJECT_PRIVACIES = [
+  'PRIVATE',
+  'PUBLIC',
+] as const satisfies readonly ProjectPrivacy[];
 
 export type Project = {
   id: string;
@@ -51,7 +64,6 @@ export type Project = {
   memberships: Record<string, ProjectMembership>;
   sites: SerializableSet;
   archived: boolean;
-  measurementUnits: MeasurementUnits;
 };
 
 interface MembershipKey {

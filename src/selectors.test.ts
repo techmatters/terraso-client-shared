@@ -25,13 +25,10 @@ import {
   DEPTH_INTERVAL_PRESETS,
 } from 'terraso-client-shared/constants';
 import {
-  DepthInterval,
-  ProjectPrivacy,
-  UserRole,
-} from 'terraso-client-shared/graphqlSchema/graphql';
-import {
   Project,
   ProjectMembership,
+  ProjectPrivacy,
+  ProjectRole,
 } from 'terraso-client-shared/project/projectSlice';
 import {
   selectProjectMembershipsWithUsers,
@@ -42,6 +39,7 @@ import {
 } from 'terraso-client-shared/selectors';
 import { Site } from 'terraso-client-shared/site/siteSlice';
 import {
+  DepthInterval,
   methodEnabled,
   methodRequired,
   ProjectDepthInterval,
@@ -91,7 +89,6 @@ const generateProject = (
     sites: siteSet,
     archived: false,
     memberships: keyBy(memberships, 'id'),
-    measurementUnits: 'METRIC',
     siteInstructions: '',
   };
 };
@@ -123,7 +120,7 @@ const generateSite = (args?: { project: Project } | { owner: User }): Site => {
   return site;
 };
 
-const generateMembership = (userId: string, userRole: UserRole) => {
+const generateMembership = (userId: string, userRole: ProjectRole) => {
   return { id: uuidv4(), userId, userRole };
 };
 
@@ -274,7 +271,7 @@ test('can select memberships', () => {
   const membership: ProjectMembership = {
     id: uuidv4(),
     userId: user.id,
-    userRole: 'manager',
+    userRole: 'MANAGER',
   };
   const project = generateProject([membership]);
   const store = createStore(initState([project], [user]));
@@ -288,8 +285,8 @@ test('can select memberships', () => {
 
 test('can select memberships of specific project', () => {
   const user = generateUser();
-  const membershipA = generateMembership(user.id, 'viewer');
-  const membershipB = generateMembership(user.id, 'manager');
+  const membershipA = generateMembership(user.id, 'VIEWER');
+  const membershipB = generateMembership(user.id, 'MANAGER');
   const projectA = generateProject([membershipA]);
   const projectB = generateProject([membershipB]);
   const store = createStore(initState([projectA, projectB], [user]));
@@ -312,11 +309,11 @@ test('not found project returns empty membership', () => {
 
 test('can access all projects with role', () => {
   const user = generateUser();
-  const project1 = generateProject([generateMembership(user.id, 'manager')]);
+  const project1 = generateProject([generateMembership(user.id, 'MANAGER')]);
   const project2 = generateProject([
-    generateMembership(user.id, 'contributor'),
+    generateMembership(user.id, 'CONTRIBUTOR'),
   ]);
-  const project3 = generateProject([generateMembership(user.id, 'manager')]);
+  const project3 = generateProject([generateMembership(user.id, 'MANAGER')]);
   const site1 = generateSite({ project: project1 });
   const site2 = generateSite({ project: project2 });
   const site3 = generateSite();
@@ -331,7 +328,7 @@ test('can access all projects with role', () => {
   );
   const pairs = selectProjectsWithTransferrableSites(
     store.getState(),
-    'manager',
+    'MANAGER',
   );
   expect(pairs).toStrictEqual({
     projects: {
@@ -352,9 +349,9 @@ test('can access all projects with role', () => {
 
 test('select user sites with project role', () => {
   const user = generateUser();
-  const project1 = generateProject([generateMembership(user.id, 'manager')]);
+  const project1 = generateProject([generateMembership(user.id, 'MANAGER')]);
   const project2 = generateProject([
-    generateMembership(user.id, 'contributor'),
+    generateMembership(user.id, 'CONTRIBUTOR'),
   ]);
   const site1 = generateSite({ project: project1 });
   const site2 = generateSite({ project: project2 });
@@ -372,10 +369,10 @@ test('select user sites with project role', () => {
 
   const roles = selectSitesAndUserRoles(store.getState());
   expect(roles).toStrictEqual({
-    [site1.id]: 'manager',
-    [site2.id]: 'contributor',
+    [site1.id]: 'MANAGER',
+    [site2.id]: 'CONTRIBUTOR',
     [site3.id]: undefined,
-    [site4.id]: 'contributor',
+    [site4.id]: 'CONTRIBUTOR',
   });
 });
 
@@ -385,22 +382,22 @@ test('select user role when site owned', () => {
   const store = createStore(initState([], [user], [site], user.id));
 
   const siteRole = selectUserRoleSite(store.getState(), site.id);
-  expect(siteRole).toStrictEqual({ kind: 'site', role: 'owner' });
+  expect(siteRole).toStrictEqual({ kind: 'site', role: 'OWNER' });
 });
 
 test('select user role in project of site', () => {
   const user = generateUser();
-  const project = generateProject([generateMembership(user.id, 'viewer')]);
+  const project = generateProject([generateMembership(user.id, 'VIEWER')]);
   const site = generateSite({ project });
   const store = createStore(initState([project], [user], [site], user.id));
 
   const siteRole = selectUserRoleSite(store.getState(), site.id);
-  expect(siteRole).toStrictEqual({ kind: 'project', role: 'viewer' });
+  expect(siteRole).toStrictEqual({ kind: 'project', role: 'VIEWER' });
 });
 
 test('select predefined project selector', () => {
   const user = generateUser();
-  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const project = generateProject([generateMembership(user.id, 'MANAGER')]);
   const site = generateSite({ project });
   const soilData = createSoilData(site);
   const projectSettings = createProjectSettings(project, {
@@ -424,7 +421,7 @@ test('select predefined project selector', () => {
 
 test('select predefined project selector with custom preset', () => {
   const user = generateUser();
-  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const project = generateProject([generateMembership(user.id, 'MANAGER')]);
   const site = generateSite({ project });
   const projectDepthIntervals = [
     { depthInterval: { start: 2, end: 3 }, label: 'first' },
@@ -479,7 +476,7 @@ test('select predefined project selector with custom preset', () => {
 
 test('overlapping site intervals get the project values of the preset interval', () => {
   const user = generateUser();
-  const project = generateProject([generateMembership(user.id, 'manager')]);
+  const project = generateProject([generateMembership(user.id, 'MANAGER')]);
   const site = generateSite({ project });
 
   const projectDepthIntervals = [
