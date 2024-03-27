@@ -108,30 +108,30 @@ jobs:
     outputs:
       client_hash: ${{ env.client_hash }}
 
-  update-web:
-    needs: build
-    uses: ./.github/workflows/update-shared.yml
-    if: github.event_name != 'pull_request'
-    with:
-      repo-path: 'techmatters/terraso-web-client'
-      repo-ref: 'staging'
-      cache-dependency-path: 'package-lock.json'
-      client-hash: ${{ needs.build.outputs.client_hash }}
-    secrets:
-      token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+  # update-web:
+  #   needs: build
+  #   uses: ./.github/workflows/update-shared.yml
+  #   if: github.event_name != 'pull_request'
+  #   with:
+  #     repo-path: 'techmatters/terraso-web-client'
+  #     repo-ref: 'staging'
+  #     cache-dependency-path: 'package-lock.json'
+  #     client-hash: ${{ needs.build.outputs.client_hash }}
+  #   secrets:
+  #     token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
 
-  update-mobile:
-    needs: build
-    uses: ./.github/workflows/update-shared.yml
-    if: github.event_name != 'pull_request'
-    with:
-      repo-path: 'techmatters/terraso-mobile-client'
-      repo-ref: 'main'
-      cache-dependency-path: 'dev-client/package-lock.json'
-      working-directory: './dev-client'
-      client-hash: ${{ needs.build.outputs.client_hash }}
-    secrets:
-      token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+  # update-mobile:
+  #   needs: build
+  #   uses: ./.github/workflows/update-shared.yml
+  #   if: github.event_name != 'pull_request'
+  #   with:
+  #     repo-path: 'techmatters/terraso-mobile-client'
+  #     repo-ref: 'main'
+  #     cache-dependency-path: 'dev-client/package-lock.json'
+  #     working-directory: './dev-client'
+  #     client-hash: ${{ needs.build.outputs.client_hash }}
+  #   secrets:
+  #     token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
 
   deploy-mobile:
     needs: update-mobile
