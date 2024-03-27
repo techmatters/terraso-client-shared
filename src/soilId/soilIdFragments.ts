@@ -24,7 +24,6 @@ export const projectSoilSettings = /* GraphQL */ `
       }
       label
     }
-    measurementUnits
     depthIntervalPreset
     soilPitRequired
     slopeRequired

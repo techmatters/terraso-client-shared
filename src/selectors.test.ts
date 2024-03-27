@@ -83,6 +83,7 @@ const generateProject = (
   return {
     id,
     name: id,
+    measurementUnits: 'METRIC',
     privacy: privacy ?? 'PRIVATE',
     description: '',
     updatedAt: '2023-10-12',
@@ -149,7 +150,6 @@ const createProjectSettings = (
       depthIntervals: [],
       electricalConductivityRequired: false,
       landUseLandCoverRequired: false,
-      measurementUnits: 'METRIC',
       notesRequired: false,
       phRequired: false,
       photosRequired: false,
