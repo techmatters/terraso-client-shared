@@ -23,6 +23,7 @@ import {
 } from 'terraso-client-shared/account/accountSlice';
 import {
   ProjectAddUserMutationInput,
+  ProjectManagementProjectMeasurementUnitsChoices,
   ProjectManagementProjectPrivacyChoices,
   ProjectMembershipProjectRoleChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -48,6 +49,12 @@ export const PROJECT_ROLES = [
   'VIEWER',
 ] as const satisfies readonly ProjectRole[];
 
+export type MeasurementUnit = ProjectManagementProjectMeasurementUnitsChoices;
+export const MEASUREMENT_UNITS = [
+  'METRIC',
+  'ENGLISH',
+] as const satisfies readonly MeasurementUnit[];
+
 export type ProjectPrivacy = ProjectManagementProjectPrivacyChoices;
 export const PROJECT_PRIVACIES = [
   'PRIVATE',
@@ -57,7 +64,8 @@ export const PROJECT_PRIVACIES = [
 export type Project = {
   id: string;
   name: string;
-  privacy: 'PRIVATE' | 'PUBLIC';
+  privacy: ProjectPrivacy;
+  measurementUnits: MeasurementUnit;
   description: string;
   siteInstructions?: string;
   updatedAt: string; // this should be Date.toLocaleDateString; redux can't serialize Dates

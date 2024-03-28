@@ -25,7 +25,6 @@ import type {
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices,
   SoilIdDepthDependentSoilDataTextureChoices,
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
-  SoilIdProjectSoilSettingsMeasurementUnitsChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
@@ -51,12 +50,6 @@ export const collectionMethods = [
 
 export type SoilPitMethod = (typeof soilPitMethods)[number];
 export type CollectionMethod = (typeof collectionMethods)[number];
-
-export type MeasurementUnit = SoilIdProjectSoilSettingsMeasurementUnitsChoices;
-export const MEASUREMENT_UNITS = [
-  'METRIC',
-  'IMPERIAL',
-] as const satisfies readonly MeasurementUnit[];
 
 export { DepthInterval };
 export type LabelledDepthInterval = {
