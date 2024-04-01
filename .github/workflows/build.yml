@@ -133,11 +133,11 @@ jobs:
   #   secrets:
   #     token: ${{ secrets.TERRASO_CLIENT_TOKEN }}
 
-  deploy-mobile:
-    needs: update-mobile
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.TERRASO_CLIENT_TOKEN }}
-    steps:
-      - name: Run mobile build workflow
-        run: gh workflow run build.yml --repo techmatters/terraso-mobile-client build
+  # deploy-mobile:
+  #   needs: update-mobile
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     GH_TOKEN: ${{ secrets.TERRASO_CLIENT_TOKEN }}
+  #   steps:
+  #     - name: Run mobile build workflow
+  #       run: gh workflow run build.yml --repo techmatters/terraso-mobile-client build
