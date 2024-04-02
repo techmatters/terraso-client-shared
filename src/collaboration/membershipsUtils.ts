@@ -31,7 +31,7 @@ type MembershipQuery = Partial<
     CollaborationMembershipsPendingFragment
 >;
 
-export type MembershipsInfo = {
+export type MembershipInfo = {
   totalCount?: number;
   pendingCount?: number;
   accountMembership?: Membership;
@@ -42,7 +42,7 @@ export type MembershipsInfo = {
 
 export type MembershipList = {
   // TODO: massage membershipsUtils/Service so more of these can be required
-  membershipsInfo?: MembershipsInfo;
+  membershipInfo?: MembershipInfo;
   id: string;
   slug: string;
   membershipType: 'CLOSED' | 'OPEN';
@@ -56,9 +56,9 @@ export type Membership = {
   user?: User;
 };
 
-export const extractMembershipsInfo = (
+export const extractMembershipInfo = (
   membershipList?: MembershipQuery | null,
-): MembershipsInfo => ({
+): MembershipInfo => ({
   totalCount:
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
