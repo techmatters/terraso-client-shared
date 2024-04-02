@@ -20,13 +20,13 @@ import { User } from 'terraso-client-shared/account/accountSlice';
 import type {
   AccountCollaborationMembershipFragment,
   CollaborationMembershipFieldsFragment,
+  CollaborationMembershipInfoFragment,
   CollaborationMembershipsFragment,
-  CollaborationMembershipsInfoFragment,
   CollaborationMembershipsPendingFragment,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
 type MembershipQuery = Partial<
-  CollaborationMembershipsInfoFragment &
+  CollaborationMembershipInfoFragment &
     AccountCollaborationMembershipFragment &
     CollaborationMembershipsPendingFragment
 >;
