@@ -35,7 +35,7 @@ export type MembershipsInfo = {
   totalCount?: number;
   pendingCount?: number;
   accountMembership?: Membership;
-  membershipsSample?: Membership[];
+  memberships?: Membership[];
   enrollMethod?: string;
   membershipType?: string;
 };
@@ -63,7 +63,7 @@ export const extractMembershipsInfo = (
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
   accountMembership: extractAccountMembership(membershipList),
-  membershipsSample: extractMemberships(membershipList),
+  memberships: extractMemberships(membershipList),
   enrollMethod: membershipList?.enrollMethod,
   membershipType: membershipList?.membershipType,
 });
