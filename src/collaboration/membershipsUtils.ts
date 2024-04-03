@@ -20,29 +20,29 @@ import { User } from 'terraso-client-shared/account/accountSlice';
 import type {
   AccountCollaborationMembershipFragment,
   CollaborationMembershipFieldsFragment,
+  CollaborationMembershipInfoFragment,
   CollaborationMembershipsFragment,
-  CollaborationMembershipsInfoFragment,
   CollaborationMembershipsPendingFragment,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
 type MembershipQuery = Partial<
-  CollaborationMembershipsInfoFragment &
+  CollaborationMembershipInfoFragment &
     AccountCollaborationMembershipFragment &
     CollaborationMembershipsPendingFragment
 >;
 
-export type MembershipsInfo = {
+export type MembershipInfo = {
   totalCount?: number;
   pendingCount?: number;
   accountMembership?: Membership;
-  membershipsSample?: Membership[];
+  memberships?: Membership[];
   enrollMethod?: string;
   membershipType?: string;
 };
 
 export type MembershipList = {
   // TODO: massage membershipsUtils/Service so more of these can be required
-  membershipsInfo?: MembershipsInfo;
+  membershipInfo?: MembershipInfo;
   id: string;
   slug: string;
   membershipType: 'CLOSED' | 'OPEN';
@@ -56,14 +56,14 @@ export type Membership = {
   user?: User;
 };
 
-export const extractMembershipsInfo = (
+export const extractMembershipInfo = (
   membershipList?: MembershipQuery | null,
-): MembershipsInfo => ({
+): MembershipInfo => ({
   totalCount:
     membershipList?.membershipsCount ?? membershipList?.memberships?.totalCount,
   pendingCount: membershipList?.pending?.totalCount,
   accountMembership: extractAccountMembership(membershipList),
-  membershipsSample: extractMemberships(membershipList),
+  memberships: extractMemberships(membershipList),
   enrollMethod: membershipList?.enrollMethod,
   membershipType: membershipList?.membershipType,
 });

@@ -35,8 +35,8 @@ export const collaborationMembershipsPending = /* GraphQL */ `
   }
 `;
 
-export const collaborationMembershipsInfo = /* GraphQL */ `
-  fragment collaborationMembershipsInfo on CollaborationMembershipListNode {
+export const collaborationMembershipInfo = /* GraphQL */ `
+  fragment collaborationMembershipInfo on CollaborationMembershipListNode {
     membershipType
     membershipsCount
     enrollMethod
