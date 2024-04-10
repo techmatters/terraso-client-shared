@@ -125,6 +125,8 @@ export const soilColorHues = [
   'PB',
 ] as const;
 
+export type ColorHue = SoilColorHue | NonNeutralColorHue;
+
 export type RockFragmentVolume =
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices;
 

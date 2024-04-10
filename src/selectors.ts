@@ -43,6 +43,7 @@ import {
   SoilData,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import {
+  DepthDependentSoilData,
   ProjectSoilSettings,
   SoilDataDepthInterval,
   soilPitMethods,
@@ -340,7 +341,7 @@ export const selectDepthDependentData =
     siteId: string;
     depthInterval: { depthInterval: DepthInterval };
   }) =>
-  (state: SharedState) =>
+  (state: SharedState): DepthDependentSoilData =>
     selectSoilData(siteId)(state).depthDependentData.find(
       sameDepth(depthInterval),
-    );
+    ) ?? { depthInterval: depthInterval.depthInterval };
