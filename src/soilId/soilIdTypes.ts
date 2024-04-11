@@ -89,12 +89,17 @@ export const textures = [
   'SILT_LOAM',
 ] as const satisfies readonly SoilTexture[];
 
-export const colorValues = [2.5, 3, 4, 5, 6, 7, 8, 8.5, 9, 9.5] as const;
+export type ColorValue = (typeof colorValues)[number];
+export const colorValues = [2, 2.5, 3, 4, 5, 6, 7, 8, 8.5, 9, 9.5] as const;
 
-export const colorChromas = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+export type ColorChroma = (typeof colorChromas)[number];
+export const colorChromas = [1, 2, 3, 4, 6, 8] as const;
 
+export type ColorHueSubstep = (typeof colorHueSubsteps)[number];
 export const colorHueSubsteps = [2.5, 5, 7.5, 10] as const;
-export const colorHues = [
+
+export type NonNeutralColorHue = (typeof nonNeutralColorHues)[number];
+export const nonNeutralColorHues = [
   'R',
   'YR',
   'Y',
@@ -106,6 +111,21 @@ export const colorHues = [
   'P',
   'RP',
 ] as const;
+
+export type SoilColorHue = (typeof soilColorHues)[number];
+export const soilColorHues = [
+  'N',
+  'R',
+  'YR',
+  'Y',
+  'GY',
+  'G',
+  'BG',
+  'B',
+  'PB',
+] as const;
+
+export type ColorHue = SoilColorHue | NonNeutralColorHue;
 
 export type RockFragmentVolume =
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices;
