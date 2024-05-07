@@ -40,7 +40,7 @@ export type Site = {
   name: string;
   latitude: number;
   longitude: number;
-  elevation: number;
+  elevation?: number;
   privacy: SitePrivacy;
   archived: boolean;
   updatedAt: string;
