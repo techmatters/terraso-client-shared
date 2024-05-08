@@ -15,8 +15,8 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-export const soilMatch = /* GraphQL */ `
-  fragment soilMatch on SoilMatch {
+export const soilMatchInfo = /* GraphQL */ `
+  fragment soilMatchInfo on SoilMatchInfo {
     score
     rank
   }
@@ -29,7 +29,6 @@ export const soilInfo = /* GraphQL */ `
       taxonomySubgroup
       description
       fullDescriptionUrl
-      dataSource
     }
 
     ecologicalSite {
@@ -42,14 +41,31 @@ export const soilInfo = /* GraphQL */ `
       capabilityClass
       subClass
     }
+
+    soilData {
+      slope
+      depthDependentData {
+        depthInterval {
+          start
+          end
+        }
+        texture
+        rockFragmentVolume
+        colorHue
+        colorValue
+        colorChroma
+      }
+    }
   }
 `;
 
 export const locationBasedSoilMatches = /* GraphQL */ `
   fragment locationBasedSoilMatches on LocationBasedSoilMatches {
     matches {
+      dataSource
+      inMapUnit
       match {
-        ...soilMatch
+        ...soilMatchInfo
       }
       soilInfo {
         ...soilInfo
@@ -61,14 +77,16 @@ export const locationBasedSoilMatches = /* GraphQL */ `
 export const dataBasedSoilMatches = /* GraphQL */ `
   fragment dataBasedSoilMatches on DataBasedSoilMatches {
     matches {
+      dataSource
+      inMapUnit
       locationMatch {
-        ...soilMatch
+        ...soilMatchInfo
       }
       dataMatch {
-        ...soilMatch
+        ...soilMatchInfo
       }
       combinedMatch {
-        ...soilMatch
+        ...soilMatchInfo
       }
       soilInfo {
         ...soilInfo

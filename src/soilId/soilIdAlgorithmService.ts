@@ -44,7 +44,7 @@ export const fetchDataBasedSoilMatches = async (
     query dataBasedSoilMatches(
       $latitude: Float!
       $longitude: Float!
-      $data: SoilIDInputData!
+      $data: SoilIdInputData!
     ) {
       soilId {
         dataBasedSoilMatches(
