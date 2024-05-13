@@ -51,9 +51,7 @@ export const soilInfo = /* GraphQL */ `
         }
         texture
         rockFragmentVolume
-        colorHue
-        colorValue
-        colorChroma
+        munsellColorString
       }
     }
   }
@@ -63,7 +61,7 @@ export const locationBasedSoilMatches = /* GraphQL */ `
   fragment locationBasedSoilMatches on LocationBasedSoilMatches {
     matches {
       dataSource
-      inMapUnit
+      distanceToNearestMapUnitM
       match {
         ...soilMatchInfo
       }
@@ -78,7 +76,7 @@ export const dataBasedSoilMatches = /* GraphQL */ `
   fragment dataBasedSoilMatches on DataBasedSoilMatches {
     matches {
       dataSource
-      inMapUnit
+      distanceToNearestMapUnitM
       locationMatch {
         ...soilMatchInfo
       }
