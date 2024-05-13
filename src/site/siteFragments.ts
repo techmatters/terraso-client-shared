@@ -21,6 +21,7 @@ export const siteData = /* GraphQL */ `
     name
     latitude
     longitude
+    elevation
     archived
     updatedAt
     privacy

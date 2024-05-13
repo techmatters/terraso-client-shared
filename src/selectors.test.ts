@@ -110,6 +110,7 @@ const generateSite = (args?: { project: Project } | { owner: User }): Site => {
     name: 'Test Site',
     latitude: 0,
     longitude: 0,
+    elevation: 0,
     privacy: 'PRIVATE',
     archived: false,
     updatedAt: '2023-10-24',
