@@ -19,7 +19,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
 import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
-import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
+import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
 import {
   CollectionMethod,
   DepthInterval,
@@ -153,7 +153,7 @@ export const {
 
 export const fetchSoilDataForUser = createAsyncThunk(
   'soilId/fetchSoilDataForUser',
-  dispatchByKeys(soilIdService.fetchSoilDataForUser, () => ({
+  dispatchByKeys(soilDataService.fetchSoilDataForUser, () => ({
     projects: setProjects,
     sites: setSites,
     projectSoilSettings: setProjectSettings,
@@ -164,37 +164,37 @@ export const fetchSoilDataForUser = createAsyncThunk(
 
 export const updateSoilData = createAsyncThunk(
   'soilId/updateSoilData',
-  soilIdService.updateSoilData,
+  soilDataService.updateSoilData,
 );
 
 export const updateDepthDependentSoilData = createAsyncThunk(
   'soilId/updateDepthDependentSoilData',
-  soilIdService.updateDepthDependentSoilData,
+  soilDataService.updateDepthDependentSoilData,
 );
 
 export const updateSoilDataDepthInterval = createAsyncThunk(
   'soilId/updateSoilDataDepthInterval',
-  soilIdService.updateSoilDataDepthInterval,
+  soilDataService.updateSoilDataDepthInterval,
 );
 
 export const deleteSoilDataDepthInterval = createAsyncThunk(
   'soilId/deleteSoilDataDepthInterval',
-  soilIdService.deleteSoilDataDepthInterval,
+  soilDataService.deleteSoilDataDepthInterval,
 );
 
 export const updateProjectSoilSettings = createAsyncThunk(
   'soilId/updateProjectSoilSettings',
-  soilIdService.updateProjectSoilSettings,
+  soilDataService.updateProjectSoilSettings,
 );
 
 export const updateProjectDepthInterval = createAsyncThunk(
   'soilId/updateProjectDepthInterval',
-  soilIdService.updateProjectDepthInterval,
+  soilDataService.updateProjectDepthInterval,
 );
 
 export const deleteProjectDepthInterval = createAsyncThunk(
   'soilId/deleteProjectDepthInterval',
-  soilIdService.deleteProjectDepthInterval,
+  soilDataService.deleteProjectDepthInterval,
 );
 
 export default soilIdSlice.reducer;

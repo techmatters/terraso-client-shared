@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Technology Matters
+ * Copyright © 2024 Technology Matters
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,223 +16,49 @@
  */
 
 import { graphql } from 'terraso-client-shared/graphqlSchema';
-import type {
-  DepthDependentSoilDataUpdateMutationInput,
-  ProjectSoilSettingsDeleteDepthIntervalMutationInput,
-  ProjectSoilSettingsUpdateDepthIntervalMutationInput,
-  ProjectSoilSettingsUpdateMutationInput,
-  SoilDataDeleteDepthIntervalMutationInput,
-  SoilDataUpdateDepthIntervalMutationInput,
-  SoilDataUpdateMutationInput,
-} from 'terraso-client-shared/graphqlSchema/graphql';
-import { collapseProjects } from 'terraso-client-shared/project/projectService';
-import { collapseSites } from 'terraso-client-shared/site/siteService';
+import { SoilIdInputData } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
-import {
-  collapseEdges,
-  collapseMaps,
-} from 'terraso-client-shared/terrasoApi/utils';
+import { Coords } from 'terraso-client-shared/types';
 
-export const fetchSoilDataForUser = async (userId: string) => {
+export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
   const query = graphql(`
-    query userSoilData($id: ID!) {
-      userSites: sites(owner: $id) {
-        edges {
-          node {
-            ...siteData
-            soilData {
-              ...soilData
-            }
-          }
-        }
-      }
-      projects: projects(member: $id) {
-        edges {
-          node {
-            ...projectData
-            siteSet {
-              edges {
-                node {
-                  soilData {
-                    ...soilData
-                  }
-                }
-              }
-            }
-            soilSettings {
-              ...projectSoilSettings
-            }
-          }
+    query locationBasedSoilMatches($latitude: Float!, $longitude: Float!) {
+      soilId {
+        locationBasedSoilMatches(latitude: $latitude, longitude: $longitude) {
+          ...locationBasedSoilMatches
         }
       }
     }
   `);
 
-  const { userSites, projects: allProjects } = await terrasoApi.requestGraphQL(
-    query,
-    { id: userId },
-  );
-
-  const {
-    projects,
-    sites: projectSites,
-    users,
-  } = collapseProjects(allProjects);
-  const allSites = collapseEdges(userSites).concat(
-    collapseEdges(allProjects).flatMap(({ siteSet }) => collapseEdges(siteSet)),
-  );
-
-  return {
-    projects,
-    users,
-    projectSoilSettings: Object.fromEntries(
-      collapseEdges(allProjects).map(({ soilSettings, id }) => [
-        id,
-        soilSettings,
-      ]),
-    ),
-    sites: collapseMaps(collapseSites(userSites), projectSites),
-    soilData: Object.fromEntries(
-      allSites.map(({ soilData, id }) => [id, soilData]),
-    ),
-  };
+  return terrasoApi
+    .requestGraphQL(query, coords)
+    .then(({ soilId }) => soilId.locationBasedSoilMatches);
 };
 
-export const updateSoilData = async (soilData: SoilDataUpdateMutationInput) => {
-  const query = graphql(`
-    mutation updateSoilData($input: SoilDataUpdateMutationInput!) {
-      updateSoilData(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilData });
-  return resp.updateSoilData.soilData!;
-};
-
-export const updateDepthDependentSoilData = async (
-  depthDependentData: DepthDependentSoilDataUpdateMutationInput,
+export const fetchDataBasedSoilMatches = async (
+  coords: Coords,
+  data: SoilIdInputData,
 ) => {
   const query = graphql(`
-    mutation updateDepthDependentSoilData(
-      $input: DepthDependentSoilDataUpdateMutationInput!
+    query dataBasedSoilMatches(
+      $latitude: Float!
+      $longitude: Float!
+      $data: SoilIdInputData!
     ) {
-      updateDepthDependentSoilData(input: $input) {
-        soilData {
-          ...soilData
+      soilId {
+        dataBasedSoilMatches(
+          latitude: $latitude
+          longitude: $longitude
+          data: $data
+        ) {
+          ...dataBasedSoilMatches
         }
-        errors
       }
     }
   `);
 
-  const resp = await terrasoApi.requestGraphQL(query, {
-    input: depthDependentData,
-  });
-
-  return resp.updateDepthDependentSoilData.soilData!;
-};
-
-export const updateSoilDataDepthInterval = async (
-  soilData: SoilDataUpdateDepthIntervalMutationInput,
-) => {
-  const query = graphql(`
-    mutation updateSoilDataDepthInterval(
-      $input: SoilDataUpdateDepthIntervalMutationInput!
-    ) {
-      updateSoilDataDepthInterval(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilData });
-  return resp.updateSoilDataDepthInterval.soilData!;
-};
-
-export const deleteSoilDataDepthInterval = async (
-  soilData: SoilDataDeleteDepthIntervalMutationInput,
-) => {
-  const query = graphql(`
-    mutation deleteSoilDataDepthInterval(
-      $input: SoilDataDeleteDepthIntervalMutationInput!
-    ) {
-      deleteSoilDataDepthInterval(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilData });
-  return resp.deleteSoilDataDepthInterval.soilData!;
-};
-
-export const updateProjectSoilSettings = async (
-  soilSettings: ProjectSoilSettingsUpdateMutationInput,
-) => {
-  const query = graphql(`
-    mutation updateProjectSoilSettings(
-      $input: ProjectSoilSettingsUpdateMutationInput!
-    ) {
-      updateProjectSoilSettings(input: $input) {
-        projectSoilSettings {
-          ...projectSoilSettings
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilSettings });
-  return resp.updateProjectSoilSettings.projectSoilSettings!;
-};
-
-export const updateProjectDepthInterval = async (
-  depthInterval: ProjectSoilSettingsUpdateDepthIntervalMutationInput,
-) => {
-  const query = graphql(`
-    mutation updateProjectSoilSettingsDepthInterval(
-      $input: ProjectSoilSettingsUpdateDepthIntervalMutationInput!
-    ) {
-      updateProjectSoilSettingsDepthInterval(input: $input) {
-        projectSoilSettings {
-          ...projectSoilSettings
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.updateProjectSoilSettingsDepthInterval.projectSoilSettings!;
-};
-
-export const deleteProjectDepthInterval = async (
-  depthInterval: ProjectSoilSettingsDeleteDepthIntervalMutationInput,
-) => {
-  const query = graphql(`
-    mutation deleteProjectSoilSettingsDepthInterval(
-      $input: ProjectSoilSettingsDeleteDepthIntervalMutationInput!
-    ) {
-      deleteProjectSoilSettingsDepthInterval(input: $input) {
-        projectSoilSettings {
-          ...projectSoilSettings
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.deleteProjectSoilSettingsDepthInterval.projectSoilSettings!;
+  return terrasoApi
+    .requestGraphQL(query, { ...coords, data })
+    .then(({ soilId }) => soilId.dataBasedSoilMatches);
 };

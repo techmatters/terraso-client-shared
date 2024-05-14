@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Technology Matters
+ * Copyright © 2024 Technology Matters
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -15,108 +15,80 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-export const projectSoilSettings = /* GraphQL */ `
-  fragment projectSoilSettings on ProjectSoilSettingsNode {
-    depthIntervals {
-      depthInterval {
-        start
-        end
+export const soilMatchInfo = /* GraphQL */ `
+  fragment soilMatchInfo on SoilMatchInfo {
+    score
+    rank
+  }
+`;
+
+export const soilInfo = /* GraphQL */ `
+  fragment soilInfo on SoilInfo {
+    soilSeries {
+      name
+      taxonomySubgroup
+      description
+      fullDescriptionUrl
+    }
+
+    ecologicalSite {
+      name
+      id
+      url
+    }
+
+    landCapabilityClass {
+      capabilityClass
+      subClass
+    }
+
+    soilData {
+      slope
+      depthDependentData {
+        depthInterval {
+          start
+          end
+        }
+        texture
+        rockFragmentVolume
+        munsellColorString
       }
-      label
-    }
-    depthIntervalPreset
-    soilPitRequired
-    slopeRequired
-    soilTextureRequired
-    soilColorRequired
-    verticalCrackingRequired
-    carbonatesRequired
-    phRequired
-    soilOrganicCarbonMatterRequired
-    electricalConductivityRequired
-    sodiumAdsorptionRatioRequired
-    soilStructureRequired
-    landUseLandCoverRequired
-    soilLimitationsRequired
-    photosRequired
-    notesRequired
-  }
-`;
-
-export const soilData = /* GraphQL */ `
-  fragment soilData on SoilDataNode {
-    downSlope
-    crossSlope
-    bedrock
-    depthIntervalPreset
-    slopeLandscapePosition
-    slopeAspect
-    slopeSteepnessSelect
-    slopeSteepnessPercent
-    slopeSteepnessDegree
-    surfaceCracksSelect
-    surfaceSaltSelect
-    floodingSelect
-    limeRequirementsSelect
-    surfaceStoninessSelect
-    waterTableDepthSelect
-    soilDepthSelect
-    landCoverSelect
-    grazingSelect
-    depthIntervals {
-      ...soilDataDepthInterval
-    }
-    depthDependentData {
-      ...depthDependentSoilData
     }
   }
 `;
 
-export const soilDataDepthInterval = /* GraphQL */ `
-  fragment soilDataDepthInterval on SoilDataDepthIntervalNode {
-    label
-    depthInterval {
-      start
-      end
+export const locationBasedSoilMatches = /* GraphQL */ `
+  fragment locationBasedSoilMatches on LocationBasedSoilMatches {
+    matches {
+      dataSource
+      distanceToNearestMapUnitM
+      match {
+        ...soilMatchInfo
+      }
+      soilInfo {
+        ...soilInfo
+      }
     }
-    soilTextureEnabled
-    soilColorEnabled
-    carbonatesEnabled
-    phEnabled
-    soilOrganicCarbonMatterEnabled
-    electricalConductivityEnabled
-    sodiumAdsorptionRatioEnabled
-    soilStructureEnabled
   }
 `;
 
-export const depthDependentSoilData = /* GraphQL */ `
-  fragment depthDependentSoilData on DepthDependentSoilDataNode {
-    depthInterval {
-      start
-      end
+export const dataBasedSoilMatches = /* GraphQL */ `
+  fragment dataBasedSoilMatches on DataBasedSoilMatches {
+    matches {
+      dataSource
+      distanceToNearestMapUnitM
+      locationMatch {
+        ...soilMatchInfo
+      }
+      dataMatch {
+        ...soilMatchInfo
+      }
+      combinedMatch {
+        ...soilMatchInfo
+      }
+      soilInfo {
+        ...soilInfo
+      }
     }
-    texture
-    rockFragmentVolume
-    clayPercent
-    colorHue
-    colorValue
-    colorChroma
-    colorPhotoUsed
-    colorPhotoSoilCondition
-    colorPhotoLightingCondition
-    conductivity
-    conductivityTest
-    conductivityUnit
-    structure
-    ph
-    phTestingSolution
-    phTestingMethod
-    soilOrganicCarbon
-    soilOrganicMatter
-    soilOrganicCarbonTesting
-    soilOrganicMatterTesting
-    sodiumAbsorptionRatio
-    carbonates
   }
 `;
