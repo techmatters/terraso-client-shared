@@ -43,6 +43,11 @@ export const disabledSoilPitMethods = [
   'sodiumAdsorptionRatio',
 ] as const;
 
+export const allSoilPitMethods = [
+  ...soilPitMethods,
+  ...disabledSoilPitMethods,
+] as const;
+
 export const collectionMethods = [
   'slope',
   'verticalCracking',
@@ -54,6 +59,11 @@ export const disabledCollectionMethods = [
   'soilLimitations',
   'landUseLandCover',
   'photos',
+] as const;
+
+export const allCollectionMethods = [
+  ...collectionMethods,
+  ...disabledCollectionMethods,
 ] as const;
 
 export type SoilPitMethod = (typeof soilPitMethods)[number];
