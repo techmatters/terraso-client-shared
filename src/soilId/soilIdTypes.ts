@@ -28,9 +28,8 @@ import type {
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
-export const soilPitMethods = [
-  'soilTexture',
-  'soilColor',
+export const soilPitMethods = ['soilTexture', 'soilColor'] as const;
+export const disabledSoilPitMethods = [
   'soilStructure',
   'carbonates',
   'ph',
@@ -38,14 +37,18 @@ export const soilPitMethods = [
   'soilOrganicCarbonMatter',
   'sodiumAdsorptionRatio',
 ] as const;
+
 export const collectionMethods = [
   'slope',
   'verticalCracking',
   ...soilPitMethods,
+  'notes',
+] as const;
+
+export const disabledCollectionMethods = [
   'soilLimitations',
   'landUseLandCover',
   'photos',
-  'notes',
 ] as const;
 
 export type SoilPitMethod = (typeof soilPitMethods)[number];
