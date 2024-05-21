@@ -55,8 +55,11 @@ export const DEPTH_INTERVAL_PRESETS = mapEntries(
 export const DEFAULT_ENABLED_SOIL_PIT_METHODS: SoilPitMethod[] = [
   'soilTexture',
   'soilColor',
-  'soilStructure',
 ];
+
+// export const DEFAULT_DISABLED_SOIL_PIT_METHODS: SoilPitMethod[] = [
+//   'soilStructure',
+// ];
 
 export const DEFAULT_PROJECT_SOIL_INTERVAL = fromEntries(
   soilPitMethods.map(method => [methodEnabled(method), false]),
