@@ -33,9 +33,8 @@ import { Coords } from 'terraso-client-shared/types';
 
 export type LoadingState = 'loading' | 'error' | 'ready';
 
-export const soilPitMethods = [
-  'soilTexture',
-  'soilColor',
+export const soilPitMethods = ['soilTexture', 'soilColor'] as const;
+export const disabledSoilPitMethods = [
   'soilStructure',
   'carbonates',
   'ph',
@@ -43,14 +42,18 @@ export const soilPitMethods = [
   'soilOrganicCarbonMatter',
   'sodiumAdsorptionRatio',
 ] as const;
+
 export const collectionMethods = [
   'slope',
   'verticalCracking',
   ...soilPitMethods,
+  'notes',
+] as const;
+
+export const disabledCollectionMethods = [
   'soilLimitations',
   'landUseLandCover',
   'photos',
-  'notes',
 ] as const;
 
 export type SoilPitMethod = (typeof soilPitMethods)[number];
