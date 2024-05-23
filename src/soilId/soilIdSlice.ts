@@ -32,10 +32,12 @@ import {
 export * from 'terraso-client-shared/soilId/soilIdTypes';
 export * from 'terraso-client-shared/soilId/soilIdFunctions';
 
+export type LoadingState = 'loading' | 'error' | 'ready';
+
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings | undefined>;
-  status: 'loading' | 'error' | 'ready';
+  status: LoadingState;
 };
 
 const initialState: SoilState = {
