@@ -21,11 +21,8 @@ import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
 import {
-  CollectionMethod,
-  DepthInterval,
   ProjectSoilSettings,
   SoilData,
-  SoilPitMethod,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import {
   createAsyncThunk,
@@ -33,14 +30,7 @@ import {
 } from 'terraso-client-shared/store/utils';
 
 export * from 'terraso-client-shared/soilId/soilIdTypes';
-
-export const methodEnabled = <T extends SoilPitMethod>(
-  method: T,
-): `${T}Enabled` => `${method}Enabled`;
-
-export const methodRequired = <T extends CollectionMethod>(
-  method: T,
-): `${T}Required` => `${method}Required`;
+export * from 'terraso-client-shared/soilId/soilIdFunctions';
 
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
@@ -53,21 +43,6 @@ const initialState: SoilState = {
   projectSettings: {},
   status: 'loading',
 };
-
-export const sameDepth =
-  ({ depthInterval: a }: { depthInterval: DepthInterval }) =>
-  ({ depthInterval: b }: { depthInterval: DepthInterval }) =>
-    a.start === b.start && a.end === b.end;
-
-export const overlaps =
-  ({ depthInterval: a }: { depthInterval: DepthInterval }) =>
-  ({ depthInterval: b }: { depthInterval: DepthInterval }) =>
-    Math.max(a.start, b.start) < Math.min(a.end, b.end);
-
-export const compareInterval = (
-  { depthInterval: a }: { depthInterval: DepthInterval },
-  { depthInterval: b }: { depthInterval: DepthInterval },
-) => a.start - b.start;
 
 const soilIdSlice = createSlice({
   name: 'soilId',
