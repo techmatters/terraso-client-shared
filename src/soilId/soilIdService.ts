@@ -23,10 +23,13 @@ import { Coords } from 'terraso-client-shared/types';
 import { soilDataToIdInput } from './soilIdFunctions';
 import { SoilData } from './soilIdTypes';
 
-export const fetchSoilMatches = async (
-  coords?: Coords,
-  soilData?: SoilData,
-) => {
+export const fetchSoilMatches = async ({
+  coords,
+  soilData,
+}: {
+  coords?: Coords;
+  soilData?: SoilData;
+}) => {
   /*
    * One or both of the match types (location, data-based) will need to be queried.
    * Fetch them both and return a promise that will complete when both are done.
@@ -43,8 +46,8 @@ export const fetchSoilMatches = async (
   return Promise.all([locationFetch, dataFetch]).then(
     ([locationBasedMatches, dataBasedMatches]) => {
       return {
-        locationBasedMatches: locationBasedMatches,
-        dataBasedMatches: dataBasedMatches,
+        locationBasedMatches: locationBasedMatches.matches,
+        dataBasedMatches: dataBasedMatches.matches,
       };
     },
   );
