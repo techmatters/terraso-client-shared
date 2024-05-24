@@ -30,7 +30,7 @@ import {
   DepthInterval,
   SoilData,
   SoilPitMethod,
-} from './soilIdTypes';
+} from 'terraso-client-shared/soilId/soilIdTypes';
 
 export const methodEnabled = <T extends SoilPitMethod>(
   method: T,
