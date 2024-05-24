@@ -17,17 +17,17 @@
 
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import { SoilIdInputData } from 'terraso-client-shared/graphqlSchema/graphql';
+import { soilDataToIdInput } from 'terraso-client-shared/soilId/soilIdFunctions';
+import { SoilData } from 'terraso-client-shared/soilId/soilIdTypes';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { Coords } from 'terraso-client-shared/types';
-
-import { soilDataToIdInput } from './soilIdFunctions';
-import { SoilData } from './soilIdTypes';
 
 export const fetchSoilMatches = async ({
   coords,
   soilData,
 }: {
   coords?: Coords;
+  siteId?: string;
   soilData?: SoilData;
 }) => {
   /*
