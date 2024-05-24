@@ -121,7 +121,7 @@ const soilIdSlice = createSlice({
 
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-      
+
       state.soilIdData.dataBasedMatches = [];
       state.soilIdParams.siteId = undefined;
     });

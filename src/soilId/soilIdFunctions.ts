@@ -23,7 +23,6 @@ import {
   SoilIdInputDepthDependentData,
   SoilIdSoilDataSlopeSteepnessSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-
 import {
   CollectionMethod,
   DepthDependentSoilData,
