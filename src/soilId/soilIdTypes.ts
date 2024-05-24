@@ -31,6 +31,8 @@ import type {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import { Coords } from 'terraso-client-shared/types';
 
+export type LoadingState = 'loading' | 'error' | 'ready';
+
 export const soilPitMethods = [
   'soilTexture',
   'soilColor',

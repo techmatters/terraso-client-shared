@@ -22,6 +22,7 @@ import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
 import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
 import {
+  LoadingState,
   ProjectSoilSettings,
   SoilData,
   SoilIdParams,
@@ -35,8 +36,6 @@ import {
 export * from 'terraso-client-shared/soilId/soilIdTypes';
 export * from 'terraso-client-shared/soilId/soilIdFunctions';
 
-export type LoadingState = 'loading' | 'error' | 'ready';
-
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings | undefined>;
@@ -44,7 +43,7 @@ export type SoilState = {
 
   soilIdParams: SoilIdParams;
   soilIdData: SoilIdResults;
-  soilIdStatus: 'loading' | 'error' | 'ready';
+  soilIdStatus: LoadingState;
 };
 
 const initialState: SoilState = {
