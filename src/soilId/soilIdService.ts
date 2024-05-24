@@ -20,6 +20,36 @@ import { SoilIdInputData } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { Coords } from 'terraso-client-shared/types';
 
+import { soilDataToIdInput } from './soilIdFunctions';
+import { SoilData } from './soilIdTypes';
+
+export const fetchSoilMatches = async (
+  coords?: Coords,
+  soilData?: SoilData,
+) => {
+  /*
+   * One or both of the match types (location, data-based) will need to be queried.
+   * Fetch them both and return a promise that will complete when both are done.
+   * If a query isn't applicable, just return an empty match array.
+   */
+  const locationFetch = coords
+    ? fetchLocationBasedSoilMatches(coords)
+    : Promise.resolve({ matches: [] });
+  const dataFetch =
+    coords && soilData
+      ? fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData))
+      : Promise.resolve({ matches: [] });
+
+  return Promise.all([locationFetch, dataFetch]).then(
+    ([locationBasedMatches, dataBasedMatches]) => {
+      return {
+        locationBasedMatches: locationBasedMatches,
+        dataBasedMatches: dataBasedMatches,
+      };
+    },
+  );
+};
+
 export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
   const query = graphql(`
     query locationBasedSoilMatches($latitude: Float!, $longitude: Float!) {
