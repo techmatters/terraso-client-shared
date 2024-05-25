@@ -24,33 +24,33 @@ import { Coords } from 'terraso-client-shared/types';
 
 export const fetchSoilMatches = async ({
   coords,
+  siteId,
   soilData,
 }: {
-  coords?: Coords;
+  coords: Coords;
   siteId?: string;
   soilData?: SoilData;
 }) => {
   /*
-   * One or both of the match types (location, data-based) will need to be queried.
-   * Fetch them both and return a promise that will complete when both are done.
-   * If a query isn't applicable, just return an empty match array.
+   * Depending on the given input parameters, one of the two APIs needs to be queried.
    */
-  const locationFetch = coords
-    ? fetchLocationBasedSoilMatches(coords)
-    : Promise.resolve({ matches: [] });
-  const dataFetch =
-    coords && soilData
-      ? fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData))
-      : Promise.resolve({ matches: [] });
-
-  return Promise.all([locationFetch, dataFetch]).then(
-    ([locationBasedMatches, dataBasedMatches]) => {
+  if (siteId && soilData) {
+    return fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData)).then(
+      result => {
+        return {
+          locationBasedMatches: [],
+          dataBasedMatches: result.matches,
+        };
+      },
+    );
+  } else {
+    return fetchLocationBasedSoilMatches(coords).then(result => {
       return {
-        locationBasedMatches: locationBasedMatches.matches,
-        dataBasedMatches: dataBasedMatches.matches,
+        locationBasedMatches: result.matches,
+        dataBasedMatches: [],
       };
-    },
-  );
+    });
+  }
 };
 
 export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
