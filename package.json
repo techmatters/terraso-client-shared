@@ -48,7 +48,7 @@
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "@types/jest-axe": "^3.5.9",
-    "@types/lodash": "^4.17.1",
+    "@types/lodash": "^4.17.4",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/parser": "^7.10.0",
     "babel-plugin-root-import": "^6.6.0",
