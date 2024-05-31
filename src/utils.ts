@@ -49,10 +49,8 @@ export const isEquivalentCoords = (a?: Coords, b?: Coords): boolean => {
       a.latitude.toFixed(5) === b.latitude.toFixed(5) &&
       a.longitude.toFixed(5) === b.longitude.toFixed(5)
     );
-  } else if (a === undefined && b === undefined) {
-    return true;
   } else {
-    return false;
+    return a === undefined && b === undefined;
   }
 };
 

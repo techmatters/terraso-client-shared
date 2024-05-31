@@ -33,6 +33,8 @@ export const fetchSoilMatches = async ({
 }) => {
   /*
    * Depending on the given input parameters, one of the two APIs needs to be queried.
+   * Sites with data use the "data based" soil matches API, as it can use soil data and location
+   * Temporary locations use the "location based" soil matches API, only using location
    */
   if (siteId && soilData) {
     return fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData)).then(
