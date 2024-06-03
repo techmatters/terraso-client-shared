@@ -16,8 +16,10 @@
  */
 
 import type {
+  DataBasedSoilMatch,
   DepthDependentSoilDataNode,
   DepthInterval,
+  LocationBasedSoilMatch,
   ProjectDepthIntervalNode,
   ProjectSoilSettingsNode,
   SoilDataDepthIntervalNode,
@@ -27,6 +29,9 @@ import type {
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
+import { Coords } from 'terraso-client-shared/types';
+
+export type LoadingState = 'loading' | 'error' | 'ready';
 
 export const soilPitMethods = [
   'soilTexture',
@@ -145,3 +150,13 @@ export const DEPTH_PRESETS = [
   'CUSTOM',
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
+
+export type SoilIdParams = {
+  coords?: Coords;
+  siteId?: string;
+};
+
+export type SoilIdResults = {
+  locationBasedMatches: LocationBasedSoilMatch[];
+  dataBasedMatches: DataBasedSoilMatch[];
+};

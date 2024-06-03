@@ -15,6 +15,8 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
+import { Coords } from 'terraso-client-shared/types';
+
 export const fromEntries = <K extends string | number | symbol, V>(
   entries: [K, V][],
 ) => Object.fromEntries(entries) as Record<K, V>;
@@ -40,6 +42,17 @@ export const mapValues = <T, U>(obj: Record<any, T>, f: (arg: T) => U) =>
 export const isValidLatitude = (lat: number) => lat >= -90 && lat <= 90;
 
 export const isValidLongitude = (lng: number) => lng >= -180 && lng <= 180;
+
+export const isEquivalentCoords = (a?: Coords, b?: Coords): boolean => {
+  if (a !== undefined && b !== undefined) {
+    return (
+      a.latitude.toFixed(5) === b.latitude.toFixed(5) &&
+      a.longitude.toFixed(5) === b.longitude.toFixed(5)
+    );
+  } else {
+    return a === undefined && b === undefined;
+  }
+};
 
 export const normalizeText = (text: string) =>
   text

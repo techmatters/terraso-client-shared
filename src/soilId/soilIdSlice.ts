@@ -20,12 +20,13 @@ import { setUsers } from 'terraso-client-shared/account/accountSlice';
 import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
+import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
 import {
-  CollectionMethod,
-  DepthInterval,
+  LoadingState,
   ProjectSoilSettings,
   SoilData,
-  SoilPitMethod,
+  SoilIdParams,
+  SoilIdResults,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import {
   createAsyncThunk,
@@ -33,41 +34,30 @@ import {
 } from 'terraso-client-shared/store/utils';
 
 export * from 'terraso-client-shared/soilId/soilIdTypes';
-
-export const methodEnabled = <T extends SoilPitMethod>(
-  method: T,
-): `${T}Enabled` => `${method}Enabled`;
-
-export const methodRequired = <T extends CollectionMethod>(
-  method: T,
-): `${T}Required` => `${method}Required`;
+export * from 'terraso-client-shared/soilId/soilIdFunctions';
 
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings | undefined>;
-  status: 'loading' | 'error' | 'ready';
+  status: LoadingState;
+
+  soilIdParams: SoilIdParams;
+  soilIdData: SoilIdResults;
+  soilIdStatus: LoadingState;
 };
 
 const initialState: SoilState = {
   soilData: {},
   projectSettings: {},
   status: 'loading',
+
+  soilIdParams: {},
+  soilIdData: {
+    locationBasedMatches: [],
+    dataBasedMatches: [],
+  },
+  soilIdStatus: 'loading',
 };
-
-export const sameDepth =
-  ({ depthInterval: a }: { depthInterval: DepthInterval }) =>
-  ({ depthInterval: b }: { depthInterval: DepthInterval }) =>
-    a.start === b.start && a.end === b.end;
-
-export const overlaps =
-  ({ depthInterval: a }: { depthInterval: DepthInterval }) =>
-  ({ depthInterval: b }: { depthInterval: DepthInterval }) =>
-    Math.max(a.start, b.start) < Math.min(a.end, b.end);
-
-export const compareInterval = (
-  { depthInterval: a }: { depthInterval: DepthInterval },
-  { depthInterval: b }: { depthInterval: DepthInterval },
-) => a.start - b.start;
 
 const soilIdSlice = createSlice({
   name: 'soilId',
@@ -75,6 +65,10 @@ const soilIdSlice = createSlice({
   reducers: {
     setSoilData: (state, action: PayloadAction<Record<string, SoilData>>) => {
       state.soilData = action.payload;
+
+      /* We clear soil ID matches based on soil data when a site's soil data changes */
+      state.soilIdData.dataBasedMatches = [];
+      state.soilIdParams.siteId = undefined;
     },
     updateSoilData: (
       state,
@@ -104,18 +98,31 @@ const soilIdSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(updateSoilData.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
+
+      /* We clear soil ID matches based on soil data when a site's soil data changes */
+      state.soilIdData.dataBasedMatches = [];
+      state.soilIdParams.siteId = undefined;
     });
 
     builder.addCase(updateDepthDependentSoilData.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
+
+      state.soilIdData.dataBasedMatches = [];
+      state.soilIdParams.siteId = undefined;
     });
 
     builder.addCase(updateSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
+
+      state.soilIdData.dataBasedMatches = [];
+      state.soilIdParams.siteId = undefined;
     });
 
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
+
+      state.soilIdData.dataBasedMatches = [];
+      state.soilIdParams.siteId = undefined;
     });
 
     builder.addCase(updateProjectSoilSettings.fulfilled, (state, action) => {
@@ -140,6 +147,24 @@ const soilIdSlice = createSlice({
 
     builder.addCase(fetchSoilDataForUser.fulfilled, state => {
       state.status = 'ready';
+    });
+
+    builder.addCase(fetchSoilIdMatches.pending, (state, action) => {
+      state.soilIdParams = {
+        coords: action.meta.arg.coords,
+        siteId: action.meta.arg.siteId,
+      };
+      state.soilIdData = initialState.soilIdData;
+      state.soilIdStatus = 'loading';
+    });
+
+    builder.addCase(fetchSoilIdMatches.rejected, state => {
+      state.soilIdStatus = 'error';
+    });
+
+    builder.addCase(fetchSoilIdMatches.fulfilled, (state, action) => {
+      state.soilIdStatus = 'ready';
+      state.soilIdData = action.payload;
     });
   },
 });
@@ -195,6 +220,11 @@ export const updateProjectDepthInterval = createAsyncThunk(
 export const deleteProjectDepthInterval = createAsyncThunk(
   'soilId/deleteProjectDepthInterval',
   soilDataService.deleteProjectDepthInterval,
+);
+
+export const fetchSoilIdMatches = createAsyncThunk(
+  'soilId/fetchSoilIdMatches',
+  soilIdService.fetchSoilMatches,
 );
 
 export default soilIdSlice.reducer;
