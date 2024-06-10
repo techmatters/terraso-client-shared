@@ -47,7 +47,7 @@
     "@graphql-codegen/client-preset": "^4.2.6",
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
     "@testing-library/jest-dom": "^6.4.5",
-    "@testing-library/react": "^15.0.7",
+    "@testing-library/react": "^16.0.0",
     "@types/jest-axe": "^3.5.9",
     "@types/lodash": "^4.17.4",
     "@types/uuid": "^9.0.8",
