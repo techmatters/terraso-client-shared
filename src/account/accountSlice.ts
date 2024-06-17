@@ -59,8 +59,6 @@ export type User = {
   preferences: Record<string, string>;
 };
 
-export type SimpleUserInfo = Omit<User, 'preferences'>;
-
 export const setHasAccessTokenAsync = createAsyncThunk(
   'account/setHasAccessTokenAsync',
   () => getToken(),
