@@ -39,7 +39,7 @@ export const fetchSoilMatches = async ({
   if (siteId && soilData) {
     return fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData)).then(
       result => {
-        if (result.__typename == 'SoilIdFailure') {
+        if (result.__typename === 'SoilIdFailure') {
           return {
             locationBasedMatches: [],
             dataBasedMatches: [],
@@ -54,7 +54,7 @@ export const fetchSoilMatches = async ({
     );
   } else {
     return fetchLocationBasedSoilMatches(coords).then(result => {
-      if (result.__typename == 'SoilIdFailure') {
+      if (result.__typename === 'SoilIdFailure') {
         return {
           locationBasedMatches: [],
           dataBasedMatches: [],
