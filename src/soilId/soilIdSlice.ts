@@ -23,6 +23,7 @@ import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
 import {
   CollectionMethod,
   DepthInterval,
+  DisabledCollectionMethod,
   ProjectSoilSettings,
   SoilData,
   SoilPitMethod,
@@ -41,6 +42,10 @@ export const methodEnabled = <T extends SoilPitMethod>(
 export const methodRequired = <T extends CollectionMethod>(
   method: T,
 ): `${T}Required` => `${method}Required`;
+
+export type MethodRequired<
+  T extends CollectionMethod | DisabledCollectionMethod,
+> = `${T}Required`;
 
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;

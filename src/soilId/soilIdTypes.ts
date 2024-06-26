@@ -27,6 +27,7 @@ import type {
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
+import { MethodRequired } from 'terraso-client-shared/soilId/soilIdSlice';
 
 export const soilPitMethods = ['soilTexture', 'soilColor'] as const;
 export const disabledSoilPitMethods = [
@@ -54,6 +55,7 @@ export const disabledCollectionMethods = [
   'soilLimitations',
   'landUseLandCover',
   'photos',
+  ...disabledSoilPitMethods,
 ] as const;
 
 export const allCollectionMethods = [
@@ -63,6 +65,9 @@ export const allCollectionMethods = [
 
 export type SoilPitMethod = (typeof soilPitMethods)[number];
 export type CollectionMethod = (typeof collectionMethods)[number];
+
+export type DisabledCollectionMethod =
+  (typeof disabledCollectionMethods)[number];
 
 export { DepthInterval };
 export type LabelledDepthInterval = {
@@ -79,12 +84,16 @@ export type SoilData = Omit<
   depthDependentData: DepthDependentSoilData[];
 };
 export type ProjectDepthInterval = Omit<ProjectDepthIntervalNode, 'project'>;
-export type ProjectSoilSettings = Omit<
+export type AllProjectSoilSettings = Omit<
   ProjectSoilSettingsNode,
   'project' | 'depthIntervals'
 > & {
   depthIntervals: ProjectDepthInterval[];
 };
+export type ProjectSoilSettings = Omit<
+  AllProjectSoilSettings,
+  MethodRequired<DisabledCollectionMethod>
+>;
 
 export type SoilTexture = SoilIdDepthDependentSoilDataTextureChoices;
 export const textures = [
