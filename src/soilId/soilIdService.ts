@@ -39,6 +39,13 @@ export const fetchSoilMatches = async ({
   if (siteId && soilData) {
     return fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData)).then(
       result => {
+        if (result.__typename == 'SoilIdFailure') {
+          return {
+            locationBasedMatches: [],
+            dataBasedMatches: [],
+            failureReason: result.reason,
+          };
+        }
         return {
           locationBasedMatches: [],
           dataBasedMatches: result.matches,
@@ -47,6 +54,13 @@ export const fetchSoilMatches = async ({
     );
   } else {
     return fetchLocationBasedSoilMatches(coords).then(result => {
+      if (result.__typename == 'SoilIdFailure') {
+        return {
+          locationBasedMatches: [],
+          dataBasedMatches: [],
+          failureReason: result.reason,
+        };
+      }
       return {
         locationBasedMatches: result.matches,
         dataBasedMatches: [],
@@ -60,6 +74,8 @@ export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
     query locationBasedSoilMatches($latitude: Float!, $longitude: Float!) {
       soilId {
         locationBasedSoilMatches(latitude: $latitude, longitude: $longitude) {
+          __typename
+          ...soilIdFailure
           ...locationBasedSoilMatches
         }
       }
@@ -87,6 +103,8 @@ export const fetchDataBasedSoilMatches = async (
           longitude: $longitude
           data: $data
         ) {
+          __typename
+          ...soilIdFailure
           ...dataBasedSoilMatches
         }
       }
