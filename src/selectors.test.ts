@@ -174,14 +174,14 @@ const generateSiteInterval = (
   defaults?: Partial<SoilDataDepthInterval>,
 ): SoilDataDepthInterval => ({
   depthInterval: interval,
-  electricalConductivityEnabled: false,
-  phEnabled: false,
-  sodiumAdsorptionRatioEnabled: false,
+  // electricalConductivityEnabled: false,
+  // phEnabled: false,
+  // sodiumAdsorptionRatioEnabled: false,
   soilColorEnabled: false,
-  soilOrganicCarbonMatterEnabled: false,
-  soilStructureEnabled: false,
+  // soilOrganicCarbonMatterEnabled: false,
+  // soilStructureEnabled: false,
   soilTextureEnabled: false,
-  carbonatesEnabled: false,
+  // carbonatesEnabled: false,
   ...(label !== undefined ? { label } : { label: '' }),
   ...DEFAULT_ENABLED_SOIL_PIT_METHODS.reduce(
     (x, method) => ({
@@ -490,10 +490,10 @@ test('overlapping site intervals get the project values of the preset interval',
   });
   const siteDepthIntervals = [
     generateSiteInterval({ start: 1, end: 2 }, 'label', {
-      carbonatesEnabled: true,
+      // carbonatesEnabled: true,
     }),
     generateSiteInterval({ start: 2, end: 3 }, 'label', {
-      phEnabled: true,
+      // phEnabled: true,
     }),
   ];
   const soilData = createSoilData(site, {
@@ -514,7 +514,7 @@ test('overlapping site intervals get the project values of the preset interval',
       interval: {
         ...siteDepthIntervals[0],
         label: 'first',
-        carbonatesEnabled: true,
+        // carbonatesEnabled: true,
       },
     },
     {
