@@ -57,6 +57,12 @@ export const soilInfo = /* GraphQL */ `
   }
 `;
 
+export const soilIdFailure = /* GraphQL */ `
+  fragment soilIdFailure on SoilIdFailure {
+    reason
+  }
+`;
+
 export const locationBasedSoilMatches = /* GraphQL */ `
   fragment locationBasedSoilMatches on LocationBasedSoilMatches {
     matches {

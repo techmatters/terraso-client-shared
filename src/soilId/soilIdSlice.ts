@@ -17,6 +17,7 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
+import { SoilIdFailureReason } from 'terraso-client-shared/graphqlSchema/graphql';
 import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
@@ -42,6 +43,8 @@ export type MethodRequired<
   T extends CollectionMethod | DisabledCollectionMethod,
 > = `${T}Required`;
 
+export type SoilIdStatus = LoadingState | SoilIdFailureReason;
+
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings | undefined>;
@@ -49,7 +52,7 @@ export type SoilState = {
 
   soilIdParams: SoilIdParams;
   soilIdData: SoilIdResults;
-  soilIdStatus: LoadingState;
+  soilIdStatus: SoilIdStatus;
 };
 
 const initialState: SoilState = {
@@ -169,8 +172,9 @@ const soilIdSlice = createSlice({
     });
 
     builder.addCase(fetchSoilIdMatches.fulfilled, (state, action) => {
-      state.soilIdStatus = 'ready';
-      state.soilIdData = action.payload;
+      const { failureReason, ...payload } = action.payload;
+      state.soilIdStatus = failureReason ?? 'ready';
+      state.soilIdData = payload;
     });
   },
 });
