@@ -22,6 +22,8 @@ import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
 import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
 import {
+  CollectionMethod,
+  DisabledCollectionMethod,
   LoadingState,
   ProjectSoilSettings,
   SoilData,
@@ -35,6 +37,10 @@ import {
 
 export * from 'terraso-client-shared/soilId/soilIdTypes';
 export * from 'terraso-client-shared/soilId/soilIdFunctions';
+
+export type MethodRequired<
+  T extends CollectionMethod | DisabledCollectionMethod,
+> = `${T}Required`;
 
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
