@@ -29,13 +29,13 @@ import type {
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
+import { MethodRequired } from 'terraso-client-shared/soilId/soilIdSlice';
 import { Coords } from 'terraso-client-shared/types';
 
 export type LoadingState = 'loading' | 'error' | 'ready';
 
-export const soilPitMethods = [
-  'soilTexture',
-  'soilColor',
+export const soilPitMethods = ['soilTexture', 'soilColor'] as const;
+export const disabledSoilPitMethods = [
   'soilStructure',
   'carbonates',
   'ph',
@@ -43,18 +43,36 @@ export const soilPitMethods = [
   'soilOrganicCarbonMatter',
   'sodiumAdsorptionRatio',
 ] as const;
+
+export const allSoilPitMethods = [
+  ...soilPitMethods,
+  ...disabledSoilPitMethods,
+] as const;
+
 export const collectionMethods = [
   'slope',
   'verticalCracking',
   ...soilPitMethods,
+  'notes',
+] as const;
+
+export const disabledCollectionMethods = [
   'soilLimitations',
   'landUseLandCover',
   'photos',
-  'notes',
+  ...disabledSoilPitMethods,
+] as const;
+
+export const allCollectionMethods = [
+  ...collectionMethods,
+  ...disabledCollectionMethods,
 ] as const;
 
 export type SoilPitMethod = (typeof soilPitMethods)[number];
 export type CollectionMethod = (typeof collectionMethods)[number];
+
+export type DisabledCollectionMethod =
+  (typeof disabledCollectionMethods)[number];
 
 export { DepthInterval };
 export type LabelledDepthInterval = {
@@ -71,12 +89,16 @@ export type SoilData = Omit<
   depthDependentData: DepthDependentSoilData[];
 };
 export type ProjectDepthInterval = Omit<ProjectDepthIntervalNode, 'project'>;
-export type ProjectSoilSettings = Omit<
+export type AllProjectSoilSettings = Omit<
   ProjectSoilSettingsNode,
   'project' | 'depthIntervals'
 > & {
   depthIntervals: ProjectDepthInterval[];
 };
+export type ProjectSoilSettings = Omit<
+  AllProjectSoilSettings,
+  MethodRequired<DisabledCollectionMethod>
+>;
 
 export type SoilTexture = SoilIdDepthDependentSoilDataTextureChoices;
 export const textures = [
