@@ -174,9 +174,11 @@ export const DEPTH_PRESETS = [
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
 
 export type SoilIdParams = {
-  coords?: Coords;
+  coords: Coords;
   siteId?: string;
 };
+
+export type SoilIdKey = `(${number}, ${number}) ${string}`;
 
 export type SoilIdResults = {
   locationBasedMatches: LocationBasedSoilMatch[];

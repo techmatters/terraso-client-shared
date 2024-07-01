@@ -17,10 +17,15 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
-import { SoilIdFailureReason } from 'terraso-client-shared/graphqlSchema/graphql';
+import {
+  DataBasedSoilMatch,
+  LocationBasedSoilMatch,
+  SoilIdFailureReason,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
+import { soilIdKey } from 'terraso-client-shared/soilId/soilIdFunctions';
 import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
 import {
   CollectionMethod,
@@ -28,8 +33,7 @@ import {
   LoadingState,
   ProjectSoilSettings,
   SoilData,
-  SoilIdParams,
-  SoilIdResults,
+  SoilIdKey,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import {
   createAsyncThunk,
@@ -45,14 +49,18 @@ export type MethodRequired<
 
 export type SoilIdStatus = LoadingState | SoilIdFailureReason;
 
+export type SoilIdEntry<T = LocationBasedSoilMatch | DataBasedSoilMatch> = {
+  matches: T[];
+  status: SoilIdStatus;
+};
+
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings | undefined>;
   status: LoadingState;
 
-  soilIdParams: SoilIdParams;
-  soilIdData: SoilIdResults;
-  soilIdStatus: SoilIdStatus;
+  locationBasedMatches: Record<SoilIdKey, SoilIdEntry<LocationBasedSoilMatch>>;
+  dataBasedMatches: Record<SoilIdKey, SoilIdEntry<DataBasedSoilMatch>>;
 };
 
 const initialState: SoilState = {
@@ -60,12 +68,8 @@ const initialState: SoilState = {
   projectSettings: {},
   status: 'loading',
 
-  soilIdParams: {},
-  soilIdData: {
-    locationBasedMatches: [],
-    dataBasedMatches: [],
-  },
-  soilIdStatus: 'loading',
+  locationBasedMatches: {},
+  dataBasedMatches: {},
 };
 
 const soilIdSlice = createSlice({
@@ -74,10 +78,7 @@ const soilIdSlice = createSlice({
   reducers: {
     setSoilData: (state, action: PayloadAction<Record<string, SoilData>>) => {
       state.soilData = action.payload;
-
-      /* We clear soil ID matches based on soil data when a site's soil data changes */
-      state.soilIdData.dataBasedMatches = [];
-      state.soilIdParams.siteId = undefined;
+      state.dataBasedMatches = {};
     },
     updateSoilData: (
       state,
@@ -107,31 +108,22 @@ const soilIdSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(updateSoilData.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-
-      /* We clear soil ID matches based on soil data when a site's soil data changes */
-      state.soilIdData.dataBasedMatches = [];
-      state.soilIdParams.siteId = undefined;
+      state.dataBasedMatches = {};
     });
 
     builder.addCase(updateDepthDependentSoilData.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-
-      state.soilIdData.dataBasedMatches = [];
-      state.soilIdParams.siteId = undefined;
+      state.dataBasedMatches = {};
     });
 
     builder.addCase(updateSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-
-      state.soilIdData.dataBasedMatches = [];
-      state.soilIdParams.siteId = undefined;
+      state.dataBasedMatches = {};
     });
 
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-
-      state.soilIdData.dataBasedMatches = [];
-      state.soilIdParams.siteId = undefined;
+      state.dataBasedMatches = {};
     });
 
     builder.addCase(updateProjectSoilSettings.fulfilled, (state, action) => {
@@ -158,23 +150,69 @@ const soilIdSlice = createSlice({
       state.status = 'ready';
     });
 
-    builder.addCase(fetchSoilIdMatches.pending, (state, action) => {
-      state.soilIdParams = {
-        coords: action.meta.arg.coords,
-        siteId: action.meta.arg.siteId,
+    builder.addCase(fetchLocationBasedSoilMatches.pending, (state, action) => {
+      const key = soilIdKey(action.meta.arg);
+      state.locationBasedMatches[key] = {
+        matches: [],
+        status: 'loading',
       };
-      state.soilIdData = initialState.soilIdData;
-      state.soilIdStatus = 'loading';
     });
 
-    builder.addCase(fetchSoilIdMatches.rejected, state => {
-      state.soilIdStatus = 'error';
+    builder.addCase(fetchLocationBasedSoilMatches.rejected, (state, action) => {
+      const key = soilIdKey(action.meta.arg);
+      state.locationBasedMatches[key] = {
+        matches: [],
+        status: 'error',
+      };
     });
 
-    builder.addCase(fetchSoilIdMatches.fulfilled, (state, action) => {
-      const { failureReason, ...payload } = action.payload;
-      state.soilIdStatus = failureReason ?? 'ready';
-      state.soilIdData = payload;
+    builder.addCase(
+      fetchLocationBasedSoilMatches.fulfilled,
+      (state, action) => {
+        const key = soilIdKey(action.meta.arg);
+        if (action.payload.__typename === 'SoilIdFailure') {
+          state.locationBasedMatches[key] = {
+            matches: [],
+            status: action.payload.reason,
+          };
+        } else {
+          state.locationBasedMatches[key] = {
+            matches: action.payload.matches,
+            status: 'ready',
+          };
+        }
+      },
+    );
+
+    builder.addCase(fetchDataBasedSoilMatches.pending, (state, action) => {
+      const key = soilIdKey(action.meta.arg.coords, action.meta.arg.siteId);
+      state.dataBasedMatches[key] = {
+        matches: [],
+        status: 'loading',
+      };
+    });
+
+    builder.addCase(fetchDataBasedSoilMatches.rejected, (state, action) => {
+      const key = soilIdKey(action.meta.arg.coords, action.meta.arg.siteId);
+      state.dataBasedMatches[key] = {
+        matches: [],
+        status: 'error',
+      };
+    });
+
+    builder.addCase(fetchDataBasedSoilMatches.fulfilled, (state, action) => {
+      const key = soilIdKey(action.meta.arg.coords, action.meta.arg.siteId);
+      if (action.payload.__typename === 'SoilIdFailure') {
+        state.dataBasedMatches[key] = {
+          matches: [],
+          status: action.payload.reason,
+        };
+      } else {
+        state.dataBasedMatches[key] = {
+          matches: action.payload.matches,
+          status: 'ready',
+        };
+      }
     });
   },
 });
@@ -232,9 +270,14 @@ export const deleteProjectDepthInterval = createAsyncThunk(
   soilDataService.deleteProjectDepthInterval,
 );
 
-export const fetchSoilIdMatches = createAsyncThunk(
-  'soilId/fetchSoilIdMatches',
-  soilIdService.fetchSoilMatches,
+export const fetchLocationBasedSoilMatches = createAsyncThunk(
+  'soilId/fetchLocationBasedSoilMatches',
+  soilIdService.fetchLocationBasedSoilMatches,
+);
+
+export const fetchDataBasedSoilMatches = createAsyncThunk(
+  'soilId/fetchDataBasedSoilMatches',
+  soilIdService.fetchDataBasedSoilMatches,
 );
 
 export default soilIdSlice.reducer;

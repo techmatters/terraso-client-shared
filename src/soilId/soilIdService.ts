@@ -17,57 +17,8 @@
 
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import { SoilIdInputData } from 'terraso-client-shared/graphqlSchema/graphql';
-import { soilDataToIdInput } from 'terraso-client-shared/soilId/soilIdFunctions';
-import { SoilData } from 'terraso-client-shared/soilId/soilIdTypes';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { Coords } from 'terraso-client-shared/types';
-
-export const fetchSoilMatches = async ({
-  coords,
-  siteId,
-  soilData,
-}: {
-  coords: Coords;
-  siteId?: string;
-  soilData?: SoilData;
-}) => {
-  /*
-   * We call different APIs for different input scenarios.
-   * When soil data is available, we use the data-based soil match API.
-   * When the input is only a location, we use the location-based soil match API.
-   */
-  if (siteId && soilData) {
-    return fetchDataBasedSoilMatches(coords, soilDataToIdInput(soilData)).then(
-      result => {
-        if (result.__typename === 'SoilIdFailure') {
-          return {
-            locationBasedMatches: [],
-            dataBasedMatches: [],
-            failureReason: result.reason,
-          };
-        }
-        return {
-          locationBasedMatches: [],
-          dataBasedMatches: result.matches,
-        };
-      },
-    );
-  } else {
-    return fetchLocationBasedSoilMatches(coords).then(result => {
-      if (result.__typename === 'SoilIdFailure') {
-        return {
-          locationBasedMatches: [],
-          dataBasedMatches: [],
-          failureReason: result.reason,
-        };
-      }
-      return {
-        locationBasedMatches: result.matches,
-        dataBasedMatches: [],
-      };
-    });
-  }
-};
 
 export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
   const query = graphql(`
@@ -87,10 +38,15 @@ export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
     .then(({ soilId }) => soilId.locationBasedSoilMatches);
 };
 
-export const fetchDataBasedSoilMatches = async (
-  coords: Coords,
-  data: SoilIdInputData,
-) => {
+export const fetchDataBasedSoilMatches = async ({
+  coords,
+  siteId,
+  soilData,
+}: {
+  coords: Coords;
+  siteId: string;
+  soilData: SoilIdInputData;
+}) => {
   const query = graphql(`
     query dataBasedSoilMatches(
       $latitude: Float!
@@ -112,6 +68,6 @@ export const fetchDataBasedSoilMatches = async (
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { ...coords, data })
+    .requestGraphQL(query, { ...coords, data: soilData })
     .then(({ soilId }) => soilId.dataBasedSoilMatches);
 };
