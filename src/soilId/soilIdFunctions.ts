@@ -28,8 +28,10 @@ import {
   DepthDependentSoilData,
   DepthInterval,
   SoilData,
+  SoilIdKey,
   SoilPitMethod,
 } from 'terraso-client-shared/soilId/soilIdTypes';
+import { Coords } from 'terraso-client-shared/types';
 
 export const methodEnabled = <T extends SoilPitMethod>(
   method: T,
@@ -135,4 +137,8 @@ export const soilDepthDependentDataToIdInput = (
     rockFragmentVolume: data.rockFragmentVolume,
     texture: data.texture,
   };
+};
+
+export const soilIdKey = (coords: Coords, siteId?: string): SoilIdKey => {
+  return `(${coords.longitude}, ${coords.latitude}) ${siteId}`;
 };
