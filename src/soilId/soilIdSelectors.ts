@@ -15,10 +15,9 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { SharedState } from 'terraso-client-shared/store/store';
-
 import { SoilIdEntry } from 'terraso-client-shared/soilId/soilIdSlice';
 import { SoilIdKey } from 'terraso-client-shared/soilId/soilIdTypes';
+import { SharedState } from 'terraso-client-shared/store/store';
 
 export const selectSoilIdMatches =
   (key: SoilIdKey) =>
