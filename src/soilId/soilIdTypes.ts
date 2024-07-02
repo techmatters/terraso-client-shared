@@ -174,11 +174,6 @@ export const DEPTH_PRESETS = [
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
 
-export type SoilIdParams = {
-  coords: Coords;
-  siteId?: string;
-};
-
 export type SoilIdKey = `(${number}, ${number}) ${string}`;
 
 export type SoilIdStatus = LoadingState | SoilIdFailureReason;
