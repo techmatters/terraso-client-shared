@@ -144,7 +144,7 @@ export const soilDepthDependentDataToIdInput = (
 };
 
 export const soilIdKey = (coords: Coords, siteId?: string): SoilIdKey => {
-  return `(${coords.longitude}, ${coords.latitude}) ${siteId}`;
+  return `(${coords.longitude}, ${coords.latitude}) ${siteId ?? ''}`;
 };
 
 export const soilIdEntryForStatus = (status: SoilIdStatus): SoilIdEntry => {
