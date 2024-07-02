@@ -17,8 +17,8 @@
 
 import { SharedState } from 'terraso-client-shared/store/store';
 
-import { SoilIdEntry } from './soilIdSlice';
-import { SoilIdKey } from './soilIdTypes';
+import { SoilIdEntry } from 'terraso-client-shared/soilId/soilIdSlice';
+import { SoilIdKey } from 'terraso-client-shared/soilId/soilIdTypes';
 
 export const selectSoilIdMatches =
   (key: SoilIdKey) =>
