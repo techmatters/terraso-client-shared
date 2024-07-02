@@ -17,15 +17,15 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { setUsers } from 'terraso-client-shared/account/accountSlice';
-import {
-  DataBasedSoilMatch,
-  LocationBasedSoilMatch,
-  SoilIdFailureReason,
-} from 'terraso-client-shared/graphqlSchema/graphql';
 import { setProjects } from 'terraso-client-shared/project/projectSlice';
 import { setSites } from 'terraso-client-shared/site/siteSlice';
 import * as soilDataService from 'terraso-client-shared/soilId/soilDataService';
-import { soilIdKey } from 'terraso-client-shared/soilId/soilIdFunctions';
+import {
+  soilIdEntryDataBased,
+  soilIdEntryForStatus,
+  soilIdEntryLocationBased,
+  soilIdKey,
+} from 'terraso-client-shared/soilId/soilIdFunctions';
 import * as soilIdService from 'terraso-client-shared/soilId/soilIdService';
 import {
   CollectionMethod,
@@ -33,6 +33,7 @@ import {
   LoadingState,
   ProjectSoilSettings,
   SoilData,
+  SoilIdEntry,
   SoilIdKey,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import {
@@ -47,20 +48,12 @@ export type MethodRequired<
   T extends CollectionMethod | DisabledCollectionMethod,
 > = `${T}Required`;
 
-export type SoilIdStatus = LoadingState | SoilIdFailureReason;
-
-export type SoilIdEntry<T = LocationBasedSoilMatch | DataBasedSoilMatch> = {
-  matches: T[];
-  status: SoilIdStatus;
-};
-
 export type SoilState = {
   soilData: Record<string, SoilData | undefined>;
   projectSettings: Record<string, ProjectSoilSettings | undefined>;
   status: LoadingState;
 
-  locationBasedMatches: Record<SoilIdKey, SoilIdEntry<LocationBasedSoilMatch>>;
-  dataBasedMatches: Record<SoilIdKey, SoilIdEntry<DataBasedSoilMatch>>;
+  matches: Record<SoilIdKey, SoilIdEntry>;
 };
 
 const initialState: SoilState = {
@@ -68,8 +61,7 @@ const initialState: SoilState = {
   projectSettings: {},
   status: 'loading',
 
-  locationBasedMatches: {},
-  dataBasedMatches: {},
+  matches: {},
 };
 
 const soilIdSlice = createSlice({
@@ -78,7 +70,7 @@ const soilIdSlice = createSlice({
   reducers: {
     setSoilData: (state, action: PayloadAction<Record<string, SoilData>>) => {
       state.soilData = action.payload;
-      state.dataBasedMatches = {};
+      state.matches = {};
     },
     updateSoilData: (
       state,
@@ -108,22 +100,22 @@ const soilIdSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(updateSoilData.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-      state.dataBasedMatches = {};
+      flushDataBasedMatches(state);
     });
 
     builder.addCase(updateDepthDependentSoilData.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-      state.dataBasedMatches = {};
+      flushDataBasedMatches(state);
     });
 
     builder.addCase(updateSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-      state.dataBasedMatches = {};
+      flushDataBasedMatches(state);
     });
 
     builder.addCase(deleteSoilDataDepthInterval.fulfilled, (state, action) => {
       state.soilData[action.meta.arg.siteId] = action.payload;
-      state.dataBasedMatches = {};
+      flushDataBasedMatches(state);
     });
 
     builder.addCase(updateProjectSoilSettings.fulfilled, (state, action) => {
@@ -152,18 +144,12 @@ const soilIdSlice = createSlice({
 
     builder.addCase(fetchLocationBasedSoilMatches.pending, (state, action) => {
       const key = soilIdKey(action.meta.arg);
-      state.locationBasedMatches[key] = {
-        matches: [],
-        status: 'loading',
-      };
+      state.matches[key] = soilIdEntryForStatus('loading');
     });
 
     builder.addCase(fetchLocationBasedSoilMatches.rejected, (state, action) => {
       const key = soilIdKey(action.meta.arg);
-      state.locationBasedMatches[key] = {
-        matches: [],
-        status: 'error',
-      };
+      state.matches[key] = soilIdEntryForStatus('error');
     });
 
     builder.addCase(
@@ -171,51 +157,40 @@ const soilIdSlice = createSlice({
       (state, action) => {
         const key = soilIdKey(action.meta.arg);
         if (action.payload.__typename === 'SoilIdFailure') {
-          state.locationBasedMatches[key] = {
-            matches: [],
-            status: action.payload.reason,
-          };
+          state.matches[key] = soilIdEntryForStatus(action.payload.reason);
         } else {
-          state.locationBasedMatches[key] = {
-            matches: action.payload.matches,
-            status: 'ready',
-          };
+          state.matches[key] = soilIdEntryLocationBased(action.payload.matches);
         }
       },
     );
 
     builder.addCase(fetchDataBasedSoilMatches.pending, (state, action) => {
       const key = soilIdKey(action.meta.arg.coords, action.meta.arg.siteId);
-      state.dataBasedMatches[key] = {
-        matches: [],
-        status: 'loading',
-      };
+      state.matches[key] = soilIdEntryForStatus('loading');
     });
 
     builder.addCase(fetchDataBasedSoilMatches.rejected, (state, action) => {
       const key = soilIdKey(action.meta.arg.coords, action.meta.arg.siteId);
-      state.dataBasedMatches[key] = {
-        matches: [],
-        status: 'error',
-      };
+      state.matches[key] = soilIdEntryForStatus('error');
     });
 
     builder.addCase(fetchDataBasedSoilMatches.fulfilled, (state, action) => {
       const key = soilIdKey(action.meta.arg.coords, action.meta.arg.siteId);
       if (action.payload.__typename === 'SoilIdFailure') {
-        state.dataBasedMatches[key] = {
-          matches: [],
-          status: action.payload.reason,
-        };
+        state.matches[key] = soilIdEntryForStatus(action.payload.reason);
       } else {
-        state.dataBasedMatches[key] = {
-          matches: action.payload.matches,
-          status: 'ready',
-        };
+        state.matches[key] = soilIdEntryDataBased(action.payload.matches);
       }
     });
   },
 });
+
+const flushDataBasedMatches = (state: SoilState) => {
+  Object.keys(state.matches)
+    .map(key => key as SoilIdKey)
+    .filter(key => state.matches[key].dataBasedMatches?.length)
+    .forEach(key => delete state.matches[key]);
+};
 
 export const {
   setProjectSettings,

@@ -17,7 +17,9 @@
 
 import { mhvcToLab } from 'munsell';
 import {
+  DataBasedSoilMatch,
   LabColorInput,
+  LocationBasedSoilMatch,
   Maybe,
   SoilIdInputData,
   SoilIdInputDepthDependentData,
@@ -28,7 +30,9 @@ import {
   DepthDependentSoilData,
   DepthInterval,
   SoilData,
+  SoilIdEntry,
   SoilIdKey,
+  SoilIdStatus,
   SoilPitMethod,
 } from 'terraso-client-shared/soilId/soilIdTypes';
 import { Coords } from 'terraso-client-shared/types';
@@ -141,4 +145,28 @@ export const soilDepthDependentDataToIdInput = (
 
 export const soilIdKey = (coords: Coords, siteId?: string): SoilIdKey => {
   return `(${coords.longitude}, ${coords.latitude}) ${siteId}`;
+};
+
+export const soilIdEntryForStatus = (status: SoilIdStatus): SoilIdEntry => {
+  return {
+    status: status,
+  };
+};
+
+export const soilIdEntryLocationBased = (
+  matches: LocationBasedSoilMatch[],
+): SoilIdEntry => {
+  return {
+    locationBasedMatches: matches,
+    status: 'ready',
+  };
+};
+
+export const soilIdEntryDataBased = (
+  matches: DataBasedSoilMatch[],
+): SoilIdEntry => {
+  return {
+    dataBasedMatches: matches,
+    status: 'ready',
+  };
 };

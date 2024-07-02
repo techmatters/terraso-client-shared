@@ -26,6 +26,7 @@ import type {
   SoilDataNode,
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices,
   SoilIdDepthDependentSoilDataTextureChoices,
+  SoilIdFailureReason,
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -179,6 +180,14 @@ export type SoilIdParams = {
 };
 
 export type SoilIdKey = `(${number}, ${number}) ${string}`;
+
+export type SoilIdStatus = LoadingState | SoilIdFailureReason;
+
+export type SoilIdEntry = {
+  locationBasedMatches?: LocationBasedSoilMatch[];
+  dataBasedMatches?: DataBasedSoilMatch[];
+  status: SoilIdStatus;
+};
 
 export type SoilIdResults = {
   locationBasedMatches: LocationBasedSoilMatch[];
