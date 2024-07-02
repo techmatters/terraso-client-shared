@@ -212,9 +212,8 @@ const flushDataBasedMatches = (state: SoilState) => {
    * cached entries that are data-based since they aren't valid anymore.
    */
   Object.keys(state.matches)
-    .map(key => key as SoilIdKey)
-    .filter(key => state.matches[key].dataBasedMatches?.length)
-    .forEach(key => delete state.matches[key]);
+    .filter(key => state.matches[key as SoilIdKey].dataBasedMatches?.length)
+    .forEach(key => delete state.matches[key as SoilIdKey]);
 };
 
 export const {
