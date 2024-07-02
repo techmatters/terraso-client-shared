@@ -98,7 +98,7 @@ const soilIdSlice = createSlice({
     ) => {
       state.status = action.payload;
     },
-    useKey: (state, action: PayloadAction<SoilIdKey>) => {
+    claimKey: (state, action: PayloadAction<SoilIdKey>) => {
       const key = action.payload;
       state.usages[key] = state.usages[key] ?? 0 + 1;
     },
@@ -213,8 +213,8 @@ export const {
   setSoilData,
   setSoilIdStatus,
   updateProjectSettings,
-  useKey,
-  releaseKey
+  claimKey,
+  releaseKey,
 } = soilIdSlice.actions;
 
 export const fetchSoilDataForUser = createAsyncThunk(
