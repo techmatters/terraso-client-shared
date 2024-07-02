@@ -31,7 +31,6 @@ import type {
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import { MethodRequired } from 'terraso-client-shared/soilId/soilIdSlice';
-import { Coords } from 'terraso-client-shared/types';
 
 export type LoadingState = 'loading' | 'error' | 'ready';
 
