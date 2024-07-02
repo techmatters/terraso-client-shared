@@ -213,6 +213,8 @@ export const {
   setSoilData,
   setSoilIdStatus,
   updateProjectSettings,
+  useKey,
+  releaseKey
 } = soilIdSlice.actions;
 
 export const fetchSoilDataForUser = createAsyncThunk(
