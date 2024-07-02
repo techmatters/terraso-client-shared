@@ -98,17 +98,11 @@ const soilIdSlice = createSlice({
     ) => {
       state.status = action.payload;
     },
-    useKey: (
-      state,
-      action: PayloadAction<SoilIdKey>,
-    ) => {
+    useKey: (state, action: PayloadAction<SoilIdKey>) => {
       const key = action.payload;
       state.usages[key] = state.usages[key] ?? 0 + 1;
     },
-    releaseKey: (
-      state,
-      action: PayloadAction<SoilIdKey>,
-    ) => {
+    releaseKey: (state, action: PayloadAction<SoilIdKey>) => {
       const key = action.payload;
       if (key in state.usages) {
         const count = Math.max(0, state.usages[key] - 1);
