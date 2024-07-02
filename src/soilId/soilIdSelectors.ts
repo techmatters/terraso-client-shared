@@ -15,20 +15,12 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import {
-  DataBasedSoilMatch,
-  LocationBasedSoilMatch,
-} from 'terraso-client-shared/graphqlSchema/graphql';
 import { SharedState } from 'terraso-client-shared/store/store';
 
 import { SoilIdEntry } from './soilIdSlice';
 import { SoilIdKey } from './soilIdTypes';
 
-export const selectSoilIdLocationBasedMatches =
+export const selectSoilIdMatches =
   (key: SoilIdKey) =>
-  (state: SharedState): SoilIdEntry<LocationBasedSoilMatch> | undefined =>
-    state.soilId.locationBasedMatches[key];
-export const selectSoilIdDataBasedMatches =
-  (key: SoilIdKey) =>
-  (state: SharedState): SoilIdEntry<DataBasedSoilMatch> | undefined =>
-    state.soilId.dataBasedMatches[key];
+  (state: SharedState): SoilIdEntry | undefined =>
+    state.soilId.matches[key];
