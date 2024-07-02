@@ -99,10 +99,15 @@ const soilIdSlice = createSlice({
       state.status = action.payload;
     },
     claimKey: (state, action: PayloadAction<SoilIdKey>) => {
+      /* When a cache key is claimed, we increment a counter for that key. */
       const key = action.payload;
       state.usages[key] = (state.usages[key] ?? 0) + 1;
     },
     releaseKey: (state, action: PayloadAction<SoilIdKey>) => {
+      /*
+       * When a cache key is released, we check to see if it is no longer in use.
+       * If no more usages exist, we remove it from the matches cache.
+       */
       const key = action.payload;
       if (key in state.usages) {
         const count = Math.max(0, state.usages[key] - 1);
@@ -202,6 +207,10 @@ const soilIdSlice = createSlice({
 });
 
 const flushDataBasedMatches = (state: SoilState) => {
+  /*
+   * When soil ID input data changes (e.g. samples, intervals), we clear any
+   * cached entries that are data-based since they aren't valid anymore.
+   */
   Object.keys(state.matches)
     .map(key => key as SoilIdKey)
     .filter(key => state.matches[key].dataBasedMatches?.length)
