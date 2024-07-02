@@ -106,7 +106,7 @@ const soilIdSlice = createSlice({
       const key = action.payload;
       if (key in state.usages) {
         const count = Math.max(0, state.usages[key] - 1);
-        if (count == 0) {
+        if (count === 0) {
           delete state.matches[key];
         }
         state.usages[key] = count;
