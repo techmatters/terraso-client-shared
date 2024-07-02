@@ -100,7 +100,7 @@ const soilIdSlice = createSlice({
     },
     claimKey: (state, action: PayloadAction<SoilIdKey>) => {
       const key = action.payload;
-      state.usages[key] = state.usages[key] ?? 0 + 1;
+      state.usages[key] = (state.usages[key] ?? 0) + 1;
     },
     releaseKey: (state, action: PayloadAction<SoilIdKey>) => {
       const key = action.payload;
