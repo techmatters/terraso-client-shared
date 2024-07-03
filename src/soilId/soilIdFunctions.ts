@@ -69,31 +69,31 @@ export const selectToPercent = (
   switch (select) {
     /** 0 - 2% (flat) */
     case 'FLAT':
-      return 0.0;
+      return 0;
     /** 2 - 5% (gentle) */
     case 'GENTLE':
-      return 0.02;
+      return 2;
     /** 15 - 30% (hilly) */
     case 'HILLY':
-      return 0.15;
+      return 15;
     /** 5 - 10% (moderate) */
     case 'MODERATE':
-      return 0.05;
+      return 5;
     /** 50 - 60% (moderately steep) */
     case 'MODERATELY_STEEP':
-      return 0.5;
+      return 50;
     /** 10 - 15% (rolling) */
     case 'ROLLING':
-      return 0.1;
+      return 10;
     /** 30 - 50% (steep) */
     case 'STEEP':
-      return 0.3;
+      return 30;
     /** 100%+ (steepest) */
     case 'STEEPEST':
-      return 1.0;
+      return 100;
     /** 60 - 100% (very steep) */
     case 'VERY_STEEP':
-      return 0.6;
+      return 60;
   }
 };
 
