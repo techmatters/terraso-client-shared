@@ -54,7 +54,6 @@ export type SoilState = {
   status: LoadingState;
 
   matches: Record<SoilIdKey, SoilIdEntry>;
-  usages: Record<SoilIdKey, number>;
 };
 
 const initialState: SoilState = {
@@ -63,7 +62,6 @@ const initialState: SoilState = {
   status: 'loading',
 
   matches: {},
-  usages: {},
 };
 
 const soilIdSlice = createSlice({
@@ -97,25 +95,6 @@ const soilIdSlice = createSlice({
       action: PayloadAction<'loading' | 'error' | 'ready'>,
     ) => {
       state.status = action.payload;
-    },
-    claimKey: (state, action: PayloadAction<SoilIdKey>) => {
-      /* When a cache key is claimed, we increment a counter for that key. */
-      const key = action.payload;
-      state.usages[key] = (state.usages[key] ?? 0) + 1;
-    },
-    releaseKey: (state, action: PayloadAction<SoilIdKey>) => {
-      /*
-       * When a cache key is released, we check to see if it is no longer in use.
-       * If no more usages exist, we remove it from the matches cache.
-       */
-      const key = action.payload;
-      if (key in state.usages) {
-        const count = Math.max(0, state.usages[key] - 1);
-        if (count === 0) {
-          delete state.matches[key];
-        }
-        state.usages[key] = count;
-      }
     },
   },
   extraReducers: builder => {
@@ -221,8 +200,6 @@ export const {
   setSoilData,
   setSoilIdStatus,
   updateProjectSettings,
-  claimKey,
-  releaseKey,
 } = soilIdSlice.actions;
 
 export const fetchSoilDataForUser = createAsyncThunk(
