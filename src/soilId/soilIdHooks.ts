@@ -29,6 +29,7 @@ import {
   fetchLocationBasedSoilMatches,
   soilDataToIdInput,
   soilIdKey,
+  SoilIdResults,
   SoilIdStatus,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import type { SharedDispatch } from 'terraso-client-shared/store/store';
@@ -42,9 +43,7 @@ import { Coords } from 'terraso-client-shared/types';
 export const useSoilIdData = (
   coords: Coords,
   siteId?: string,
-): {
-  locationBasedMatches: LocationBasedSoilMatch[];
-  dataBasedMatches: DataBasedSoilMatch[];
+): SoilIdResults & {
   status: SoilIdStatus;
 } => {
   const dispatch = useDispatch<SharedDispatch>();
