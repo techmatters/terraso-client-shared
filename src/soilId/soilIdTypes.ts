@@ -26,11 +26,11 @@ import type {
   SoilDataNode,
   SoilIdDepthDependentSoilDataRockFragmentVolumeChoices,
   SoilIdDepthDependentSoilDataTextureChoices,
+  SoilIdFailureReason,
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import { MethodRequired } from 'terraso-client-shared/soilId/soilIdSlice';
-import { Coords } from 'terraso-client-shared/types';
 
 export type LoadingState = 'loading' | 'error' | 'ready';
 
@@ -173,9 +173,14 @@ export const DEPTH_PRESETS = [
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
 
-export type SoilIdParams = {
-  coords?: Coords;
-  siteId?: string;
+export type SoilIdKey = `(${number}, ${number}) ${string}`;
+
+export type SoilIdStatus = LoadingState | SoilIdFailureReason;
+
+export type SoilIdEntry = {
+  locationBasedMatches?: LocationBasedSoilMatch[];
+  dataBasedMatches?: DataBasedSoilMatch[];
+  status: SoilIdStatus;
 };
 
 export type SoilIdResults = {
