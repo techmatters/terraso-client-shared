@@ -25,10 +25,8 @@ import {
 import { selectSoilData } from 'terraso-client-shared/selectors';
 import { selectSoilIdMatches } from 'terraso-client-shared/soilId/soilIdSelectors';
 import {
-  claimKey,
   fetchDataBasedSoilMatches,
   fetchLocationBasedSoilMatches,
-  releaseKey,
   soilDataToIdInput,
   soilIdKey,
   SoilIdStatus,
@@ -62,7 +60,7 @@ export const useSoilIdData = (
   const entry = useSelector(soilIdSelector);
   const entryPresent = Boolean(entry);
 
-  /* Side effect 1: load data if it's missing */
+  /* load data if it's missing */
   useEffect(() => {
     if (!entryPresent) {
       if (siteId && soilData) {
@@ -78,14 +76,6 @@ export const useSoilIdData = (
       }
     }
   }, [dispatch, coords, siteId, entryPresent, soilData]);
-
-  /* Side effect 2: record usage of keys in the soil ID cache */
-  useEffect(() => {
-    dispatch(claimKey(key));
-    return () => {
-      dispatch(releaseKey(key));
-    };
-  }, [dispatch, key]);
 
   return {
     locationBasedMatches: entry?.locationBasedMatches ?? [],
