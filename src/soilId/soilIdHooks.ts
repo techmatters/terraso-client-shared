@@ -18,10 +18,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DEFAULT_SOIL_DATA } from 'terraso-client-shared/constants';
-import {
-  DataBasedSoilMatch,
-  LocationBasedSoilMatch,
-} from 'terraso-client-shared/graphqlSchema/graphql';
 import { selectSoilData } from 'terraso-client-shared/selectors';
 import { selectSoilIdMatches } from 'terraso-client-shared/soilId/soilIdSelectors';
 import {
