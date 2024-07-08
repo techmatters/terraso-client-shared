@@ -24,9 +24,8 @@ import {
   fetchDataBasedSoilMatches,
   fetchLocationBasedSoilMatches,
   soilDataToIdInput,
+  SoilIdData,
   soilIdKey,
-  SoilIdResults,
-  SoilIdStatus,
 } from 'terraso-client-shared/soilId/soilIdSlice';
 import type { SharedDispatch } from 'terraso-client-shared/store/store';
 import { Coords } from 'terraso-client-shared/types';
@@ -36,12 +35,7 @@ import { Coords } from 'terraso-client-shared/types';
  * If multiple components are passing different inputs to this hook simultaneously, it
  * will not function correctly.
  */
-export const useSoilIdData = (
-  coords: Coords,
-  siteId?: string,
-): SoilIdResults & {
-  status: SoilIdStatus;
-} => {
+export const useSoilIdData = (coords: Coords, siteId?: string): SoilIdData => {
   const dispatch = useDispatch<SharedDispatch>();
 
   /* We only need to select soil data for data-based matches. */

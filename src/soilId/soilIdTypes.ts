@@ -187,3 +187,5 @@ export type SoilIdResults = {
   locationBasedMatches: LocationBasedSoilMatch[];
   dataBasedMatches: DataBasedSoilMatch[];
 };
+
+export type SoilIdData = SoilIdResults & { status: SoilIdStatus };
