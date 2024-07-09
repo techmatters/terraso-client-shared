@@ -45,6 +45,7 @@ export const projectSoilSettings = /* GraphQL */ `
 
 export const soilData = /* GraphQL */ `
   fragment soilData on SoilDataNode {
+    selectedSoilId
     downSlope
     crossSlope
     bedrock
