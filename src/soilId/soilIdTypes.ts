@@ -167,8 +167,8 @@ export const surfaceCracks = [
 export type ProjectDepthIntervalPreset =
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices;
 export const DEPTH_PRESETS = [
-  'LANDPKS',
   'NRCS',
+  'BLM_STANDARD',
   'CUSTOM',
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];

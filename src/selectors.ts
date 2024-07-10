@@ -225,8 +225,8 @@ export const selectUserRoleProject = createSelector(
 
 const projectIntervals = (settings: ProjectSoilSettings) => {
   switch (settings.depthIntervalPreset) {
-    case 'LANDPKS':
     case 'NRCS':
+    case 'BLM_STANDARD':
       return DEPTH_INTERVAL_PRESETS[settings.depthIntervalPreset];
     case 'CUSTOM':
       return settings.depthIntervals;
@@ -237,8 +237,8 @@ const projectIntervals = (settings: ProjectSoilSettings) => {
 
 const sitePresetIntervals = (soilData: SoilData) => {
   switch (soilData.depthIntervalPreset) {
-    case 'LANDPKS':
     case 'NRCS':
+    case 'BLM_STANDARD':
       return DEPTH_INTERVAL_PRESETS[soilData.depthIntervalPreset];
     default:
       return [];
