@@ -39,7 +39,7 @@ export const DEPTH_INTERVAL_PRESETS = mapEntries(
       { start: 60, end: 100 },
       { start: 100, end: 200 },
     ],
-    BLM_STANDARD: [
+    BLM: [
       { start: 0, end: 1 },
       { start: 1, end: 10 },
       { start: 10, end: 20 },
@@ -49,7 +49,7 @@ export const DEPTH_INTERVAL_PRESETS = mapEntries(
   } as const,
   depthIntervals =>
     depthIntervals.map(depthInterval => ({ label: '', depthInterval })),
-) satisfies Record<'NRCS' | 'BLM_STANDARD', readonly LabelledDepthInterval[]>;
+) satisfies Record<'NRCS' | 'BLM', readonly LabelledDepthInterval[]>;
 
 export const DEFAULT_ENABLED_SOIL_PIT_METHODS: SoilPitMethod[] = [
   'soilTexture',

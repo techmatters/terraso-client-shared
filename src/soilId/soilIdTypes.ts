@@ -168,7 +168,7 @@ export type ProjectDepthIntervalPreset =
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices;
 export const DEPTH_PRESETS = [
   'NRCS',
-  'BLM_STANDARD',
+  'BLM',
   'CUSTOM',
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
