@@ -333,15 +333,17 @@ export const useSiteSoilIntervals = (siteId: string): AggregatedInterval[] => {
   );
 };
 
-export const selectDepthDependentData =
-  ({
-    siteId,
-    depthInterval,
-  }: {
-    siteId: string;
-    depthInterval: { depthInterval: DepthInterval };
-  }) =>
-  (state: SharedState): DepthDependentSoilData =>
-    selectSoilData(siteId)(state).depthDependentData.find(
-      sameDepth(depthInterval),
-    ) ?? { depthInterval: depthInterval.depthInterval };
+export const selectDepthDependentData = ({
+  siteId,
+  depthInterval,
+}: {
+  siteId: string;
+  depthInterval: { depthInterval: DepthInterval };
+}): (state: SharedState) => DepthDependentSoilData =>
+  createSelector(
+    selectSoilData(siteId),
+    soilData =>
+      soilData.depthDependentData.find(sameDepth(depthInterval)) ?? {
+        depthInterval: depthInterval.depthInterval,
+      } as DepthDependentSoilData,
+  );
