@@ -339,11 +339,12 @@ export const selectDepthDependentData = ({
 }: {
   siteId: string;
   depthInterval: { depthInterval: DepthInterval };
-}): (state: SharedState) => DepthDependentSoilData =>
+}): ((state: SharedState) => DepthDependentSoilData) =>
   createSelector(
     selectSoilData(siteId),
     soilData =>
-      soilData.depthDependentData.find(sameDepth(depthInterval)) ?? {
+      soilData.depthDependentData.find(sameDepth(depthInterval)) ??
+      ({
         depthInterval: depthInterval.depthInterval,
-      } as DepthDependentSoilData,
+      } as DepthDependentSoilData),
   );
