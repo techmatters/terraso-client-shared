@@ -134,7 +134,7 @@ const createSoilData = (
     [site.id]: {
       depthDependentData: [],
       depthIntervals: [],
-      depthIntervalPreset: 'LANDPKS',
+      depthIntervalPreset: 'NRCS',
       ...defaults,
     },
   };
@@ -147,7 +147,7 @@ const createProjectSettings = (
   return {
     [project.id]: {
       // carbonatesRequired: false,
-      depthIntervalPreset: 'LANDPKS',
+      depthIntervalPreset: 'NRCS',
       depthIntervals: [],
       // electricalConductivityRequired: false,
       // landUseLandCoverRequired: false,
@@ -402,7 +402,7 @@ test('select predefined project selector', () => {
   const site = generateSite({ project });
   const soilData = createSoilData(site);
   const projectSettings = createProjectSettings(project, {
-    depthIntervalPreset: 'LANDPKS',
+    depthIntervalPreset: 'NRCS',
   });
 
   const aggregatedIntervals = renderSelectorHook(
@@ -416,7 +416,7 @@ test('select predefined project selector', () => {
   expect(
     aggregatedIntervals.map(({ interval: { depthInterval } }) => depthInterval),
   ).toStrictEqual(
-    DEPTH_INTERVAL_PRESETS['LANDPKS'].map(({ depthInterval }) => depthInterval),
+    DEPTH_INTERVAL_PRESETS['NRCS'].map(({ depthInterval }) => depthInterval),
   );
 });
 
