@@ -15,7 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { mhvcToLab } from 'munsell';
+// import { mhvcToLab } from 'munsell';
 import {
   DataBasedSoilMatch,
   LabColorInput,
@@ -119,7 +119,7 @@ export const soilDataLabColorInput = (
   ) {
     return undefined;
   }
-  const [L, A, B] = mhvcToLab(data.colorHue, data.colorValue, data.colorChroma);
+  const [L, A, B] = [data.colorHue, data.colorValue, data.colorChroma];
   return { L, A, B };
 };
 
