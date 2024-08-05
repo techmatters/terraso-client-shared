@@ -12,7 +12,7 @@
     "munsell": "^1.1.5",
     "react": "18.2.0",
     "react-redux": "^8.1.3",
-    "terraso-backend": "github:techmatters/terraso-backend#482418ea3d09f0ddf420620450d85106d2227236",
+    "terraso-backend": "github:techmatters/terraso-backend#65846cb",
     "uuid": "^10.0.0"
   },
   "scripts": {
