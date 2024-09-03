@@ -27,9 +27,6 @@ import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import _ from 'lodash/fp';
 import accountReducer from 'terraso-client-shared/account/accountSlice';
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
-import projectReducer from 'terraso-client-shared/project/projectSlice';
-import siteReducer from 'terraso-client-shared/site/siteSlice';
-import soilIdReducer from 'terraso-client-shared/soilId/soilIdSlice';
 
 const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {
@@ -45,9 +42,6 @@ const handleAbortMiddleware: Middleware = () => next => action => {
 const sharedReducers = {
   account: accountReducer,
   notifications: notificationsReducer,
-  site: siteReducer,
-  project: projectReducer,
-  soilId: soilIdReducer,
 };
 
 // Using some advanced TypeScript features here: since we have

@@ -30,7 +30,10 @@ import type {
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-import { MethodRequired } from 'terraso-client-shared/soilId/soilIdSlice';
+
+export type MethodRequired<
+  T extends CollectionMethod | DisabledCollectionMethod,
+> = `${T}Required`;
 
 export type LoadingState = 'loading' | 'error' | 'ready';
 

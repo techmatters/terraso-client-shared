@@ -15,11 +15,29 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { SoilIdEntry } from 'terraso-client-shared/soilId/soilIdSlice';
-import { SoilIdKey } from 'terraso-client-shared/soilId/soilIdTypes';
-import { SharedState } from 'terraso-client-shared/store/store';
+export type SitePrivacy = 'PRIVATE' | 'PUBLIC';
 
-export const selectSoilIdMatches =
-  (key: SoilIdKey) =>
-  (state: SharedState): SoilIdEntry | undefined =>
-    state.soilId.matches[key];
+export type Site = {
+  projectId?: string;
+  ownerId?: string;
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  elevation?: number | null;
+  privacy: SitePrivacy;
+  archived: boolean;
+  updatedAt: string;
+  notes: Record<string, SiteNote>;
+};
+
+export type SiteNote = {
+  id: string;
+  siteId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId: string;
+  authorFirstName: string;
+  authorLastName: string;
+};
