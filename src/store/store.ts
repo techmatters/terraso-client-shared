@@ -28,7 +28,7 @@ import _ from 'lodash/fp';
 import accountReducer from 'terraso-client-shared/account/accountSlice';
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
 
-const handleAbortMiddleware: Middleware = () => next => action => {
+export const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {
     next({
       ...action,
@@ -39,7 +39,7 @@ const handleAbortMiddleware: Middleware = () => next => action => {
   next(action);
 };
 
-const sharedReducers = {
+export const sharedReducers = {
   account: accountReducer,
   notifications: notificationsReducer,
 };
@@ -60,7 +60,7 @@ const createStoreFactory = <S>(reducers: ReducersMapObject<S>) => {
     configureStore({
       middleware: getDefaultMiddleware =>
         getDefaultMiddleware().concat(handleAbortMiddleware),
-      reducer: { ...sharedReducers, ...reducers },
+      reducer: { ...reducers, ...sharedReducers },
       preloadedState: intialState,
     });
 };
