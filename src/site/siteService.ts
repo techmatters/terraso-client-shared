@@ -26,7 +26,7 @@ import type {
   SiteTransferMutationInput,
   SiteUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
-import type { Site, SiteNote } from 'terraso-client-shared/site/siteSlice';
+import type { Site, SiteNote } from 'terraso-client-shared/site/siteTypes';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
   collapseEdges,
