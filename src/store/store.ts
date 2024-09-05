@@ -27,11 +27,8 @@ import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import _ from 'lodash/fp';
 import accountReducer from 'terraso-client-shared/account/accountSlice';
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
-import projectReducer from 'terraso-client-shared/project/projectSlice';
-import siteReducer from 'terraso-client-shared/site/siteSlice';
-import soilIdReducer from 'terraso-client-shared/soilId/soilIdSlice';
 
-const handleAbortMiddleware: Middleware = () => next => action => {
+export const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {
     next({
       ...action,
@@ -42,12 +39,9 @@ const handleAbortMiddleware: Middleware = () => next => action => {
   next(action);
 };
 
-const sharedReducers = {
+export const sharedReducers = {
   account: accountReducer,
   notifications: notificationsReducer,
-  site: siteReducer,
-  project: projectReducer,
-  soilId: soilIdReducer,
 };
 
 // Using some advanced TypeScript features here: since we have
@@ -66,7 +60,7 @@ const createStoreFactory = <S>(reducers: ReducersMapObject<S>) => {
     configureStore({
       middleware: getDefaultMiddleware =>
         getDefaultMiddleware().concat(handleAbortMiddleware),
-      reducer: { ...sharedReducers, ...reducers },
+      reducer: { ...reducers, ...sharedReducers },
       preloadedState: intialState,
     });
 };
