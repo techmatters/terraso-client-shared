@@ -121,14 +121,14 @@ export const userSlice = createSlice({
   initialState,
 
   reducers: {
-    setCurrentUser: (state, action) => ({
+    setCurrentUser: (state, action: PayloadAction<User | null>) => ({
       ...state,
       currentUser: {
         data: action.payload,
         fetching: false,
       },
     }),
-    setHasToken: (state, action) => ({
+    setHasToken: (state, action: PayloadAction<boolean>) => ({
       ...state,
       hasToken: action.payload,
     }),
