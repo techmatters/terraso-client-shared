@@ -15,7 +15,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
 import * as accountService from 'terraso-client-shared/account/accountService';
 import { getToken, removeToken } from 'terraso-client-shared/account/auth';
@@ -49,6 +49,8 @@ export const initialState = {
   },
   users: {} as Record<string, User>,
 };
+
+type AccountState = typeof initialState;
 
 export type User = {
   id: string;
@@ -97,6 +99,23 @@ export const unsubscribeFromNotifications = createAsyncThunk(
   false,
 );
 
+export const setUsers = (
+  state: Draft<AccountState>,
+  users: Record<string, User>,
+) => {
+  state.users = users;
+};
+export const updateUsers = (
+  state: Draft<AccountState>,
+  users: Record<string, User>,
+) => {
+  Object.assign(state.users, users);
+};
+
+export const addUser = (state: Draft<AccountState>, user: User) => {
+  state.users[user.id] = user;
+};
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -113,16 +132,6 @@ export const userSlice = createSlice({
       ...state,
       hasToken: action.payload,
     }),
-    setUsers: (state, { payload: users }) => {
-      state.users = users;
-    },
-    updateUsers: (state, { payload: users }) => {
-      Object.assign(state.users, users);
-    },
-
-    addUser: (state, { payload: user }) => {
-      state.users[user.id] = user;
-    },
   },
 
   extraReducers: builder => {
@@ -274,8 +283,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setCurrentUser, setUsers, updateUsers, setHasToken, addUser } =
-  userSlice.actions;
+export const { setCurrentUser, setHasToken } = userSlice.actions;
 
 export default userSlice.reducer;
 
