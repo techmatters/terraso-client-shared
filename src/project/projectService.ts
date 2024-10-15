@@ -213,7 +213,9 @@ export const addUserToProject = (input: ProjectAddUserMutationInput) => {
   `);
   return terrasoApi
     .requestGraphQL(command, { input })
-    .then(output => output.addUserToProject);
+    .then(output =>
+      collapseProjectMembership(output.addUserToProject.membership),
+    );
 };
 
 export const updateUserRole = (input: ProjectUpdateUserRoleMutationInput) => {
