@@ -17,10 +17,8 @@
 
 import { useEffect } from 'react';
 import {
-  AnyAction,
   AsyncThunkAction,
   createAsyncThunk as createAsyncThunkBase,
-  ThunkAction,
 } from '@reduxjs/toolkit';
 import type { BaseThunkAPI } from '@reduxjs/toolkit/dist/createAsyncThunk';
 import _ from 'lodash/fp';
@@ -36,7 +34,6 @@ import type {
   SharedDispatch,
   SharedState,
 } from 'terraso-client-shared/store/store';
-import { entries, fromEntries } from 'terraso-client-shared/utils';
 
 export type SerializableSet = Record<string, boolean>;
 
@@ -170,31 +167,4 @@ export const useFetchData = (
     const req = dispatch(dataFetchRequest);
     return () => req.abort();
   }, [dispatch, dataFetchCallback]);
-};
-
-type DispatchMap<Result> = {
-  [Property in keyof Result]: (
-    arg: Result[Property],
-  ) =>
-    | AnyAction
-    | ThunkAction<Result[Property], SharedState, undefined, AnyAction>;
-};
-
-export const dispatchByKeys = <T extends object, ThunkArg>(
-  fetcher: CreateAsyncThunkParams<T, ThunkArg>,
-  dispatchMapFn: (_: T) => DispatchMap<T>,
-): CreateAsyncThunkParams<T, ThunkArg> => {
-  return async (arg, currentUser, thunkAPI) => {
-    const result = await fetcher(arg, currentUser, thunkAPI);
-    const dispatchMap = dispatchMapFn(result);
-
-    return fromEntries(
-      await Promise.all(
-        entries<keyof T, T[keyof T]>(result).map(async ([key, result]) => {
-          await thunkAPI.dispatch(dispatchMap[key](result));
-          return [key, result];
-        }),
-      ),
-    ) as T;
-  };
 };

@@ -235,7 +235,7 @@ export const addSiteNote = (siteNote: SiteNoteAddMutationInput) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: siteNote })
-    .then(resp => resp.addSiteNote.siteNote!);
+    .then(resp => collapseSiteNote(resp.addSiteNote.siteNote));
 };
 
 export const deleteSiteNote = (siteNote: SiteNote) => {
@@ -266,5 +266,5 @@ export const updateSiteNote = (siteNote: SiteNoteUpdateMutationInput) => {
 
   return terrasoApi
     .requestGraphQL(query, { input: siteNote })
-    .then(resp => resp.updateSiteNote.siteNote!);
+    .then(resp => collapseSiteNote(resp.updateSiteNote.siteNote));
 };
