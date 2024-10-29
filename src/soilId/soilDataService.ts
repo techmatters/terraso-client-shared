@@ -22,6 +22,7 @@ import type {
   ProjectSoilSettingsUpdateDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateMutationInput,
   SoilDataDeleteDepthIntervalMutationInput,
+  SoilDataPushEntryResultFragment,
   SoilDataPushInput,
   SoilDataUpdateDepthIntervalMutationInput,
   SoilDataUpdateMutationInput,
@@ -33,6 +34,17 @@ import {
   collapseEdges,
   collapseMaps,
 } from 'terraso-client-shared/terrasoApi/utils';
+
+const collapseSoilDataPushEntry = (result: SoilDataPushEntryResultFragment) => {
+  if (result.__typename !== 'SoilDataPushEntrySuccess') return result;
+
+  const { site, ...resultWithoutSite } = result;
+
+  return {
+    ...resultWithoutSite,
+    soilData: result.site.soilData,
+  };
+};
 
 export const fetchSoilDataForUser = async (userId: string) => {
   const query = graphql(`
@@ -245,17 +257,7 @@ export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
         results {
           siteId
           result {
-            __typename
-            ... on SoilDataPushEntryFailure {
-              reason
-            }
-            ... on SoilDataPushEntrySuccess {
-              site {
-                soilData {
-                  ...soilData
-                }
-              }
-            }
+            ...soilDataPushEntryResult
           }
         }
         errors
@@ -264,5 +266,8 @@ export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.pushSoilData.results!;
+  return resp.pushSoilData.results.map(entry => ({
+    ...entry,
+    result: collapseSoilDataPushEntry(entry.result),
+  }))!;
 };

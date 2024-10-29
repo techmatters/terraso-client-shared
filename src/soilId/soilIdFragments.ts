@@ -98,3 +98,19 @@ export const dataBasedSoilMatches = /* GraphQL */ `
     }
   }
 `;
+
+export const soilDataPushEntryResult = /* GraphQL */ `
+  fragment soilDataPushEntryResult on SoilDataPushEntryResult {
+    __typename
+    ... on SoilDataPushEntryFailure {
+      reason
+    }
+    ... on SoilDataPushEntrySuccess {
+      site {
+        soilData {
+          ...soilData
+        }
+      }
+    }
+  }
+`;
