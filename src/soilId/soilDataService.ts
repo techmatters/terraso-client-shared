@@ -22,7 +22,6 @@ import type {
   ProjectSoilSettingsUpdateDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateMutationInput,
   SoilDataDeleteDepthIntervalMutationInput,
-  SoilDataPushEntryResultFragment,
   SoilDataPushInput,
   SoilDataUpdateDepthIntervalMutationInput,
   SoilDataUpdateMutationInput,
