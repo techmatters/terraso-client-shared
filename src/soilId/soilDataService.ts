@@ -22,6 +22,7 @@ import type {
   ProjectSoilSettingsUpdateDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateMutationInput,
   SoilDataDeleteDepthIntervalMutationInput,
+  SoilDataPushInput,
   SoilDataUpdateDepthIntervalMutationInput,
   SoilDataUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -235,4 +236,23 @@ export const deleteProjectDepthInterval = async (
 
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
   return resp.deleteProjectSoilSettingsDepthInterval.projectSoilSettings!;
+};
+
+export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
+  const query = graphql(`
+    mutation pushSoilData($input: SoilDataPushInput!) {
+      pushSoilData(input: $input) {
+        results {
+          siteId
+          result {
+            ...soilDataPushEntryResult
+          }
+        }
+        errors
+      }
+    }
+  `);
+
+  const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
+  return resp.pushSoilData.results;
 };
