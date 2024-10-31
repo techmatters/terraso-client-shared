@@ -35,17 +35,6 @@ import {
   collapseMaps,
 } from 'terraso-client-shared/terrasoApi/utils';
 
-const collapseSoilDataPushEntry = (result: SoilDataPushEntryResultFragment) => {
-  if (result.__typename !== 'SoilDataPushEntrySuccess') return result;
-
-  const { site, ...resultWithoutSite } = result;
-
-  return {
-    ...resultWithoutSite,
-    soilData: result.site.soilData,
-  };
-};
-
 export const fetchSoilDataForUser = async (userId: string) => {
   const query = graphql(`
     query userSoilData($id: ID!) {
@@ -266,8 +255,5 @@ export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.pushSoilData.results.map(entry => ({
-    ...entry,
-    result: collapseSoilDataPushEntry(entry.result),
-  }))!;
+  return resp.pushSoilData.results;
 };

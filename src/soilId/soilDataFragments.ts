@@ -120,3 +120,17 @@ export const depthDependentSoilData = /* GraphQL */ `
     carbonates
   }
 `;
+
+export const soilDataPushEntryResult = /* GraphQL */ `
+  fragment soilDataPushEntryResult on SoilDataPushEntryResult {
+    __typename
+    ... on SoilDataPushEntryFailure {
+      reason
+    }
+    ... on SoilDataPushEntrySuccess {
+      soilData {
+        ...soilData
+      }
+    }
+  }
+`;
