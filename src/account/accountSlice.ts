@@ -132,6 +132,10 @@ export const userSlice = createSlice({
       ...state,
       hasToken: action.payload,
     }),
+    addUserToCache: (state, action: PayloadAction<User>) => {
+      addUser(state, action.payload);
+      return state;
+    },
   },
 
   extraReducers: builder => {
@@ -283,7 +287,8 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setCurrentUser, setHasToken } = userSlice.actions;
+export const { setCurrentUser, setHasToken, addUserToCache } =
+  userSlice.actions;
 
 export default userSlice.reducer;
 
