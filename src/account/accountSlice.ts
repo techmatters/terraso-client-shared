@@ -99,6 +99,11 @@ export const unsubscribeFromNotifications = createAsyncThunk(
   false,
 );
 
+export const checkUserInProject = createAsyncThunk(
+  'account/checkUserInProject',
+  accountService.checkUserInProject,
+);
+
 export const setUsers = (
   state: Draft<AccountState>,
   users: Record<string, User>,
@@ -132,10 +137,6 @@ export const userSlice = createSlice({
       ...state,
       hasToken: action.payload,
     }),
-    addUserToCache: (state, action: PayloadAction<User>) => {
-      addUser(state, action.payload);
-      return state;
-    },
   },
 
   extraReducers: builder => {
@@ -284,11 +285,20 @@ export const userSlice = createSlice({
       unsubscribeFromNotifications.fulfilled,
       _.set('unsubscribe', { processing: false, success: true, error: null }),
     );
+
+    builder.addCase(checkUserInProject.fulfilled, (state, action) => {
+      // TODO: Client should not be able to access other users' preferences
+      // https://github.com/techmatters/terraso-client-shared/issues/1030 and
+      // https://github.com/techmatters/terraso-backend/issues/1548
+      if (!('type' in action.payload)) {
+        const user = { ...action.payload, preferences: {} } as User;
+        addUser(state, user);
+      }
+    });
   },
 });
 
-export const { setCurrentUser, setHasToken, addUserToCache } =
-  userSlice.actions;
+export const { setCurrentUser, setHasToken } = userSlice.actions;
 
 export default userSlice.reducer;
 
