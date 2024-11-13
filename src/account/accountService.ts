@@ -160,10 +160,13 @@ export const signOut = async () => {
 
 export type UserInProjectError = 'NoUser' | 'InProject';
 
-export const checkUserInProject = async (
-  projectId: string,
-  userEmail: string,
-) => {
+export const checkUserInProject = async ({
+  projectId,
+  userEmail,
+}: {
+  projectId: string;
+  userEmail: string;
+}) => {
   const existQuery = graphql(`
     query userExistsInProject($email: String!, $project: String!) {
       userExists: users(email_Iexact: $email) {
