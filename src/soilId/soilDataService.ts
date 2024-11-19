@@ -44,6 +44,9 @@ export const fetchSoilDataForUser = async (userId: string) => {
             soilData {
               ...soilData
             }
+            soilMetadata {
+              ...soilMetadata
+            }
           }
         }
       }
@@ -56,6 +59,9 @@ export const fetchSoilDataForUser = async (userId: string) => {
                 node {
                   soilData {
                     ...soilData
+                  }
+                  soilMetadata {
+                    ...soilMetadata
                   }
                 }
               }
@@ -83,6 +89,8 @@ export const fetchSoilDataForUser = async (userId: string) => {
     collapseEdges(allProjects).flatMap(({ siteSet }) => collapseEdges(siteSet)),
   );
 
+  userSites.edges[0].node.soilData;
+
   return {
     projects,
     users,
@@ -95,6 +103,9 @@ export const fetchSoilDataForUser = async (userId: string) => {
     sites: collapseMaps(collapseSites(userSites), projectSites),
     soilData: Object.fromEntries(
       allSites.map(({ soilData, id }) => [id, soilData]),
+    ),
+    soilMetadata: Object.fromEntries(
+      allSites.map(({ soilMetadata, id }) => [id, soilMetadata]),
     ),
   };
 };
