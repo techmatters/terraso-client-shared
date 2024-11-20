@@ -29,6 +29,7 @@ import type {
   SoilIdFailureReason,
   SoilIdProjectSoilSettingsDepthIntervalPresetChoices,
   SoilIdSoilDataSurfaceCracksSelectChoices,
+  SoilMetadataNode,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
 export type MethodRequired<
@@ -91,6 +92,7 @@ export type SoilData = Omit<
   depthIntervals: SoilDataDepthInterval[];
   depthDependentData: DepthDependentSoilData[];
 };
+export type SoilMetadata = Omit<SoilMetadataNode, 'site'>;
 export type ProjectDepthInterval = Omit<ProjectDepthIntervalNode, 'project'>;
 export type AllProjectSoilSettings = Omit<
   ProjectSoilSettingsNode,

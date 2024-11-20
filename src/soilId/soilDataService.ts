@@ -89,8 +89,6 @@ export const fetchSoilDataForUser = async (userId: string) => {
     collapseEdges(allProjects).flatMap(({ siteSet }) => collapseEdges(siteSet)),
   );
 
-  userSites.edges[0].node.soilData;
-
   return {
     projects,
     users,
