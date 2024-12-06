@@ -40,11 +40,9 @@ export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
 
 export const fetchDataBasedSoilMatches = async ({
   coords,
-  siteId,
   soilData,
 }: {
   coords: Coords;
-  siteId: string;
   soilData: SoilIdInputData;
 }) => {
   const query = graphql(`
