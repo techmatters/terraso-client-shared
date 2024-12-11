@@ -16,10 +16,8 @@
  */
 
 import type {
-  DataBasedSoilMatch,
   DepthDependentSoilDataNode,
   DepthInterval,
-  LocationBasedSoilMatch,
   ProjectDepthIntervalNode,
   ProjectSoilSettingsNode,
   SoilDataDepthIntervalNode,
