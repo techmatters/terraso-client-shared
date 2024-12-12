@@ -16,10 +16,8 @@
  */
 
 import type {
-  DataBasedSoilMatch,
   DepthDependentSoilDataNode,
   DepthInterval,
-  LocationBasedSoilMatch,
   ProjectDepthIntervalNode,
   ProjectSoilSettingsNode,
   SoilDataDepthIntervalNode,
@@ -37,6 +35,7 @@ export type MethodRequired<
 > = `${T}Required`;
 
 export type LoadingState = 'loading' | 'error' | 'ready';
+export type SoilIdStatus = LoadingState | SoilIdFailureReason;
 
 export const soilPitMethods = ['soilTexture', 'soilColor'] as const;
 export const disabledSoilPitMethods = [
@@ -177,20 +176,3 @@ export const DEPTH_PRESETS = [
   'CUSTOM',
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
-
-export type SoilIdKey = `(${number}, ${number}) ${string}`;
-
-export type SoilIdStatus = LoadingState | SoilIdFailureReason;
-
-export type SoilIdEntry = {
-  locationBasedMatches?: LocationBasedSoilMatch[];
-  dataBasedMatches?: DataBasedSoilMatch[];
-  status: SoilIdStatus;
-};
-
-export type SoilIdResults = {
-  locationBasedMatches: LocationBasedSoilMatch[];
-  dataBasedMatches: DataBasedSoilMatch[];
-};
-
-export type SoilIdData = SoilIdResults & { status: SoilIdStatus };

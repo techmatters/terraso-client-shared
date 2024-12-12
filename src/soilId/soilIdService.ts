@@ -38,15 +38,10 @@ export const fetchLocationBasedSoilMatches = async (coords: Coords) => {
     .then(({ soilId }) => soilId.locationBasedSoilMatches);
 };
 
-export const fetchDataBasedSoilMatches = async ({
-  coords,
-  siteId,
-  soilData,
-}: {
-  coords: Coords;
-  siteId: string;
-  soilData: SoilIdInputData;
-}) => {
+export const fetchDataBasedSoilMatches = async (
+  coords: Coords,
+  soilData: SoilIdInputData,
+) => {
   const query = graphql(`
     query dataBasedSoilMatches(
       $latitude: Float!
