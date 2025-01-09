@@ -5,17 +5,35 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
+    target-branch: 'dependencies'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
+      day: 'sunday'
     open-pull-requests-limit: 20
     allow:
       - dependency-type: all
+    groups:
+      babel:
+        patterns:
+          - '@babel/*'
+          - 'babel*'
+      types:
+        patterns:
+          - '@types/*'
+      eslint:
+        patterns:
+          - 'eslint-*'
+      jest:
+        patterns:
+          - 'jest'
+          - 'jest-*'
+          - 'ts-jest'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     allow:
       - dependency-type: all
