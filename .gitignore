@@ -131,3 +131,6 @@ dist
 
 # graphql codegen
 src/graphqlSchema
+
+# macOS
+.DS_Store
