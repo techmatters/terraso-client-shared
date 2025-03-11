@@ -26,7 +26,7 @@
     "test": "npm run generate-types && jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false",
-    "prepare": "scripts/prepare.sh && husky install"
+    "prepare": "scripts/prepare.sh && husky"
   },
   "browserslist": [
     ">0.2%",
