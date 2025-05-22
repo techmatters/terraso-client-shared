@@ -65,6 +65,7 @@ export const soilIdFailure = /* GraphQL */ `
 
 export const dataBasedSoilMatches = /* GraphQL */ `
   fragment dataBasedSoilMatches on DataBasedSoilMatches {
+    dataRegion
     matches {
       dataSource
       distanceToNearestMapUnitM
