@@ -29,6 +29,7 @@ export const soilInfo = /* GraphQL */ `
       taxonomySubgroup
       description
       fullDescriptionUrl
+      management
     }
 
     ecologicalSite {
