@@ -16,6 +16,8 @@
  */
 
 import type {
+  DataBasedSoilMatch,
+  DataBasedSoilMatches,
   DepthDependentSoilDataNode,
   DepthInterval,
   ProjectDepthIntervalNode,
@@ -176,3 +178,9 @@ export const DEPTH_PRESETS = [
   'CUSTOM',
   'NONE',
 ] as const satisfies readonly ProjectDepthIntervalPreset[];
+
+// The backend previously had "DataBasedSoilMatch" and "LocationBasedSoilMatch" types,
+// but both are now under the name "DataBasedSoilMatch". For clarity in the client,
+// use the name "SoilMatch".
+export type SoilMatch = DataBasedSoilMatch;
+export type SoilMatches = DataBasedSoilMatches;
