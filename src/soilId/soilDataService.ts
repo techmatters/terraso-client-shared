@@ -262,6 +262,9 @@ export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
     }
   `);
 
+  console.log('QUERY --> ', query);
+  console.log('INPUT --> ', depthInterval);
+
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
   return resp.pushSoilData.results;
 };
