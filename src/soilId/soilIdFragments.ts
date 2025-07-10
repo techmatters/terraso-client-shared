@@ -63,6 +63,28 @@ export const soilIdFailure = /* GraphQL */ `
   }
 `;
 
+export const soilMatches = /* GraphQL */ `
+  fragment soilMatches on SoilMatches {
+    dataRegion
+    matches {
+      dataSource
+      distanceToNearestMapUnitM
+      locationMatch {
+        ...soilMatchInfo
+      }
+      dataMatch {
+        ...soilMatchInfo
+      }
+      combinedMatch {
+        ...soilMatchInfo
+      }
+      soilInfo {
+        ...soilInfo
+      }
+    }
+  }
+`;
+
 export const dataBasedSoilMatches = /* GraphQL */ `
   fragment dataBasedSoilMatches on DataBasedSoilMatches {
     dataRegion

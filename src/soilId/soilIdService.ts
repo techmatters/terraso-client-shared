@@ -25,20 +25,16 @@ export const fetchDataBasedSoilMatches = async (
   soilData: SoilIdInputData,
 ) => {
   const query = graphql(`
-    query dataBasedSoilMatches(
+    query soilMatches(
       $latitude: Float!
       $longitude: Float!
       $data: SoilIdInputData!
     ) {
       soilId {
-        dataBasedSoilMatches(
-          latitude: $latitude
-          longitude: $longitude
-          data: $data
-        ) {
+        soilMatches(latitude: $latitude, longitude: $longitude, data: $data) {
           __typename
           ...soilIdFailure
-          ...dataBasedSoilMatches
+          ...soilMatches
         }
       }
     }
@@ -46,5 +42,5 @@ export const fetchDataBasedSoilMatches = async (
 
   return terrasoApi
     .requestGraphQL(query, { ...coords, data: soilData })
-    .then(({ soilId }) => soilId.dataBasedSoilMatches);
+    .then(({ soilId }) => soilId.soilMatches);
 };
