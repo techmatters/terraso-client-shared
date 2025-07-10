@@ -63,8 +63,8 @@ export const soilIdFailure = /* GraphQL */ `
   }
 `;
 
-export const dataBasedSoilMatches = /* GraphQL */ `
-  fragment dataBasedSoilMatches on DataBasedSoilMatches {
+export const soilMatches = /* GraphQL */ `
+  fragment soilMatches on SoilMatches {
     dataRegion
     matches {
       dataSource
