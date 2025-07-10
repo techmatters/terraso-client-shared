@@ -20,7 +20,7 @@ import { SoilIdInputData } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { Coords } from 'terraso-client-shared/types';
 
-export const fetchDataBasedSoilMatches = async (
+export const fetchSoilMatches = async (
   coords: Coords,
   soilData: SoilIdInputData,
 ) => {

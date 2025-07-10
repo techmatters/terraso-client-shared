@@ -84,25 +84,3 @@ export const soilMatches = /* GraphQL */ `
     }
   }
 `;
-
-export const dataBasedSoilMatches = /* GraphQL */ `
-  fragment dataBasedSoilMatches on DataBasedSoilMatches {
-    dataRegion
-    matches {
-      dataSource
-      distanceToNearestMapUnitM
-      locationMatch {
-        ...soilMatchInfo
-      }
-      dataMatch {
-        ...soilMatchInfo
-      }
-      combinedMatch {
-        ...soilMatchInfo
-      }
-      soilInfo {
-        ...soilInfo
-      }
-    }
-  }
-`;
