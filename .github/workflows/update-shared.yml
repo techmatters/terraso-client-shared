@@ -50,7 +50,7 @@ jobs:
           npm install
 
       - name: Commit version bump
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           file_pattern: "package.json package-lock.json"
           commit_message: "build: update shared client to ${{ inputs.client-hash }}"

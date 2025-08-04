@@ -11,8 +11,8 @@
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-redux": "^8.1.3",
-    "terraso-backend": "github:techmatters/terraso-backend#fac222b",
-    "uuid": "^11.1.0"
+    "terraso-backend": "github:techmatters/terraso-backend#cc3450e62a882464a782c896626ad90609304f8e",
+    "uuid": "^10.0.0"
   },
   "scripts": {
     "generate-types": "graphql-codegen",
