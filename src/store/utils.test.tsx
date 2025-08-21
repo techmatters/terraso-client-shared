@@ -19,16 +19,9 @@ import 'terraso-client-shared/tests/utils';
 
 import React from 'react';
 import { fetchAuthURLs } from 'terraso-client-shared/account/accountSlice';
+import { Message } from 'terraso-client-shared/notifications/notificationsSlice';
 import { useFetchData } from 'terraso-client-shared/store/utils';
 import { render } from 'terraso-client-shared/tests/utils';
-
-type NotificationMessage = {
-  severity: string;
-  content: string;
-  params: {
-    error: string;
-  };
-};
 
 const TestComponent = () => {
   useFetchData(fetchAuthURLs);
@@ -46,7 +39,7 @@ test('AsyncThunk: Handle error', async () => {
   const { store } = await render(<TestComponent />);
   const [message] = Object.values(
     store.getState().notifications.messages,
-  ) as NotificationMessage[];
+  ) as Message[];
   expect(message.severity).toBe('error');
   expect(message.params.error).toBe('Test error');
   expect(message.content).toContain('Test error');
@@ -56,7 +49,7 @@ test('AsyncThunk: Handle multiple errors', async () => {
   const { store } = await render(<TestComponent />);
   const [message1, message2] = Object.values(
     store.getState().notifications.messages,
-  ) as NotificationMessage[];
+  ) as Message[];
   expect(message1.severity).toBe('error');
   expect(message1.params.error).toBe('Test error 1');
   expect(message1.content).toContain('Test error 1');
@@ -72,7 +65,7 @@ test('AsyncThunk: Complex error message', async () => {
   const { store } = await render(<TestComponent />);
   const [message] = Object.values(
     store.getState().notifications.messages,
-  ) as NotificationMessage[];
+  ) as Message[];
   expect(message.severity).toBe('error');
   expect(message.params.error).toBe('Unexpected');
   expect(message.content).toContain('common.unexpected_error');
