@@ -3,7 +3,3 @@ lint:
 
 format:
 	npm run format-js
-
-setup-git-hooks:
-	@cp scripts/commit-msg.sample .git/hooks/commit-msg
-	@echo "git hooks installed"
