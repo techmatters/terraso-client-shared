@@ -19,8 +19,8 @@ import { useEffect } from 'react';
 import {
   AsyncThunkAction,
   createAsyncThunk as createAsyncThunkBase,
+  GetThunkAPI,
 } from '@reduxjs/toolkit';
-import type { BaseThunkAPI } from '@reduxjs/toolkit/dist/createAsyncThunk';
 import _ from 'lodash/fp';
 import { useDispatch } from 'react-redux';
 import { signOut, User } from 'terraso-client-shared/account/accountSlice';
@@ -83,12 +83,7 @@ type ThunkAPIConfig = {
   dispatch: SharedDispatch;
   rejectValue: RejectPayload;
 };
-export type ThunkAPI = BaseThunkAPI<
-  SharedState,
-  unknown,
-  SharedDispatch,
-  RejectPayload
->;
+export type ThunkAPI = GetThunkAPI<ThunkAPIConfig>;
 
 type CreateAsyncThunkParams<Returned, ThunkArg> = (
   arg: ThunkArg,
