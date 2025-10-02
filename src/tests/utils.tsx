@@ -17,10 +17,9 @@
 
 import 'terraso-client-shared/tests/config';
 
-import React, { ReactElement } from 'react';
+import React, { act, ReactElement } from 'react';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import createStoreFactory, {
   DispatchFromStoreFactory,
