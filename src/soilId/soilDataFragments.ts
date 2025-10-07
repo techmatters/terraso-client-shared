@@ -75,6 +75,10 @@ export const soilData = /* GraphQL */ `
 export const soilMetadata = /* GraphQL */ `
   fragment soilMetadata on SoilMetadataNode {
     selectedSoilId
+    userRatings {
+      soilMatchId
+      rating
+    }
   }
 `;
 
