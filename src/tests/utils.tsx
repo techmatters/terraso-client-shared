@@ -17,20 +17,29 @@
 
 import 'terraso-client-shared/tests/config';
 
-import React, { ReactElement } from 'react';
+import React, { act, ReactElement } from 'react';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
-import createStoreFactory, {
+import {
   DispatchFromStoreFactory,
+  handleAbortMiddleware,
+  sharedReducers,
   SharedState,
   StateFromStoreFactory,
 } from 'terraso-client-shared/store/store';
 
 const executeAxe = process.env['TEST_A11Y'] === 'true';
 
-export const createStore = createStoreFactory({});
+export const createStore = (intialState?: Partial<SharedState>) =>
+  configureStore({
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware().concat(handleAbortMiddleware),
+    reducer: combineReducers(sharedReducers),
+    preloadedState: intialState,
+  });
+
 export type TestAppState = StateFromStoreFactory<typeof createStore>;
 export type TestAppDispatch = DispatchFromStoreFactory<typeof createStore>;
 
