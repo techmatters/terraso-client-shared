@@ -5,6 +5,16 @@
   "sideEffects": [
     "src/tests/config.ts"
   ],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.1",
     "jwt-decode": "^4.0.0",
@@ -22,11 +32,11 @@
     "format-js": "npm run format",
     "check-ts": "npm run generate-types && tsc --noEmit --emitDeclarationOnly false",
     "check-modules": "depcheck",
-    "build": "npm run generate-types && tsc && babel src --extensions \".ts,.tsx\" --out-dir dist && cp -r README.md package.json src dist/",
+    "build": "npm run generate-types && tsc && babel src --extensions \".ts,.tsx\" --out-dir dist && cp -r README.md package.json dist/",
     "test": "npm run generate-types && jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false",
-    "prepare": "scripts/prepare.sh && husky",
+    "prepare": "npm run build",
     "sync-to-mobile": "scripts/sync-to-mobile.sh",
     "sync-to-mobile:watch": "scripts/sync-to-mobile.sh --watch",
     "install:local-backend": "scripts/install-local-backend.sh"
@@ -75,6 +85,9 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "roots": [
+      "<rootDir>/src"
+    ],
     "collectCoverageFrom": [
       "src/**/*.ts"
     ],
