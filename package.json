@@ -11,7 +11,7 @@
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-redux": "^8.1.3",
-    "terraso-backend": "github:techmatters/terraso-backend#a1a3a787c0d77987798f9d9c5a658d4291f90288",
+    "terraso-backend": "github:techmatters/terraso-backend#8337b833f9f66e3b8916c785c5205ac2346196e6",
     "uuid": "^10.0.0"
   },
   "scripts": {
