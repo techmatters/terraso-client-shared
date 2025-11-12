@@ -72,16 +72,6 @@ export const soilData = /* GraphQL */ `
   }
 `;
 
-export const soilMetadata = /* GraphQL */ `
-  fragment soilMetadata on SoilMetadataNode {
-    selectedSoilId
-    userRatings {
-      soilMatchId
-      rating
-    }
-  }
-`;
-
 export const soilDataDepthInterval = /* GraphQL */ `
   fragment soilDataDepthInterval on SoilDataDepthIntervalNode {
     label
