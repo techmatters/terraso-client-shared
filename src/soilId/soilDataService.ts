@@ -284,8 +284,6 @@ export const pushSiteData = async (input: SiteDataPushInput) => {
             ...soilMetadataPushEntryResult
           }
         }
-        soilDataError
-        soilMetadataError
         errors
         clientMutationId
       }
