@@ -268,6 +268,7 @@ export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
   return resp.pushSoilData.results;
 };
 
+// Note: Return type is almost SiteDataPushPayload except that `site` is not in SoilDataNode
 export const pushSiteData = async (input: SiteDataPushInput) => {
   const query = graphql(`
     mutation pushSiteData($input: SiteDataPushInput!) {
