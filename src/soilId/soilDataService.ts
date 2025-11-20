@@ -28,7 +28,7 @@ import type {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import { collapseProjects } from 'terraso-client-shared/project/projectService';
 import { collapseSites } from 'terraso-client-shared/site/siteService';
-import type { SiteDataPushInput } from 'terraso-client-shared/soilId/soilIdTypes';
+import type { UserDataPushInput } from 'terraso-client-shared/soilId/soilIdTypes';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
   collapseEdges,
@@ -248,7 +248,7 @@ export const deleteProjectDepthInterval = async (
   return resp.deleteProjectSoilSettingsDepthInterval.projectSoilSettings!;
 };
 
-/** @deprecated Use pushSiteData instead */
+/** @deprecated Use pushUserData instead */
 export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
   const query = graphql(`
     mutation pushSoilData($input: SoilDataPushInput!) {
@@ -268,11 +268,11 @@ export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
   return resp.pushSoilData.results;
 };
 
-// Note: Return type is almost SiteDataPushPayload except that `site` is not in SoilDataNode
-export const pushSiteData = async (input: SiteDataPushInput) => {
+// Note: Return type is almost UserDataPushPayload except that `site` is not in SoilDataNode
+export const pushUserData = async (input: UserDataPushInput) => {
   const query = graphql(`
-    mutation pushSiteData($input: SiteDataPushInput!) {
-      pushSiteData(input: $input) {
+    mutation pushUserData($input: UserDataPushInput!) {
+      pushUserData(input: $input) {
         soilDataResults {
           siteId
           result {
@@ -292,5 +292,5 @@ export const pushSiteData = async (input: SiteDataPushInput) => {
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input });
-  return resp.pushSiteData;
+  return resp.pushUserData;
 };

@@ -31,8 +31,8 @@ import type {
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
 export type {
-  SiteDataPushInput,
-  SiteDataPushPayload,
+  UserDataPushInput,
+  UserDataPushPayload,
   SoilMetadataPushInputEntry,
   SoilMetadataPushEntry,
   SoilMetadataPushFailureReason,
