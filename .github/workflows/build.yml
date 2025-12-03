@@ -100,8 +100,7 @@ jobs:
       - name: Get shared client version
         id: getClientHash
         run: |
-          git checkout main
-          CLIENT_HASH=`git rev-parse --short main`
+          CLIENT_HASH=`git rev-parse --short origin/main`
           if [ -z "$CLIENT_HASH" ]; then
             exit 1
           fi
