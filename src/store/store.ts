@@ -18,22 +18,30 @@
 import 'terraso-client-shared/account/accountSlice'; // necessary to avoid circular dependency issue
 
 import {
-  configureStore,
   Middleware,
-  ReducersMapObject,
   StateFromReducersMapObject,
+  Store,
+  ThunkDispatch,
+  UnknownAction,
 } from '@reduxjs/toolkit';
-import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import _ from 'lodash/fp';
 import accountReducer from 'terraso-client-shared/account/accountSlice';
 import notificationsReducer from 'terraso-client-shared/notifications/notificationsSlice';
 
 export const handleAbortMiddleware: Middleware = () => next => action => {
   if (_.getOr(false, 'meta.aborted', action)) {
-    next({
-      ...action,
-      type: action.type.replace('rejected', 'aborted'),
-    });
+    if (
+      action instanceof Object &&
+      'type' in action &&
+      typeof action.type === 'string'
+    ) {
+      next({
+        ...action,
+        type: action?.type?.replace('rejected', 'aborted'),
+      });
+    } else {
+      next(action);
+    }
     return;
   }
   next(action);
@@ -49,25 +57,15 @@ export const sharedReducers = {
 // types from the return type of the store factory instead of from the store
 // directly as normal. background reading:
 // https://redux-toolkit.js.org/usage/usage-with-typescript#getting-the-state-type
-export type StateFromStoreFactory<T extends (_: any) => ToolkitStore> =
-  ReturnType<ReturnType<T>['getState']>;
-export type DispatchFromStoreFactory<T extends (_: any) => ToolkitStore> =
+export type StateFromStoreFactory<T extends (_: any) => Store> = ReturnType<
+  ReturnType<T>['getState']
+>;
+export type DispatchFromStoreFactory<T extends (_: any) => Store> =
   ReturnType<T>['dispatch'];
 
-// TODO: why doesn't the returned store type include the reducers from S?
-const createStoreFactory = <S>(reducers: ReducersMapObject<S>) => {
-  return (intialState?: Partial<SharedState & S>) =>
-    configureStore({
-      middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat(handleAbortMiddleware),
-      reducer: { ...reducers, ...sharedReducers },
-      preloadedState: intialState,
-    });
-};
-
 export type SharedState = StateFromReducersMapObject<typeof sharedReducers>;
-export type SharedDispatch = DispatchFromStoreFactory<
-  ReturnType<typeof createStoreFactory>
+export type SharedDispatch = ThunkDispatch<
+  SharedState,
+  undefined,
+  UnknownAction
 >;
-
-export default createStoreFactory;
