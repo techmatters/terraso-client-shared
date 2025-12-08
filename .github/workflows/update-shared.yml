@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Check out dependent Git repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ inputs.repo-path }}
           ref: ${{ inputs.repo-ref }}
