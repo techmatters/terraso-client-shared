@@ -26,7 +26,10 @@
     "test": "npm run generate-types && jest",
     "test-debug": "npm run generate-types && npx --inspect-brk jest --runInBand --no-cache",
     "test-coverage": "npm run generate-types && jest --coverage --changedSince=origin/main --watchAll=false",
-    "prepare": "scripts/prepare.sh && husky"
+    "prepare": "scripts/prepare.sh && husky",
+    "sync-to-mobile": "scripts/sync-to-mobile.sh",
+    "sync-to-mobile:watch": "scripts/sync-to-mobile.sh --watch",
+    "install:local-backend": "scripts/install-local-backend.sh"
   },
   "browserslist": [
     ">0.2%",
