@@ -24,7 +24,8 @@
     "declarationMap": true,
     "paths": {
       "terraso-client-shared/*": ["./src/*"]
-    }
+    },
+    "rootDir": "src"
   },
 
   "include": ["src"],
