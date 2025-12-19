@@ -28,6 +28,11 @@ import {
 export const pullUserData = async (userId: string) => {
   const query = graphql(`
     query userSoilData($id: ID!) {
+      allExportTokens {
+        token
+        resourceType
+        resourceId
+      }
       userSites: sites(owner: $id) {
         edges {
           node {
@@ -66,10 +71,11 @@ export const pullUserData = async (userId: string) => {
     }
   `);
 
-  const { userSites, projects: allProjects } = await terrasoApi.requestGraphQL(
-    query,
-    { id: userId },
-  );
+  const {
+    allExportTokens,
+    userSites,
+    projects: allProjects,
+  } = await terrasoApi.requestGraphQL(query, { id: userId });
 
   const {
     projects,
@@ -96,6 +102,7 @@ export const pullUserData = async (userId: string) => {
     soilMetadata: Object.fromEntries(
       allSites.map(({ soilMetadata, id }) => [id, soilMetadata]),
     ),
+    exportTokens: allExportTokens ?? [],
   };
 };
 
