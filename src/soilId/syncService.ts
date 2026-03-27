@@ -18,7 +18,7 @@
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import { collapseProjects } from 'terraso-client-shared/project/projectService';
 import { collapseSites } from 'terraso-client-shared/site/siteService';
-import type { UserDataPushInput } from 'terraso-client-shared/soilId/soilIdTypes';
+import type { UserDataPushInput } from 'terraso-client-shared/soilId/syncTypes';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import {
   collapseEdges,
@@ -106,11 +106,16 @@ export const pullUserData = async (userId: string) => {
   };
 };
 
-// Note: Return type is almost UserDataPushPayload except that `site` is not in SoilDataNode
 export const pushUserData = async (input: UserDataPushInput) => {
   const query = graphql(`
     mutation pushUserData($input: UserDataPushInput!) {
       pushUserData(input: $input) {
+        siteResults {
+          siteId
+          result {
+            ...sitePushEntryResult
+          }
+        }
         soilDataResults {
           siteId
           result {
@@ -130,5 +135,11 @@ export const pushUserData = async (input: UserDataPushInput) => {
   `);
 
   const resp = await terrasoApi.requestGraphQL(query, { input });
-  return resp.pushUserData;
+  const payload = resp.pushUserData;
+
+  return {
+    soilDataResults: payload.soilDataResults ?? null,
+    soilMetadataResults: payload.soilMetadataResults ?? null,
+    siteResults: payload.siteResults ?? null,
+  };
 };

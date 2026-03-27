@@ -30,14 +30,7 @@ import type {
   SoilMetadataNode,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 
-export type {
-  UserDataPushInput,
-  UserDataPushPayload,
-  SoilMetadataPushInputEntry,
-  SoilMetadataPushEntry,
-  SoilMetadataPushFailureReason,
-  UserRatingInput,
-} from 'terraso-client-shared/graphqlSchema/graphql';
+export type { UserRatingInput } from 'terraso-client-shared/graphqlSchema/graphql';
 
 export type MethodRequired<
   T extends CollectionMethod | DisabledCollectionMethod,
