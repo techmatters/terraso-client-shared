@@ -37,6 +37,7 @@ export const collapseSite = (site: SiteDataFragment): Site => {
   const { project, owner, notes, ...rest } = site;
   return {
     ...rest,
+    elevation: rest.elevation ?? null,
     projectId: project?.id,
     ownerId: owner?.id,
     notes: collapseSiteNotes(notes),

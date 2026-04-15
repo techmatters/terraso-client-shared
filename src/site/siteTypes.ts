@@ -24,7 +24,7 @@ export type Site = {
   name: string;
   latitude: number;
   longitude: number;
-  elevation?: number | null;
+  elevation: number | null;
   privacy: SitePrivacy;
   archived: boolean;
   updatedAt: string;
