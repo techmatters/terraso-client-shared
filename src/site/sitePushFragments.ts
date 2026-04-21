@@ -1,5 +1,5 @@
 /*
- * Copyright © 2024 Technology Matters
+ * Copyright © 2026 Technology Matters
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -15,29 +15,16 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-export type SitePrivacy = 'PRIVATE' | 'PUBLIC';
-
-export type Site = {
-  projectId?: string;
-  ownerId?: string;
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  elevation: number | null;
-  privacy: SitePrivacy;
-  archived: boolean;
-  updatedAt: string;
-  notes: Record<string, SiteNote>;
-};
-
-export type SiteNote = {
-  id: string;
-  siteId: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  authorId: string;
-  authorFirstName: string;
-  authorLastName: string;
-};
+export const sitePushEntryResult = /* GraphQL */ `
+  fragment sitePushEntryResult on SitePushEntryResult {
+    __typename
+    ... on SitePushEntryFailure {
+      reason
+    }
+    ... on SitePushEntrySuccess {
+      site {
+        ...siteData
+      }
+    }
+  }
+`;

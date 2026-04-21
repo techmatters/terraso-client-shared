@@ -1,5 +1,5 @@
 /*
- * Copyright © 2024 Technology Matters
+ * Copyright © 2025 Technology Matters
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -15,29 +15,21 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-export type SitePrivacy = 'PRIVATE' | 'PUBLIC';
+import type { SitePushEntryResultFragment } from 'terraso-client-shared/graphqlSchema/graphql';
 
-export type Site = {
-  projectId?: string;
-  ownerId?: string;
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  elevation: number | null;
-  privacy: SitePrivacy;
-  archived: boolean;
-  updatedAt: string;
-  notes: Record<string, SiteNote>;
-};
+export type {
+  UserDataPushInput,
+  UserDataPushPayload,
+  SoilMetadataPushInputEntry,
+  SoilMetadataPushEntry,
+  SoilMetadataPushFailureReason,
+  SitePushEntryResultFragment,
+  SitePushFailureReason,
+  SitePushInputEntry,
+  SitePushNoteInput,
+} from 'terraso-client-shared/graphqlSchema/graphql';
 
-export type SiteNote = {
-  id: string;
+export type SitePushEntry = {
   siteId: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  authorId: string;
-  authorFirstName: string;
-  authorLastName: string;
+  result: SitePushEntryResultFragment;
 };
