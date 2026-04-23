@@ -18,11 +18,8 @@
 import type { User } from 'terraso-client-shared/account/accountSlice';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
-  SiteAddMutationInput,
   SiteDataFragment,
-  SiteNoteAddMutationInput,
   SiteNoteDataFragment,
-  SiteNoteUpdateMutationInput,
   SiteTransferMutationInput,
   SiteUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
@@ -32,6 +29,8 @@ import {
   collapseEdges,
   Connection,
 } from 'terraso-client-shared/terrasoApi/utils';
+
+// Note: we used to have some mutations in this file that are now covered by pushUserData
 
 export const collapseSite = (site: SiteDataFragment): Site => {
   const { project, owner, notes, ...rest } = site;
@@ -135,23 +134,6 @@ export const fetchSitesForUser = async (_: undefined, user: User | null) => {
     );
 };
 
-export const addSite = (site: SiteAddMutationInput) => {
-  const query = graphql(`
-    mutation addSite($input: SiteAddMutationInput!) {
-      addSite(input: $input) {
-        site {
-          ...siteData
-        }
-        errors
-      }
-    }
-  `);
-
-  return terrasoApi
-    .requestGraphQL(query, { input: site })
-    .then(resp => collapseSite(resp.addSite.site));
-};
-
 export const updateSite = (site: SiteUpdateMutationInput) => {
   const query = graphql(`
     mutation updateSite($input: SiteUpdateMutationInput!) {
@@ -220,52 +202,4 @@ export const transferSitesToProject = (input: SiteTransferMutationInput) => {
       return { projectId, updated: condensedUpdated };
     },
   );
-};
-
-export const addSiteNote = (siteNote: SiteNoteAddMutationInput) => {
-  const query = graphql(`
-    mutation addSiteNote($input: SiteNoteAddMutationInput!) {
-      addSiteNote(input: $input) {
-        siteNote {
-          ...siteNoteData
-        }
-        errors
-      }
-    }
-  `);
-
-  return terrasoApi
-    .requestGraphQL(query, { input: siteNote })
-    .then(resp => collapseSiteNote(resp.addSiteNote.siteNote));
-};
-
-export const deleteSiteNote = (siteNote: SiteNote) => {
-  const query = graphql(`
-    mutation deleteSiteNote($input: SiteNoteDeleteMutationInput!) {
-      deleteSiteNote(input: $input) {
-        errors
-      }
-    }
-  `);
-
-  return terrasoApi
-    .requestGraphQL(query, { input: { id: siteNote.id } })
-    .then(_ => siteNote);
-};
-
-export const updateSiteNote = (siteNote: SiteNoteUpdateMutationInput) => {
-  const query = graphql(`
-    mutation updateSiteNote($input: SiteNoteUpdateMutationInput!) {
-      updateSiteNote(input: $input) {
-        siteNote {
-          ...siteNoteData
-        }
-        errors
-      }
-    }
-  `);
-
-  return terrasoApi
-    .requestGraphQL(query, { input: siteNote })
-    .then(resp => collapseSiteNote(resp.updateSiteNote.siteNote));
 };

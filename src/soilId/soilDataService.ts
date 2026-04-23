@@ -17,95 +17,13 @@
 
 import { graphql } from 'terraso-client-shared/graphqlSchema';
 import type {
-  DepthDependentSoilDataUpdateMutationInput,
   ProjectSoilSettingsDeleteDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateDepthIntervalMutationInput,
   ProjectSoilSettingsUpdateMutationInput,
-  SoilDataDeleteDepthIntervalMutationInput,
-  SoilDataPushInput,
-  SoilDataUpdateDepthIntervalMutationInput,
-  SoilDataUpdateMutationInput,
 } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 
-export const updateSoilData = async (soilData: SoilDataUpdateMutationInput) => {
-  const query = graphql(`
-    mutation updateSoilData($input: SoilDataUpdateMutationInput!) {
-      updateSoilData(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilData });
-  return resp.updateSoilData.soilData!;
-};
-
-export const updateDepthDependentSoilData = async (
-  depthDependentData: DepthDependentSoilDataUpdateMutationInput,
-) => {
-  const query = graphql(`
-    mutation updateDepthDependentSoilData(
-      $input: DepthDependentSoilDataUpdateMutationInput!
-    ) {
-      updateDepthDependentSoilData(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, {
-    input: depthDependentData,
-  });
-
-  return resp.updateDepthDependentSoilData.soilData!;
-};
-
-export const updateSoilDataDepthInterval = async (
-  soilData: SoilDataUpdateDepthIntervalMutationInput,
-) => {
-  const query = graphql(`
-    mutation updateSoilDataDepthInterval(
-      $input: SoilDataUpdateDepthIntervalMutationInput!
-    ) {
-      updateSoilDataDepthInterval(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilData });
-  return resp.updateSoilDataDepthInterval.soilData!;
-};
-
-export const deleteSoilDataDepthInterval = async (
-  soilData: SoilDataDeleteDepthIntervalMutationInput,
-) => {
-  const query = graphql(`
-    mutation deleteSoilDataDepthInterval(
-      $input: SoilDataDeleteDepthIntervalMutationInput!
-    ) {
-      deleteSoilDataDepthInterval(input: $input) {
-        soilData {
-          ...soilData
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: soilData });
-  return resp.deleteSoilDataDepthInterval.soilData!;
-};
+// Note: we used to have some mutations in this file that are now covered by pushUserData
 
 export const updateProjectSoilSettings = async (
   soilSettings: ProjectSoilSettingsUpdateMutationInput,
@@ -165,24 +83,4 @@ export const deleteProjectDepthInterval = async (
 
   const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
   return resp.deleteProjectSoilSettingsDepthInterval.projectSoilSettings!;
-};
-
-/** @deprecated Use pushUserData instead */
-export const pushSoilData = async (depthInterval: SoilDataPushInput) => {
-  const query = graphql(`
-    mutation pushSoilData($input: SoilDataPushInput!) {
-      pushSoilData(input: $input) {
-        results {
-          siteId
-          result {
-            ...soilDataPushEntryResult
-          }
-        }
-        errors
-      }
-    }
-  `);
-
-  const resp = await terrasoApi.requestGraphQL(query, { input: depthInterval });
-  return resp.pushSoilData.results;
 };
