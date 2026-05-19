@@ -60,11 +60,16 @@ export const collapseSiteNotes = (
 
 export const collapseSiteNote = (siteNote: SiteNoteDataFragment): SiteNote => {
   const { author, site, ...rest } = siteNote;
+  // After the backend's SET_NULL cascade for deleted users, `author` can
+  // be null on existing notes. Coerce to empty strings so downstream
+  // display code can format normally; the consuming UI is expected to
+  // detect the empty name and substitute a localized "Deleted User"
+  // fallback (e.g., terraso-mobile-client SiteNoteCard).
   return {
     ...rest,
-    authorId: author.id,
-    authorFirstName: author.firstName,
-    authorLastName: author.lastName,
+    authorId: author?.id ?? '',
+    authorFirstName: author?.firstName ?? '',
+    authorLastName: author?.lastName ?? '',
     siteId: site.id,
   };
 };
