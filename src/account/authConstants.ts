@@ -16,3 +16,17 @@
  */
 
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
+
+// Sentinel id used by the backend `deleted_user_stub()` resolver for
+// SiteNote.author and Site.owner when the underlying FK is null (the
+// authoring user has been soft-deleted via UserDeleteMutation).
+// New clients import this and substitute a localized label; old
+// clients fall through to formatFullName which renders "Deleted User"
+// in English from the stub's firstName/lastName fields.
+//
+// See deleted_user_stub_plan.md in terraso-backend-research.
+export const DELETED_USER_ID = '00000000-0000-0000-0000-000000000000';
+
+export const isDeletedUser = (
+  user: { id?: string | null } | null | undefined,
+): boolean => !!user && user.id === DELETED_USER_ID;
