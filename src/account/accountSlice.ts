@@ -48,6 +48,11 @@ export const initialState = {
     error: null,
   },
   users: {} as Record<string, User>,
+
+  // Used to show a message confirming account deletion on login screen
+  // when automatic account deletion succeeds and the user is being
+  // signed out.
+  accountDeletedEmail: null as string | null,
 };
 
 type AccountState = typeof initialState;
@@ -89,6 +94,12 @@ export const fetchAuthURLs = createAsyncThunk(
 export const savePreference = createAsyncThunk(
   'account/savePreference',
   accountService.savePreference,
+  null,
+  false,
+);
+export const deleteUserAccount = createAsyncThunk(
+  'account/deleteUserAccount',
+  accountService.deleteUserAccount,
   null,
   false,
 );
@@ -136,6 +147,14 @@ export const userSlice = createSlice({
     setHasToken: (state, action: PayloadAction<boolean>) => ({
       ...state,
       hasToken: action.payload,
+    }),
+    setAccountDeletedEmail: (state, action: PayloadAction<string>) => ({
+      ...state,
+      accountDeletedEmail: action.payload,
+    }),
+    clearAccountDeletedEmail: state => ({
+      ...state,
+      accountDeletedEmail: null,
     }),
   },
 
@@ -206,6 +225,27 @@ export const userSlice = createSlice({
         state,
       ),
     );
+
+    // Blocked self-delete: backend set the pending-deletion pref server-side;
+    // mirror it locally so isPending flips without an extra refetch. The
+    // clean-delete branch ('deleted') is handled by the calling hook —
+    // it dispatches userLoggedOut/signOut/setAccountDeletedEmail directly.
+    builder.addCase(deleteUserAccount.fulfilled, (state, action) => {
+      if (action.payload.kind !== 'blocked' || !state.currentUser.data) {
+        return state;
+      }
+      return {
+        ...state,
+        currentUser: {
+          ...state.currentUser,
+          data: _.set(
+            ['preferences', 'account_deletion_request'],
+            'true',
+            state.currentUser.data,
+          ),
+        },
+      };
+    });
 
     builder.addCase(fetchUser.pending, state => ({
       ...state,
@@ -298,7 +338,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setCurrentUser, setHasToken } = userSlice.actions;
+export const {
+  setCurrentUser,
+  setHasToken,
+  setAccountDeletedEmail,
+  clearAccountDeletedEmail,
+} = userSlice.actions;
 
 export default userSlice.reducer;
 
