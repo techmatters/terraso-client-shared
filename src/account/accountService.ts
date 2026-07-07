@@ -131,17 +131,9 @@ export const savePreference = async (
   return result.updateUserPreference.preference!;
 };
 
-export type DeletionBlocker = {
-  model: string;
-  qualifier: string | null;
-  field: string;
-  count: number;
-  ids: string[];
-};
-
 export type DeleteUserAccountResult =
   | { kind: 'deleted'; email: string }
-  | { kind: 'blocked'; blockers: DeletionBlocker[] };
+  | { kind: 'blocked' };
 
 export const deleteUserAccount = async (
   userId: string,
@@ -152,13 +144,6 @@ export const deleteUserAccount = async (
       deleteUser(input: $input) {
         user {
           ...userFields
-        }
-        blockers {
-          model
-          qualifier
-          field
-          count
-          ids
         }
         errors
       }
@@ -177,15 +162,7 @@ export const deleteUserAccount = async (
   if (payload.user) {
     return { kind: 'deleted', email: currentUser!.email };
   }
-
-  // `blockers` is typed as `Array<Maybe<BlockerType>>` by codegen but the
-  // backend never returns null entries — drop them so the typed result
-  // matches what callers actually receive.
-  const blockers = (payload.blockers ?? []).filter(
-    (b): b is NonNullable<typeof b> => b !== null,
-  ) as DeletionBlocker[];
-
-  return { kind: 'blocked', blockers };
+  return { kind: 'blocked' };
 };
 
 export const unsubscribeFromNotifications = (token: string) => {
