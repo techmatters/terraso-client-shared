@@ -64,6 +64,11 @@ export type User = {
   preferences: Record<string, string>;
 };
 
+// Pref that flips to 'true' when the user has requested account deletion but when account can't be auto-deleted
+const ACCOUNT_DELETION_REQUEST_PREF_KEY = 'account_deletion_request';
+export const isAccountDeletionPending = (user: User | null | undefined) =>
+  user?.preferences[ACCOUNT_DELETION_REQUEST_PREF_KEY] === 'true';
+
 export const setHasAccessTokenAsync = createAsyncThunk(
   'account/setHasAccessTokenAsync',
   () => getToken(),
@@ -224,10 +229,12 @@ export const userSlice = createSlice({
       ),
     );
 
-    // Blocked self-delete: backend set the pending-deletion pref server-side; mirror it locally so isPending flips without an extra refetch. The clean-delete branch ('deleted') is handled by the calling hook — it dispatches userLoggedOut/signOut/setAccountDeletedEmail directly.
+    // When there are blockers to auto-deletion: note the backend set the pending-deletion pref server-side; here we mirror it locally so the client doesn't need an extra refetch.
+    // When auto-deletion succeeded, the rest of the behavior is handled by the calling hook.
     builder.addCase(deleteUserAccount.fulfilled, (state, action) => {
       if (action.payload.kind === 'blocked' && state.currentUser.data) {
-        state.currentUser.data.preferences.account_deletion_request = 'true';
+        state.currentUser.data.preferences[ACCOUNT_DELETION_REQUEST_PREF_KEY] =
+          'true';
       }
     });
 
