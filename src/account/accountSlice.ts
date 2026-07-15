@@ -49,9 +49,7 @@ export const initialState = {
   },
   users: {} as Record<string, User>,
 
-  // Used to show a message confirming account deletion on login screen
-  // when automatic account deletion succeeds and the user is being
-  // signed out.
+  // Used to show a message confirming account deletion on login screen when automatic account deletion succeeds and the user is being signed out.
   accountDeletedEmail: null as string | null,
 };
 
@@ -226,25 +224,11 @@ export const userSlice = createSlice({
       ),
     );
 
-    // Blocked self-delete: backend set the pending-deletion pref server-side;
-    // mirror it locally so isPending flips without an extra refetch. The
-    // clean-delete branch ('deleted') is handled by the calling hook —
-    // it dispatches userLoggedOut/signOut/setAccountDeletedEmail directly.
+    // Blocked self-delete: backend set the pending-deletion pref server-side; mirror it locally so isPending flips without an extra refetch. The clean-delete branch ('deleted') is handled by the calling hook — it dispatches userLoggedOut/signOut/setAccountDeletedEmail directly.
     builder.addCase(deleteUserAccount.fulfilled, (state, action) => {
-      if (action.payload.kind !== 'blocked' || !state.currentUser.data) {
-        return state;
+      if (action.payload.kind === 'blocked' && state.currentUser.data) {
+        state.currentUser.data.preferences.account_deletion_request = 'true';
       }
-      return {
-        ...state,
-        currentUser: {
-          ...state.currentUser,
-          data: _.set(
-            ['preferences', 'account_deletion_request'],
-            'true',
-            state.currentUser.data,
-          ),
-        },
-      };
     });
 
     builder.addCase(fetchUser.pending, state => ({
