@@ -48,6 +48,9 @@ export const initialState = {
     error: null,
   },
   users: {} as Record<string, User>,
+
+  // Used to show a message confirming account deletion on login screen when automatic account deletion succeeds and the user is being signed out.
+  accountDeletedEmail: null as string | null,
 };
 
 type AccountState = typeof initialState;
@@ -60,6 +63,11 @@ export type User = {
   profileImage: string;
   preferences: Record<string, string>;
 };
+
+// Pref that flips to 'true' when the user has requested account deletion but when account can't be auto-deleted
+const ACCOUNT_DELETION_REQUEST_PREF_KEY = 'account_deletion_request';
+export const isAccountDeletionPending = (user: User | null | undefined) =>
+  user?.preferences[ACCOUNT_DELETION_REQUEST_PREF_KEY] === 'true';
 
 export const setHasAccessTokenAsync = createAsyncThunk(
   'account/setHasAccessTokenAsync',
@@ -89,6 +97,12 @@ export const fetchAuthURLs = createAsyncThunk(
 export const savePreference = createAsyncThunk(
   'account/savePreference',
   accountService.savePreference,
+  null,
+  false,
+);
+export const deleteUserAccount = createAsyncThunk(
+  'account/deleteUserAccount',
+  accountService.deleteUserAccount,
   null,
   false,
 );
@@ -136,6 +150,14 @@ export const userSlice = createSlice({
     setHasToken: (state, action: PayloadAction<boolean>) => ({
       ...state,
       hasToken: action.payload,
+    }),
+    setAccountDeletedEmail: (state, action: PayloadAction<string>) => ({
+      ...state,
+      accountDeletedEmail: action.payload,
+    }),
+    clearAccountDeletedEmail: state => ({
+      ...state,
+      accountDeletedEmail: null,
     }),
   },
 
@@ -206,6 +228,15 @@ export const userSlice = createSlice({
         state,
       ),
     );
+
+    // When there are blockers to auto-deletion: note the backend set the pending-deletion pref server-side; here we mirror it locally so the client doesn't need an extra refetch.
+    // When auto-deletion succeeded, the rest of the behavior is handled by the calling hook.
+    builder.addCase(deleteUserAccount.fulfilled, (state, action) => {
+      if (action.payload.kind === 'blocked' && state.currentUser.data) {
+        state.currentUser.data.preferences[ACCOUNT_DELETION_REQUEST_PREF_KEY] =
+          'true';
+      }
+    });
 
     builder.addCase(fetchUser.pending, state => ({
       ...state,
@@ -298,7 +329,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setCurrentUser, setHasToken } = userSlice.actions;
+export const {
+  setCurrentUser,
+  setHasToken,
+  setAccountDeletedEmail,
+  clearAccountDeletedEmail,
+} = userSlice.actions;
 
 export default userSlice.reducer;
 

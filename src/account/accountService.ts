@@ -131,6 +131,40 @@ export const savePreference = async (
   return result.updateUserPreference.preference!;
 };
 
+export type DeleteUserAccountResult =
+  | { kind: 'deleted'; email: string }
+  | { kind: 'blocked' };
+
+export const deleteUserAccount = async (
+  userId: string,
+  currentUser: User | null,
+): Promise<DeleteUserAccountResult> => {
+  const query = graphql(`
+    mutation deleteUserAccount($input: UserDeleteMutationInput!) {
+      deleteUser(input: $input) {
+        user {
+          ...userFields
+        }
+        errors
+      }
+    }
+  `);
+  // Note: when the backend populates `errors` (e.g. the blocked-and-
+  // HubSpot-down case), terrasoApi's handleApiErrors rejects this promise
+  // before we get here. The thunk lands in the .rejected state and the
+  // app's standard error-toast machinery surfaces it. So this resolver
+  // only sees the two success shapes below.
+  const response = await terrasoApi.requestGraphQL(query, {
+    input: { id: userId },
+  });
+  const payload = response.deleteUser;
+
+  if (payload.user) {
+    return { kind: 'deleted', email: currentUser!.email };
+  }
+  return { kind: 'blocked' };
+};
+
 export const unsubscribeFromNotifications = (token: string) => {
   const query = graphql(`
     mutation unsubscribeUser($input: UserUnsubscribeUpdateInput!) {
