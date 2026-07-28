@@ -16,3 +16,13 @@
  */
 
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
+
+// terraso-backend returns an in-memory User stub with this id (and the English
+// name "Deleted User") in place of null when a record's author has been
+// deleted, so the schema's non-null `author` contract still holds. Must
+// stay in sync with DELETED_USER_ID in apps/core/models/users.py; drift is
+// silent, so both sides pin the literal in a test.
+export const DELETED_USER_ID = '00000000-0000-0000-0000-000000000000';
+
+// Callers substitute their own localized label — the stub's name is English.
+export const isDeletedUser = (id: string) => id === DELETED_USER_ID;
