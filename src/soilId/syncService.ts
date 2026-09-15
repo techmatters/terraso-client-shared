@@ -33,6 +33,9 @@ export const pullUserData = async (userId: string) => {
         resourceType
         resourceId
       }
+      soilId {
+        soilIdAlgorithmVersion
+      }
       userSites: sites(owner: $id) {
         edges {
           node {
@@ -73,6 +76,7 @@ export const pullUserData = async (userId: string) => {
 
   const {
     allExportTokens,
+    soilId,
     userSites,
     projects: allProjects,
   } = await terrasoApi.requestGraphQL(query, { id: userId });
@@ -103,6 +107,9 @@ export const pullUserData = async (userId: string) => {
       allSites.map(({ soilMetadata, id }) => [id, soilMetadata]),
     ),
     exportTokens: allExportTokens ?? [],
+    // Semver of the deployed soil-ID algorithm; the mobile client flushes its
+    // cached matches when MAJOR/MINOR changes (see terraso-mobile-client).
+    soilIdAlgorithmVersion: soilId?.soilIdAlgorithmVersion ?? undefined,
   };
 };
 
