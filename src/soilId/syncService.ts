@@ -109,7 +109,7 @@ export const pullUserData = async (userId: string) => {
     exportTokens: allExportTokens ?? [],
     // Semver of the deployed soil-ID algorithm; the mobile client flushes its
     // cached matches when MAJOR/MINOR changes (see terraso-mobile-client).
-    soilIdAlgorithmVersion: soilId?.soilIdAlgorithmVersion ?? undefined,
+    soilIdAlgorithmVersion: soilId.soilIdAlgorithmVersion,
   };
 };
 
