@@ -1,5 +1,5 @@
 /*
- * Copyright © 2024 Technology Matters
+ * Copyright © 2026 Technology Matters
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,31 +16,27 @@
  */
 
 import { graphql } from 'terraso-client-shared/graphqlSchema';
-import { SoilIdInputData } from 'terraso-client-shared/graphqlSchema/graphql';
 import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 import { Coords } from 'terraso-client-shared/types';
 
-export const fetchSoilMatches = async (
+/**
+ * Point elevation (meters) for coords, from the backend's Mapbox Terrain-RGB
+ * lookup — the same source the soil-ID ranking uses as its fallback, so the
+ * app stores the identical elevation it will be ranked against. Null when the
+ * backend can't resolve one.
+ */
+export const fetchElevation = async (
   coords: Coords,
-  soilData: SoilIdInputData,
-) => {
+): Promise<number | null> => {
   const query = graphql(`
-    query soilMatches(
-      $latitude: Float!
-      $longitude: Float!
-      $data: SoilIdInputData!
-    ) {
-      soilId {
-        soilMatches(latitude: $latitude, longitude: $longitude, data: $data) {
-          __typename
-          ...soilIdFailure
-          ...soilMatches
-        }
+    query elevation($latitude: Float!, $longitude: Float!) {
+      lookup {
+        elevation(latitude: $latitude, longitude: $longitude)
       }
     }
   `);
 
   return terrasoApi
-    .requestGraphQL(query, { ...coords, data: soilData })
-    .then(({ soilId }) => soilId.soilMatches);
+    .requestGraphQL(query, { ...coords })
+    .then(({ lookup }) => lookup.elevation ?? null);
 };
