@@ -44,3 +44,25 @@ export const fetchSoilMatches = async (
     .requestGraphQL(query, { ...coords, data: soilData })
     .then(({ soilId }) => soilId.soilMatches);
 };
+
+/**
+ * Point elevation (meters) for coords, from the backend's Mapbox Terrain-RGB
+ * lookup — the same source the soil-ID ranking uses as its fallback, so the
+ * app stores the identical elevation it will be ranked against. Null when the
+ * backend can't resolve one.
+ */
+export const fetchElevation = async (
+  coords: Coords,
+): Promise<number | null> => {
+  const query = graphql(`
+    query elevation($latitude: Float!, $longitude: Float!) {
+      soilId {
+        elevation(latitude: $latitude, longitude: $longitude)
+      }
+    }
+  `);
+
+  return terrasoApi
+    .requestGraphQL(query, { ...coords })
+    .then(({ soilId }) => soilId.elevation ?? null);
+};
