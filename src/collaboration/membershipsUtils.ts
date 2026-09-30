@@ -16,7 +16,7 @@
  */
 
 import _ from 'lodash/fp';
-import { User } from 'terraso-client-shared/account/accountSlice';
+import type { User } from 'terraso-client-shared/account/accountTypes';
 import type {
   AccountCollaborationMembershipFragment,
   CollaborationMembershipFieldsFragment,

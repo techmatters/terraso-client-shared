@@ -23,9 +23,10 @@ import {
 } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
 import { useDispatch } from 'react-redux';
-import { signOut, User } from 'terraso-client-shared/account/accountSlice';
+import type { User } from 'terraso-client-shared/account/accountTypes';
 import { refreshToken } from 'terraso-client-shared/account/auth';
 import { UNAUTHENTICATED } from 'terraso-client-shared/account/authConstants';
+import { signOut } from 'terraso-client-shared/account/signOut';
 import {
   addMessage,
   Message,
