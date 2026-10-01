@@ -10,8 +10,22 @@
   "plugins": [
     "prettier",
     "lodash-fp",
-    "eslint-plugin-react"
+    "eslint-plugin-react",
+    "import"
   ],
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  },
   "extends": [
     "react-app",
     "react-app/jest",
@@ -24,6 +38,7 @@
     "testing-library/no-unnecessary-act": "off",
     "testing-library/render-result-naming-convention": "off",
     "curly": "error",
-    "react/jsx-curly-brace-presence": "error"
+    "react/jsx-curly-brace-presence": "error",
+    "import/no-cycle": "error"
   }
 }

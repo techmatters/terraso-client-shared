@@ -17,10 +17,13 @@
 
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash/fp';
+import {
+  setCurrentUser,
+  setHasToken,
+} from 'terraso-client-shared/account/accountActions';
 import * as accountService from 'terraso-client-shared/account/accountService';
-import { getToken, removeToken } from 'terraso-client-shared/account/auth';
-import logger from 'terraso-client-shared/monitoring/logger';
-import type { SharedDispatch } from 'terraso-client-shared/store/store';
+import type { User } from 'terraso-client-shared/account/accountTypes';
+import { getToken } from 'terraso-client-shared/account/auth';
 import { createAsyncThunk } from 'terraso-client-shared/store/utils';
 
 export const initialState = {
@@ -55,14 +58,7 @@ export const initialState = {
 
 type AccountState = typeof initialState;
 
-export type User = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  profileImage: string;
-  preferences: Record<string, string>;
-};
+export type { User } from 'terraso-client-shared/account/accountTypes';
 
 // Pref that flips to 'true' when the user has requested account deletion but when account can't be auto-deleted
 const ACCOUNT_DELETION_REQUEST_PREF_KEY = 'account_deletion_request';
@@ -140,17 +136,6 @@ export const userSlice = createSlice({
   initialState,
 
   reducers: {
-    setCurrentUser: (state, action: PayloadAction<User | null>) => ({
-      ...state,
-      currentUser: {
-        data: action.payload,
-        fetching: false,
-      },
-    }),
-    setHasToken: (state, action: PayloadAction<boolean>) => ({
-      ...state,
-      hasToken: action.payload,
-    }),
     setAccountDeletedEmail: (state, action: PayloadAction<string>) => ({
       ...state,
       accountDeletedEmail: action.payload,
@@ -162,6 +147,19 @@ export const userSlice = createSlice({
   },
 
   extraReducers: builder => {
+    builder.addCase(setCurrentUser, (state, action) => ({
+      ...state,
+      currentUser: {
+        data: action.payload,
+        fetching: false,
+      },
+    }));
+
+    builder.addCase(setHasToken, (state, action) => ({
+      ...state,
+      hasToken: action.payload,
+    }));
+
     builder.addCase(setHasAccessTokenAsync.fulfilled, (state, action) => ({
       ...state,
       hasToken: action.payload !== undefined,
@@ -329,20 +327,13 @@ export const userSlice = createSlice({
   },
 });
 
-export const {
-  setCurrentUser,
-  setHasToken,
-  setAccountDeletedEmail,
-  clearAccountDeletedEmail,
-} = userSlice.actions;
+export const { setAccountDeletedEmail, clearAccountDeletedEmail } =
+  userSlice.actions;
 
 export default userSlice.reducer;
 
-export const signOut = () => (dispatch: SharedDispatch) => {
-  accountService.signOut().catch(error => {
-    logger.error('Failed to execute API signout request', error);
-  });
-  removeToken();
-  dispatch(setHasToken(false));
-  dispatch(setCurrentUser(null));
-};
+export {
+  setCurrentUser,
+  setHasToken,
+} from 'terraso-client-shared/account/accountActions';
+export { signOut } from 'terraso-client-shared/account/signOut';

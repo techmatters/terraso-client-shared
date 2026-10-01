@@ -16,7 +16,7 @@
  */
 
 import _ from 'lodash/fp';
-import { User } from 'terraso-client-shared/account/accountSlice';
+import type { User } from 'terraso-client-shared/account/accountTypes';
 import { getUserEmail } from 'terraso-client-shared/account/auth';
 import { getAPIConfig } from 'terraso-client-shared/config';
 import { graphql } from 'terraso-client-shared/graphqlSchema';
