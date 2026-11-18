@@ -23,9 +23,24 @@ import * as terrasoApi from 'terraso-client-shared/terrasoApi/api';
 // depth interval. The caller uploads the bytes directly to S3 at `uploadUrl`
 // (sending a Content-Type header matching `input.contentType`); the object
 // lands at `objectKey`. See the backend requestSoilImageUploadUrl mutation.
+//
+// NOTE: the explicit return type re-exposes `errors` from the backend
+// payload. requestGraphQL's typed return runs the response through
+// `WithoutEntryErrors` (terrasoApi/api.ts), which strips per-entry `errors`
+// keys from the inferred type — convenient for most mutations where
+// top-level GraphQL errors are the only failure mode. This mutation uses
+// per-entry `errors` (GenericScalar) to surface business-rule failures
+// (e.g. "no permission on this site"), so the caller needs to see it.
+// GenericScalar is opaque; typing as `unknown` forces callers to inspect
+// the shape they get rather than assume. The data is present at runtime
+// regardless — only the inferred type was dropping it.
 export const requestSoilImageUploadUrl = async (
   input: SoilImageUploadUrlRequestInput,
-) => {
+): Promise<{
+  uploadUrl?: string | null;
+  objectKey?: string | null;
+  errors?: unknown;
+}> => {
   const query = graphql(`
     mutation requestSoilImageUploadUrl(
       $input: SoilImageUploadUrlRequestInput!
